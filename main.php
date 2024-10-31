@@ -29,25 +29,24 @@ function white($use_js_checks)
             $curdomain = substr($curdomain, 0, - $portLength);
         }
         foreach ($ws->domainSpecific as $wds) {
-            if ($wds['name'] == $curdomain) {
-                $wtd_arr = explode(":", $wds['action'], 2);
-                $action = $wtd_arr[0];
-                switch ($action) {
-                    case 'error':
-                        $error_codes = [intval($wtd_arr[1])];
-                        break;
-                    case 'folder':
-                        $folder_names = [$wtd_arr[1]];
-                        break;
-                    case 'curl':
-                        $curl_urls = [$wtd_arr[1]];
-                        break;
-                    case 'redirect':
-                        $redirect_urls = [$wtd_arr[1]];
-                        break;
-                }
-                break;
+            if ($wds->name !== $curdomain) continue;
+            $wtd_arr = explode(":", $wds->action, 2);
+            $action = $wtd_arr[0];
+            switch ($action) {
+                case 'error':
+                    $error_codes = [intval($wtd_arr[1])];
+                    break;
+                case 'folder':
+                    $folder_names = [$wtd_arr[1]];
+                    break;
+                case 'curl':
+                    $curl_urls = [$wtd_arr[1]];
+                    break;
+                case 'redirect':
+                    $redirect_urls = [$wtd_arr[1]];
+                    break;
             }
+            break;
         }
     }
 
@@ -104,7 +103,7 @@ function black(array $clickparams)
 
     $landings = [];
     $isfolderland = false;
-    
+
     $bl = $c->black->land;
     if ($bl->action == 'redirect')
         $landings = $bl->redirectUrls;

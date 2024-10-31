@@ -27,8 +27,8 @@ $js_checks_str=	implode('", "', $jsChecks->events);
 $jsCode = str_replace('{JSCHECKS}', $js_checks_str, $jsCode);
 
 $jsCode = str_replace('{JSTIMEOUT}', $jsChecks->timeout, $jsCode);
-$jsCode = str_replace('{JSTZSTART}', $jsChecks->tzStart, $jsCode);
-$jsCode = str_replace('{JSTZEND}', $jsChecks->tzEnd, $jsCode);
+$jsCode = str_replace('{JSTZMIN}', $jsChecks->tzMin, $jsCode);
+$jsCode = str_replace('{JSTZMAX}', $jsChecks->tzMax, $jsCode);
 
 $detector= file_get_contents(__DIR__.'/detector.js');
 $fullCode = $detector."\n".$jsCode;

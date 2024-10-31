@@ -23,6 +23,11 @@ function load_content_with_include($url): string
     } elseif (file_exists($fulldir . '/index.htm')) {
         require $fulldir . '/index.htm';
     }
+    //Not Found
+    else{ 
+        http_response_code(404);
+        echo $url.' Not Found!';
+    }
 
     $html = ob_get_clean();
     return $html;

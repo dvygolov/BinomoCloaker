@@ -7,4 +7,11 @@ require_once __DIR__ . '/../db.php';
 //Добавляем, по какому из js-событий мы поймали бота
 $reason = $_GET['reason'] ?? 'js_tests';
 global $db;
-$db->add_white_click(Cloaker::get_click_params(), $reason, $cur_config);
+
+$dbCamp = $db->get_campaign_by_domain($_SERVER['HTTP_HOST']);
+if ($dbCamp===null)
+    die("NO CAMPAIGN FOR THIS DOMAIN!");
+$added = $db->add_white_click(Cloaker::get_click_params(), $reason, $dbCamp['id']);
+if (DebugMethods::on()){
+    echo $added?"OK":"Error";
+}

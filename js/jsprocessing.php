@@ -30,7 +30,7 @@ header('Access-Control-Allow-Credentials: true');
 
 if ($is_bad_click) {
     //это бот, который прошёл javascript-проверку
-    $db->add_white_click($cloaker->click_params, $cloaker->block_reason, $cur_config);
+    $db->add_white_click($cloaker->click_params, $cloaker->block_reason, $c->campaignId);
     header("Access-Control-Expose-Headers: YWBAction", false, 200);
     header("YWBAction: none", true, 200);
     return http_response_code(200);
@@ -50,7 +50,7 @@ if ($is_bad_click) {
     }
     //если в настройках JS-подключения у нас подмена или iframe
     header("Access-Control-Expose-Headers: YWBAction", false, 200);
-    header("YWBAction: " . $black_jsconnect_action, true, 200);
+    header("YWBAction: " . $c->black->jsconnectAction, true, 200);
     black($cloaker->click_params);
 
     if (!headers_sent()) {

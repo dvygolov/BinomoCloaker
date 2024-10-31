@@ -19,7 +19,7 @@ let botDetector = new BotDetector({
     timeout: {JSTIMEOUT},
     callback: callback,
     tests: ["{JSCHECKS}"],
-    tzStart: {JSTZSTART},
-    tzEnd: {JSTZEND}
+    tzStart: {JSTZMIN},
+    tzEnd: {JSTZMAX}
 });
 botDetector.monitor();

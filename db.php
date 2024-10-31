@@ -438,7 +438,7 @@ class Db
         return $sumArray;
     }
 
-    public function add_white_click($data, $reason, $campId)
+    public function add_white_click($data, $reason, $campId):bool
     {
         // Prepare click data
         $click = $this->prepare_click_data($data, $campId);
@@ -460,8 +460,10 @@ class Db
             // Prepare failed, get and display the error message
             $errorMessage = $db->lastErrorMsg();
             add_log("errors", "Couldn't add white click: $errorMessage:" . json_encode($click));
+            return false;
         }
         $db->close();
+        return true;
     }
 
     public function add_black_click($subid, $data, $preland, $land, $campId)
