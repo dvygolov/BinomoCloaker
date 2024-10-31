@@ -1,11 +1,10 @@
 <?php
 require_once __DIR__ . '/../db.php';
-function show_stats($startDate, $endDate, StatisticsSettings $ss):string    
+function show_stats($startDate, $endDate, StatisticsSettings $ss):string
 {
-    global $campId;
-    
+    global $db, $campId;
+
     $tableData ='';
-    $db = new Db();
     foreach ($ss->tables as $tSettings) {
         $dataset = $db->get_statistics(
             $tSettings->columns, $tSettings->groupby, $campId,
@@ -39,7 +38,57 @@ function show_stats($startDate, $endDate, StatisticsSettings $ss):string
             <br/>
             <br/>
 EOF;
-   }
+    }
+    return $tableData;
+}
+
+function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
+{
+    global $db, $campId;
+
+    $sts = $startDate->getTimestamp();
+    $ets = $endDate->getTimestamp();
+    $filter = $_GET['filter'] ?? '';
+    switch ($filter) {
+        case 'leads':
+            $dataset = $db->get_leads($sts, $ets, $campId);
+            break;
+        case 'blocked':
+            $dataset = $db->get_white_clicks($sts, $ets, $campId);
+            break;
+        case 'single':
+            $clickId = $_GET['subid'] ?? '';
+            $dataset = $db->get_clicks_by_subid($clickId);
+            break;
+        default:
+            $dataset = $db->get_black_clicks($sts, $ets, $campId);
+            break;
+    }
+    
+    $dJson = json_encode($dataset);
+    $tName = "blocked";
+    $tColumns = get_clicks_columns($filter, $ss->timezone);
+    $tableData = <<<EOF
+        <div id="t$tName"></div>
+        <script>
+            let t{$tName}Data = $dJson;
+            let t{$tName}Columns = $tColumns;
+            let t{$tName}Table = new Tabulator('#t{$tName}', {
+                layout: "fitColumns",
+                columns: t{$tName}Columns,
+                columnCalcs: "both",
+                pagination: "local",
+                paginationSize: 500,
+                paginationSizeSelector: [25, 50, 100, 200, 500, 1000, 2000, 5000],
+                paginationCounter: "rows",
+                height: "100%",
+                data: t{$tName}Data,
+                tooltips: true
+            });
+        </script>
+        <br/>
+        <br/>
+EOF;
     return $tableData;
 }
 
@@ -47,7 +96,8 @@ function get_table_settings(): array
 {
     try {
         $tables = json_decode(file_get_contents(__DIR__ . '/settings.json'), true, 512, JSON_THROW_ON_ERROR);
-    } catch (JsonException $e) {
+    }
+    catch (JsonException $e) {
         die($e->getMessage());
     }
     return $tables;
@@ -403,7 +453,7 @@ function get_clicks_columns(string $filter, $timezone): string
                     "headerFilter": "input",
                     "headerFilterFunc": function(headerValue, rowValue, rowData, filterParams){
                         if (rowValue.length===0) return false;
-                        return JSON.stringify(rowValue).includes(headerValue); 
+                        return JSON.stringify(rowValue).includes(headerValue);
                     },
                     "headerSort":false,
                     "tooltip": function(e, cell, onRendered){
@@ -487,7 +537,7 @@ JSON;
                     "headerFilter": "input",
                     "headerFilterFunc": function(headerValue, rowValue, rowData, filterParams){
                         if (rowValue.length===0) return false;
-                        return JSON.stringify(rowValue).includes(headerValue); 
+                        return JSON.stringify(rowValue).includes(headerValue);
                     },
                     "headerSort":false,
                     "tooltip": function(e, cell, onRendered){
@@ -652,7 +702,7 @@ JSON;
                     "headerFilter": "input",
                     "headerFilterFunc": function(headerValue, rowValue, rowData, filterParams){
                         if (rowValue.length===0) return false;
-                        return JSON.stringify(rowValue).includes(headerValue); 
+                        return JSON.stringify(rowValue).includes(headerValue);
                     },
                     "headerSort":false,
                     "tooltip": function(e, cell, onRendered){
@@ -708,8 +758,8 @@ function get_campaigns_columns(): string
         {
             "title": "ID",
             "field": "id",
-            "visible": false, 
-        },        
+            "visible": false,
+        },
         {
             "title": "Name",
             "formatter": "link",
@@ -725,13 +775,12 @@ function get_campaigns_columns(): string
             "title": "Actions",
             "formatter": "html",
             "hozAlign": "center",
-            "cellClick": campActionsHandler, 
+            "cellClick": campActionsHandler,
             "formatter": function() {
                 return `
                     <button class="btn btn-rename" title="Rename"><i class="bi bi-pencil-fill"></i></button>
                     <button class="btn btn-delete" title="Delete"><i class="bi bi-file-x"></i></button>
                     <button class="btn btn-clone" title="Clone"><i class="bi bi-copy"></i></button>
-                    <button class="btn btn-copy-link" title="Copy link"><i class="bi bi-link"></i></button>
                     <button class="btn btn-stats" title="View stats"><i class="bi bi-bar-chart-fill"></i></button>
                     <button class="btn btn-allowed" title="View allowed clicks"><i class="bi bi-person-circle"></i></button>
                     <button class="btn btn-blocked" title="View blocked clicks"><i class="bi bi-ban"></i></button>`;

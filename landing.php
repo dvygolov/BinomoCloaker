@@ -7,9 +7,8 @@ require_once __DIR__ . '/redirect.php';
 require_once __DIR__ . '/abtest.php';
 require_once __DIR__ . '/cookies.php';
 
-global $c;
+global $c, $db;
 //adding the fact that user reached landing to the database
-$db = new Db();
 $db->add_lpctr(get_cookie('subid'));
 
 $l = $_GET['l'] ?? -1;

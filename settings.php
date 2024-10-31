@@ -23,5 +23,17 @@ $cloSettings =
 //- won't obfuscate any javascript code 
 //- will add YWB headers to the response, where you'll be able to see, how long does it take to process requests
   "debug" => true
-]
+];
+
+date_default_timezone_set($cloSettings['timezone']);
+$dtz = new DateTimeZone($cloSettings['timezone']);
+
+$startdate = isset($_GET['startdate']) ?
+    DateTime::createFromFormat('d.m.y', $_GET['startdate'], $dtz) :
+    new DateTime("now", $dtz);
+$enddate = isset($_GET['enddate']) ?
+    DateTime::createFromFormat('d.m.y', $_GET['enddate'], $dtz) :
+    new DateTime("now", $dtz);
+$startdate->setTime(0, 0, 0);
+$enddate->setTime(23, 59, 59);
 ?>

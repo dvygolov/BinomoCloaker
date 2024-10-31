@@ -6,6 +6,7 @@ require_once __DIR__ . '/logging.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/macros.php';
 require_once __DIR__ . '/requestfunc.php';
+global $db;
 
 $curLink = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 $subid = $_REQUEST['subid'] ?? '';
@@ -54,7 +55,6 @@ else
     $msg = "$subid, $status, $payout";
 add_log("postback", $msg);
 
-$db = new Db();
 $updated = $db->update_status($subid, $inner_status, $payout);
 
 if ($updated) {

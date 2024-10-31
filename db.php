@@ -694,14 +694,14 @@ class Db
         }
 
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            if (!empty($row['settings'])) {
-                $settings = json_decode($row['settings'], true);
-                if (isset($settings['domains']) && $this->match_domain($settings['domains'], $domain)) {
-                    $db->close();
-                    $row['settings'] = json_decode($row['settings'], true);
-                    return $row;
-                }
-            }
+            if (empty($row['settings'])) continue;
+            $settings = json_decode($row['settings'], true);
+            if (!isset($settings['domains']))continue;
+            if (!$this->match_domain($settings['domains'], $domain)) continue;
+
+            $db->close();
+            $row['settings'] = json_decode($row['settings'], true);
+            return $row;
         }
 
         $db->close();
@@ -908,3 +908,5 @@ class Db
         $db->close();
     }
 }
+
+$db = new Db();

@@ -4,7 +4,6 @@ require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/tablecolumns.php';
 require_once __DIR__ . '/../settings.php';
 
-$db = new Db();
 $dataset = $db->get_campaigns();
 ?>
 <!doctype html>

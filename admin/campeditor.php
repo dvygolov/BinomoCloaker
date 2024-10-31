@@ -11,7 +11,6 @@ if (!$passOk)
 $action = $_REQUEST['action'];
 $name = $_REQUEST['name']??'';
 $campId = $_REQUEST['campId']??-1;
-$db = new Db();
 
 switch ($action) {
     case 'add':

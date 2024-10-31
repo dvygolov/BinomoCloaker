@@ -5,6 +5,7 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/cookies.php';
 require_once __DIR__ . '/redirect.php';
 require_once __DIR__ . '/requestfunc.php';
+global $db;
 
 $name = '';
 if (isset($_POST['name']))
@@ -59,7 +60,6 @@ else {
 $post_data = http_build_query($_POST);
 $res = post($fullpath, $post_data);
 
-$db = new Db();
 //в ответе должен быть редирект, если его нет - грузим обычную страницу Спасибо кло
 switch ($res["info"]["http_code"]) {
     case 302:

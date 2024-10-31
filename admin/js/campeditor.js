@@ -58,13 +58,15 @@ async function campActionsHandler(e, cell) {
         await campEditor('dup', campaignId);
     }
 
-    if (target.classList.contains('btn-copy-link')) {
-        const link = `https://example.com/campaign/${campaignId}`;
-        await navigator.clipboard.writeText(link);
-        alert(`Link ${link} copied to clipboard!`);
-    }
-
     if (target.classList.contains('btn-stats')) {
         window.location.href = `statistics.php?campId=${campaignId}`;
+    }
+
+    if (target.classList.contains('btn-allowed')) {
+        window.location.href = `clicks.php?campId=${campaignId}`;
+    }
+
+    if (target.classList.contains('btn-blocked')) {
+        window.location.href = `clicks.php?campId=${campaignId}&filter=blocked`;
     }
 }

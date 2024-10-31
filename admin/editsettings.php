@@ -1,13 +1,7 @@
 <?php
 require_once __DIR__ . '/passwordcheck.php';
-require_once __DIR__ . '/../db.php';
-require_once __DIR__ . '/../campaign.php';
-require_once __DIR__ . '/../campinit.php';
-global $campId;
-
-$db = new Db();
-$s = $db->get_campaign_settings($campId);
-$c = new Campaign($campId, $s);
+require_once __DIR__ . '/campinit.php';
+global $c;
 ?>
 <!doctype html>
 <html lang="en">

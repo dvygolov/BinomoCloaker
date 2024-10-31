@@ -61,7 +61,7 @@ class MacrosProcessor
 
     private function get_macro_value($macro): string|bool
     {
-        $db = new Db();
+        global $db;
         $preset = ['subid', 'prelanding', 'landing'];
         if (in_array($macro, $preset)) {
             $cookie = get_cookie($macro);

@@ -6,5 +6,5 @@ require_once __DIR__ . '/../db.php';
 
 //Добавляем, по какому из js-событий мы поймали бота
 $reason = $_GET['reason'] ?? 'js_tests';
-$db = new Db();
+global $db;
 $db->add_white_click(Cloaker::get_click_params(), $reason, $cur_config);

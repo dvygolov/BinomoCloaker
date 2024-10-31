@@ -5,7 +5,7 @@ require_once __DIR__ . '/core.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/main.php';
 
-$db = new Db();
+global $db;
 $dbCamp = $db->get_campaign_by_domain($_SERVER['HTTP_HOST']);
 if ($dbCamp===null)
     die("NO CAMPAIGN FOR THIS DOMAIN!");

@@ -92,7 +92,7 @@ function white($use_js_checks)
 
 function black(array $clickparams)
 {
-    global $c; //Campaign
+    global $c, $db; //Campaign
     header('Access-Control-Allow-Credentials: true');
     if (isset($_SERVER['HTTP_REFERER'])) {
         $parsed_url = parse_url($_SERVER['HTTP_REFERER']);
@@ -114,7 +114,6 @@ function black(array $clickparams)
     }
 
     $bp = $c->black->preland;
-    $db = new Db();
     switch ($bp->action) {
         case 'none':
             $res = select_item($landings, $c->saveUserFlow, 'landing', $isfolderland);
