@@ -32,7 +32,9 @@ function show_stats($startDate, $endDate, StatisticsSettings $ss):string
                     dataTreeChildIndent: 35,
                     height: "100%",
                     data: t{$tName}Data,
-                    tooltips: true
+                    columnDefaults:{
+                        tooltip:true,
+                    }
                 });
             </script>
             <br/>
@@ -83,7 +85,9 @@ function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
                 paginationCounter: "rows",
                 height: "100%",
                 data: t{$tName}Data,
-                tooltips: true
+                columnDefaults:{
+                    tooltip:true,
+                }
             });
         </script>
         <br/>

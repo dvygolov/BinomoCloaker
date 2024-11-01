@@ -28,14 +28,14 @@ if ($payout === '') {
     echo "No payout found! Url: $curLink";
     return;
 }
-$click = $db->get_clicks_by_subid($subid);
+$click = $db->get_clicks_by_subid($subid,true);
 if (empty($click)){
     http_response_code(500);
     echo "No click for subid $subid found! Url: $curLink";
     return;
 }
-$cs = $db->get_campaign_settings($click['campaign_id']);
-$c = new Campaign($click['id'],$cs);
+$cs = $db->get_campaign_settings($click[0]['campaign_id']);
+$c = new Campaign($click[0]['campaign_id'],$cs);
 
 $inner_status = '';
 switch (strtolower($status)) {
@@ -80,12 +80,12 @@ function process_s2s_posbacks(array $s2s_postbacks, string $inner_status, string
 {
     $mp = new MacrosProcessor($subid);
     foreach ($s2s_postbacks as $s2s) {
-        if (!in_array($inner_status, $s2s['events'])) continue;
-        if (empty($s2s['url'])) continue;
-        $final_url = str_replace('{status}', $inner_status, $s2s['url']);
+        if (!in_array($inner_status, $s2s->events)) continue;
+        if (empty($s2s->url)) continue;
+        $final_url = str_replace('{status}', $inner_status, $s2s->url);
         $final_url = $mp->replace_url_macros($final_url);
         $s2s_res = '';
-        switch ($s2s['method']) {
+        switch ($s2s->method) {
             case 'GET':
                 $s2s_res = get($final_url);
                 break;
@@ -98,6 +98,6 @@ function process_s2s_posbacks(array $s2s_postbacks, string $inner_status, string
                 $s2s_res = post($urlParts[0], $params);
                 break;
         }
-        add_log("postback", "{$s2s['method']}, $final_url, $inner_status, {$s2s_res['info']['http_code']}");
+        add_log("postback", "{$s2s->method}, $final_url, $inner_status, {$s2s_res['info']['http_code']}");
     }
 }
