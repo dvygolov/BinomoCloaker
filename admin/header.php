@@ -5,7 +5,7 @@
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                     <div class="logo-pro">
                         <a href="index.php">
-                            <img class="main-logo" src="./img/logo.png" alt="" />
+                            <img class="main-logo" src="<?=get_cloaker_path()?>img/logo.png" alt="" />
                         </a>
                     </div>
                 </div>

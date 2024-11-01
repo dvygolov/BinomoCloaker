@@ -19,7 +19,6 @@ $dataset = $db->get_campaigns();
         </div>
         <div id="campaigns"></div>
     </div>
-    <script src="./js/campeditor.js?v=<?= filemtime(__DIR__.'/js/campeditor.js') ?>"></script> 
     <script>
         let tableData = <?= json_encode($dataset) ?>;
         let tableColumns = <?= get_campaigns_columns() ?>;
