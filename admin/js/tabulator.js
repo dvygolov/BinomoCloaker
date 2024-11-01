@@ -12064,7 +12064,9 @@
 			
 			if(DT.isDateTime(value)){
 				newDatetime = value;
-			}else if(inputFormat === "iso"){
+			} else if (inputFormat === "unix") {
+				newDatetime = DT.fromSeconds(value);
+			} else if (inputFormat === "iso") {
 				newDatetime = DT.fromISO(String(value));
 			}else {
 				newDatetime = DT.fromFormat(String(value), inputFormat);
@@ -12221,7 +12223,9 @@
 			if(DT){
 				if(DT.isDateTime(cellValue)){
 					newDatetime = cellValue;
-				}else if(inputFormat === "iso"){
+				} else if (inputFormat === "unix") {
+					newDatetime = DT.fromSeconds(cellValue);
+				} else if (inputFormat === "iso") {
 					newDatetime = DT.fromISO(String(cellValue));
 				}else {
 					newDatetime = DT.fromFormat(String(cellValue), inputFormat);
@@ -12348,7 +12352,9 @@
 			if(DT){
 				if(DT.isDateTime(cellValue)){
 					newDatetime = cellValue;
-				}else if(inputFormat === "iso"){
+				} else if (inputFormat === "unix") {
+					newDatetime = DT.fromSeconds(cellValue);
+				} else if (inputFormat === "iso") {
 					newDatetime = DT.fromISO(String(cellValue));
 				}else {
 					newDatetime = DT.fromFormat(String(cellValue), inputFormat);
@@ -16596,7 +16602,9 @@
 
 			if(DT.isDateTime(value)){
 				newDatetime = value;
-			}else if(inputFormat === "iso"){
+			} else if (inputFormat === "unix") {
+				newDatetime = DT.fromSeconds(value);
+			} else if (inputFormat === "iso") {
 				newDatetime = DT.fromISO(String(value));
 			}else {
 				newDatetime = DT.fromFormat(String(value), inputFormat);
@@ -16637,7 +16645,9 @@
 
 			if(DT.isDateTime(value)){
 				newDatetime = value;
-			}else if(inputFormat === "iso"){
+			} else if (inputFormat === "unix") {
+				newDatetime = DT.fromSeconds(value);
+			} else if (inputFormat === "iso") {
 				newDatetime = DT.fromISO(String(value));
 			}else {
 				newDatetime = DT.fromFormat(String(value), inputFormat);
@@ -27247,7 +27257,9 @@
 			if(!DT.isDateTime(a)){
 				if(format === "iso"){
 					a = DT.fromISO(String(a));
-				}else {
+				} else if (format === "unix") {
+					a = DT.fromSeconds(a);
+				} else {
 					a = DT.fromFormat(String(a), format);
 				}
 			}
@@ -27255,7 +27267,9 @@
 			if(!DT.isDateTime(b)){
 				if(format === "iso"){
 					b = DT.fromISO(String(b));
-				}else {
+				} else if (format === "unix") {
+					b = DT.fromSeconds(b);
+				} else {
 					b = DT.fromFormat(String(b), format);
 				}
 			}

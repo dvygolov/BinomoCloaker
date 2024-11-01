@@ -19,7 +19,7 @@ class DebugMethods
     {
         if (!self::on()) return;
         $time_elapsed_secs = microtime(true) - self::$start_times[$header_name];
-        unset($start_times[$header_name]);
+        unset(self::$start_times[$header_name]);
         header($header_name.": " . $time_elapsed_secs);
     }
 

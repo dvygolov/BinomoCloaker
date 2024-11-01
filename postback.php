@@ -6,6 +6,7 @@ require_once __DIR__ . '/logging.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/macros.php';
 require_once __DIR__ . '/requestfunc.php';
+require_once __DIR__ . '/campaign.php';
 global $db;
 
 $curLink = 'http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
@@ -27,18 +28,27 @@ if ($payout === '') {
     echo "No payout found! Url: $curLink";
     return;
 }
+$click = $db->get_clicks_by_subid($subid);
+if (empty($click)){
+    http_response_code(500);
+    echo "No click for subid $subid found! Url: $curLink";
+    return;
+}
+$cs = $db->get_campaign_settings($click['campaign_id']);
+$c = new Campaign($click['id'],$cs);
+
 $inner_status = '';
 switch (strtolower($status)) {
-    case strtolower($lead_status_name):
+    case strtolower($c->postback->leadStatusName):
         $inner_status = 'Lead';
         break;
-    case strtolower($purchase_status_name):
+    case strtolower($c->postback->purchaseStatusName):
         $inner_status = 'Purchase';
         break;
-    case strtolower($reject_status_name):
+    case strtolower($c->postback->rejectStatusName):
         $inner_status = 'Reject';
         break;
-    case strtolower($trash_status_name):
+    case strtolower($c->postback->trashStatusName):
         $inner_status = 'Trash';
         break;
 }
@@ -58,7 +68,7 @@ add_log("postback", $msg);
 $updated = $db->update_status($subid, $inner_status, $payout);
 
 if ($updated) {
-    process_s2s_posbacks($s2s_postbacks, $inner_status, $subid);
+    process_s2s_posbacks($c->postback->s2sPostbacks, $inner_status, $subid);
     http_response_code(200);
     echo "Postback for subid $subid with status $status and payout $payout accepted.";
 } else {

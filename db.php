@@ -466,7 +466,7 @@ class Db
         return true;
     }
 
-    public function add_black_click($subid, $data, $preland, $land, $campId)
+    public function add_black_click($subid, $data, $preland, $land, $campId):bool
     {
         // Prepare click data with the provided data and configuration
         $click = $this->prepare_click_data($data, $campId);
@@ -475,18 +475,20 @@ class Db
         $click['land'] = empty($land) ? 'unknown' : $land;
 
         // Prepare the SQL INSERT statement for the 'clicks' table
-        $query = "INSERT INTO clicks (campaign_id, time, ip, country, lang, os, osver, client, clientver, device, brand, model, isp, ua, subid, preland, land, params, cost, lpclick, status) VALUES (:campid, :time, :ip, :country, :lang, :os, :osver, :client, :clientver, :device, :brand, :model, :isp, :ua, :subid, :preland, :land, :params, :cpc, 0, NULL)";
+        $query = "INSERT INTO clicks (campaign_id, time, ip, country, lang, os, osver, client, clientver, device, brand, model, isp, ua, subid, preland, land, params, cost, lpclick, status) VALUES (:campaign_id, :time, :ip, :country, :lang, :os, :osver, :client, :clientver, :device, :brand, :model, :isp, :ua, :subid, :preland, :land, :params, :cpc, 0, NULL)";
 
         $db = $this->open_db();
         $stmt = $db->prepare($query);
         if ($stmt === false) {
             $errorMessage = $db->lastErrorMsg();
             add_log("errors", "Couldn't prepare black click: $errorMessage:" . json_encode($click));
+            return false;
         }
 
         // Bind parameters from the $click array to the prepared statement
         foreach ($click as $key => $value) {
-            $stmt->bindValue(':' . $key, $value);
+            $bound = $stmt->bindValue(':' . $key, $value);
+            if (!$bound) die("Couldn't bind $key to $value");
         }
 
         // Manually bind the lpclick and status parameters
@@ -498,8 +500,10 @@ class Db
         if ($result === false) {
             $errorMessage = $db->lastErrorMsg();
             add_log("errors", "Couldn't add black click: $errorMessage:" . json_encode($click));
+            return false;
         }
         $db->close();
+        return true;
     }
 
     public function add_lead($subid, $name, $phone, $status = 'Lead')

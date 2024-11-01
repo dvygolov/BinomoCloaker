@@ -67,7 +67,7 @@ function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
     
     $dJson = json_encode($dataset);
     $tName = "blocked";
-    $tColumns = get_clicks_columns($filter, $ss->timezone);
+    $tColumns = get_clicks_columns($campId, $filter, $ss->timezone);
     $tableData = <<<EOF
         <div id="t$tName"></div>
         <script>
@@ -389,7 +389,7 @@ function get_stats_columns(string $tName, array $columns, array $groupby, $timez
     return json_encode($tabulatorColumns);
 }
 
-function get_clicks_columns(string $filter, $timezone): string
+function get_clicks_columns(int $campId, string $filter, $timezone): string
 {
     $columns = [];
     switch ($filter) {
@@ -587,7 +587,7 @@ JSON;
                     "field": "subid",
                     "formatter": "link",
                     "formatterParams": {
-                        "urlPrefix": "index.php?filter=single&subid="
+                        "urlPrefix": "clicks.php?campId=$campId&filter=single&subid="
                     }
                 },
                 {
@@ -635,7 +635,7 @@ JSON;
                     "field": "subid",
                     "formatter": "link",
                     "formatterParams": {
-                        "urlPrefix": "index.php?filter=single&subid="
+                        "urlPrefix": "clicks.php?campId=$campId&filter=single&subid="
                     },
                     "headerSort":false,
                     "width":"100"
