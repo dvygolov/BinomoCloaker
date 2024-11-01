@@ -658,9 +658,6 @@ global $c;
                     </div>
                 </div>
             </div>
-            <br />
-            <hr />
-            <h4>#3 Traffic Distribution Settings</h4>
             <div class="form-group-inner">
                 <div class="row">
                     <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
@@ -697,7 +694,7 @@ global $c;
             </div>
             <br />
             <hr />
-            <h4>#5 Cloaker filters</h4>
+            <h4>#4 Cloaker filters</h4>
             <div class="form-group-inner">
                 <p>
                 Here you define: which traffic will be ALLOWED to see the money pages.
@@ -707,7 +704,7 @@ global $c;
                 </div>
             </div>
             <hr />
-            <h4>#6 Additional scripts settings</h4>
+            <h4>#5 Additional scripts settings</h4>
             <div class="form-group-inner">
                 <div class="row">
                     <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
@@ -886,7 +883,7 @@ global $c;
             </div>
             <br />
             <hr />
-            <h4>#7 Subids (utms) settings</h4>
+            <h4>#6 Subids (utms) settings</h4>
             <p>
                 Кло берёт из адресной строки те субметки, что слева и:<br />
                 1. Если у вас локальный ленд, то кло записывает значения меток в
@@ -939,7 +936,7 @@ global $c;
 
             <br />
             <hr />
-            <h4>#8 Campaign statistics settings</h4>
+            <h4>#7 Campaign statistics settings</h4>
             <div class="form-group-inner">
                 <div class="row">
                     <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
@@ -955,7 +952,7 @@ global $c;
             </div>
             <br />
             <hr />
-            <h4>#9 Postbacks settings</h4>
+            <h4>#8 Postbacks settings</h4>
             <div class="form-group-inner">
                 <div class="row">
                     <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">

@@ -2,23 +2,24 @@
 require_once __DIR__.'/settings.php';
 class DebugMethods
 {
-    static float $start_time;
+    static array $start_times;
 
     public static function on(): bool
     {
         global $cloSettings;
         return $cloSettings['debug'];
     }
-    public static function start(): void
+    public static function start($header_name): void
     {
         if (!self::on()) return;
-        self::$start_time = microtime(true);
+        self::$start_times[$header_name] = microtime(true);
     }
 
     public static function stop($header_name): void
     {
         if (!self::on()) return;
-        $time_elapsed_secs = microtime(true) - self::$start_time;
+        $time_elapsed_secs = microtime(true) - self::$start_times[$header_name];
+        unset($start_times[$header_name]);
         header($header_name.": " . $time_elapsed_secs);
     }
 

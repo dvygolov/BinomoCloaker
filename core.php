@@ -8,6 +8,21 @@ require_once __DIR__ . '/bases/device/autoload.php';
 require_once __DIR__ . '/bases/device/ClientHints.php';
 require_once __DIR__ . '/bases/device/DeviceDetector.php';
 require_once __DIR__ . '/bases/device/Spyc.php';
+//DeviceDetector caching
+require_once __DIR__ . '/bases/device/Cache/Doctrine/MultiGetCache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/MultiDeleteCache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/MultiPutCache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/Cache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/FlushableCache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/ClearableCache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/MultiOperationCache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/CacheProvider.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/FileCache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/PhpFileCache.php';
+require_once __DIR__ . '/bases/device/Cache/Doctrine/CacheProvider.php';
+
+require_once __DIR__ . '/bases/device/Cache/CacheInterface.php';
+require_once __DIR__ . '/bases/device/Cache/DoctrineBridge.php';
 //GEO and referer
 require_once __DIR__ . '/bases/referer.php';
 require_once __DIR__ . '/bases/iputils.php';
@@ -16,7 +31,7 @@ require_once __DIR__ . '/bases/ipcountry.php';
 use Sinergi\BrowserDetector\Language;
 use DeviceDetector\ClientHints;
 use DeviceDetector\DeviceDetector;
-
+use DeviceDetector\Cache\DoctrineBridge;
 class Cloaker
 {
     var array $s;
@@ -25,8 +40,8 @@ class Cloaker
 
     public function __construct(array $s)
     {
+        DebugMethods::start("YWBCoreConstruct");
         ClientHints::requestClientHints();
-        DebugMethods::start();
         $this->s = $s;
         $this->click_params = Cloaker::get_click_params();
         DebugMethods::stop("YWBCoreConstruct");
@@ -39,22 +54,24 @@ class Cloaker
         $a['referer'] = get_referer();
         $lang = new Language();
         $a['lang'] = $lang->getLanguage();
-
+        
         $clientHints = ClientHints::factory($_SERVER); 
         $dd = new DeviceDetector($a['ua'], $clientHints);
-        $dd->parse();
 
+        $phpFileCache = new Doctrine\Common\Cache\PhpFileCache('./tmp/');
+        $dd->setCache(new DoctrineBridge($phpFileCache));
+        $dd->parse();
         $clientInfo = $dd->getClient();
         $a['client'] = $clientInfo['name'];
         $a['clientver'] = $clientInfo['version'];
-
+        
         $osInfo = $dd->getOs();
         $a['os'] = $osInfo['name'];
         $a['osver'] = $osInfo['version'];
         $a['device'] = $dd->getDeviceName();
         $a['brand'] = $dd->getBrandName();
         $a['model'] = $dd->getModel();
-
+        
         $a['ip'] = getip();
         $a['country'] = getcountry($a['ip']);
         $a['isp'] = getisp($a['ip']);
@@ -121,7 +138,7 @@ class Cloaker
     public function is_bad_click(): bool
     {
         try {
-            DebugMethods::start();
+            DebugMethods::start("YWBCoreCheck");
             if (!array_key_exists('rules', $this->s))
                 return false;
             return !$this->match_filters($this->s['condition'] === 'AND', $this->s['rules']);

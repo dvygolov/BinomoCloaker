@@ -208,10 +208,10 @@ function load_white_curl($url, $add_js_check)
     $html = $res['html'];
     $html = rewrite_relative_urls($html, $url);
 
-    //удаляем лишние палящие теги
+    //remove everything unneeded
     $html = preg_replace('/(<meta property=\"og:url\" [^>]+>)/', "", $html);
     $html = preg_replace('/(<link rel=\"canonical\" [^>]+>)/', "", $html);
-    //режем все трекинговые скрипты
+    //killing tracking scripts
     $tracking_scripts = array(
         'google_analytics' => 'https://www.google-analytics.com/analytics.js',
         'google_tag_manager' => 'https://www.googletagmanager.com/gtag/js',
@@ -231,7 +231,10 @@ function load_white_curl($url, $add_js_check)
         $pattern = '#<script[^>]*(src="[^"]*' . preg_quote($url) . '[^"]*")[^>]*>.*?</script>|<script[^>]*>[^<]*' . preg_quote($url) . '[^<]*</script>#is';
         $html = preg_replace($pattern, '', $html);
     }
-    //добавляем в <head> пару доп. метатегов
+    //removing all noscript tags
+    $pattern = '#<noscript>.*?</noscript>#is';
+    $html = preg_replace($pattern, '', $html);
+    //adding some additional tags to head
     $html = str_replace('<head>', '<head><meta name="referrer" content="no-referrer"><meta name="robots" content="noindex, nofollow">', $html);
 
     if ($add_js_check) {
@@ -242,7 +245,7 @@ function load_white_curl($url, $add_js_check)
 
 function load_js_testpage()
 {
-    $test_page = load_content_with_include('js/tests/testpage.html');
+    $test_page = load_content_with_include('js/tests/page.html');
     return add_js_testcode($test_page);
 }
 
