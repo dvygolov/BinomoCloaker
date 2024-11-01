@@ -360,3 +360,4 @@ healthchecksdb
 /clicks.db-shm
 /clicks.db-wal
 /black
+/inner
