@@ -6,6 +6,7 @@ require_once __DIR__ . '/../core.php';
 require_once __DIR__ . '/../settings.php';
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/../main.php';
+require_once __DIR__ . '/../requestfunc.php';
 
 global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
@@ -22,11 +23,7 @@ $is_bad_click = $cloaker->is_bad_click();
 if (isset($_GET['reason']))
     $cloaker->block_reason[] = $_GET['reason'];
 
-if (isset($_SERVER['HTTP_REFERER'])) {
-    $parsed_url = parse_url($_SERVER['HTTP_REFERER']);
-    header('Access-Control-Allow-Origin: ' . $parsed_url['scheme'] . '://' . $parsed_url['host']);
-}
-header('Access-Control-Allow-Credentials: true');
+send_access_control_headers();
 
 if ($is_bad_click) {
     //это бот, который прошёл javascript-проверку

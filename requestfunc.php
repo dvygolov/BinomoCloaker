@@ -47,6 +47,18 @@ function is_https(): bool
     return $isSecure;
 }
 
+function send_access_control_headers()
+{
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        $parsed_url = parse_url($_SERVER['HTTP_REFERER']);
+        $origin = $parsed_url['scheme'] . '://' . $parsed_url['host'];
+        if (!empty($parsed_url['port']))
+            $origin .= ':' . $parsed_url['port'];
+        header('Access-Control-Allow-Origin: ' . $origin);
+    }
+    header('Access-Control-Allow-Credentials: true');
+}
+
 function get_abs_from_rel($url)
 {
     $fullpath = get_cloaker_path();
@@ -101,7 +113,9 @@ function get($url): array
 function post($url, $postfields): array
 {
     $curl = curl_init();
-    curl_setopt_array($curl, array(
+    curl_setopt_array(
+    $curl,
+    array(
     CURLOPT_URL => $url,
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT => 10,

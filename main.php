@@ -6,6 +6,7 @@ require_once __DIR__ . '/htmlprocessing.php';
 require_once __DIR__ . '/cookies.php';
 require_once __DIR__ . '/redirect.php';
 require_once __DIR__ . '/abtest.php';
+require_once __DIR__ . '/requestfunc.php';
 
 function white($use_js_checks)
 {
@@ -92,11 +93,8 @@ function white($use_js_checks)
 function black(array $clickparams)
 {
     global $c, $db; //Campaign
-    header('Access-Control-Allow-Credentials: true');
-    if (isset($_SERVER['HTTP_REFERER'])) {
-        $parsed_url = parse_url($_SERVER['HTTP_REFERER']);
-        header('Access-Control-Allow-Origin: ' . $parsed_url['scheme'] . '://' . $parsed_url['host']);
-    }
+    
+    send_access_control_headers();
 
     $cursubid = set_subid();
     set_px();
