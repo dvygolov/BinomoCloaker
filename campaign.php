@@ -191,7 +191,6 @@ class LandingSettings implements JsonSerializable
     public array $folderNames;
     public array $redirectUrls;
     public int $redirectType;
-    public bool $useCustomThankyou;
 
     public static function fromArray($arr): LandingSettings
     {
@@ -200,7 +199,6 @@ class LandingSettings implements JsonSerializable
         $ls->folderNames = $arr['folders'];
         $ls->redirectUrls = $arr['redirect']['urls'];
         $ls->redirectType = $arr['redirect']['type'];
-        $ls->useCustomThankyou = $arr['customthankyou'];
         return $ls;
     }
     function jsonSerialize():array
@@ -211,8 +209,7 @@ class LandingSettings implements JsonSerializable
         "redirect" => [
         "urls" => $this->redirectUrls,
         "type" => $this->redirectType
-        ],
-        "customthankyou" => $this->useCustomThankyou
+        ]
         ];
     }
 }

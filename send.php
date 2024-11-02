@@ -5,7 +5,8 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/cookies.php';
 require_once __DIR__ . '/redirect.php';
 require_once __DIR__ . '/requestfunc.php';
-global $db;
+global $db, $cloSettings;
+
 
 $name = '';
 if (isset($_POST['name']))
@@ -24,12 +25,12 @@ else if (isset($_POST['tel']))
     $phone = $_POST['tel'];
 
 $subid = get_cookie('subid');
-if ($subid === '' && isset($_POST['subid']))
+if (empty($subid) && isset($_POST['subid']))
     $subid = $_POST['subid'];
 
 //если юзверь каким-то чудом отправил пустые поля в форме
-if ($name === '' || $phone === '') {
-    redirect('thankyou/thankyou.php?nopixel=1');
+if (empty($name) || empty($phone)) {
+    redirect(get_cloaker_path());
     return;
 }
 
@@ -42,7 +43,7 @@ set_cookie('ctime', (new DateTime())->getTimestamp(), '/');
 
 //шлём в ПП только если это не дубль
 if ($is_duplicate) {
-    redirect('thankyou/thankyou.php?nopixel=1');
+    redirect(get_cloaker_path());
     return;
 }
 
@@ -60,20 +61,21 @@ else {
 $post_data = http_build_query($_POST);
 $res = post($fullpath, $post_data);
 
+$customThankyou = $cloSettings['thankyouFolder'];
 //в ответе должен быть редирект, если его нет - грузим обычную страницу Спасибо кло
 switch ($res["info"]["http_code"]) {
     case 302:
         $db->add_lead($subid, $name, $phone);
-        if ($black_land_use_custom_thankyou_page) {
-            redirect("thankyou/thankyou.php?" . http_build_query($_GET));
+        if (!empty($customThankyou)) {
+            redirect($customThankyou."/index.php?" . http_build_query($_GET));
         } else {
             redirect($res["info"]["redirect_url"]);
         }
         break;
     case 200:
         $db->add_lead($subid, $name, $phone);
-        if ($black_land_use_custom_thankyou_page) {
-            jsredirect("thankyou/thankyou.php?" . http_build_query($_GET));
+        if (!empty($customThankyou)) {
+            jsredirect($customThankyou."/index.php?" . http_build_query($_GET));
         } else {
             echo $res["html"];
         }

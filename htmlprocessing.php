@@ -10,9 +10,11 @@ function load_content_with_include($url): string
 {
     ob_start();
     $fulldir = __DIR__ . '/' . $url;
-    if (str_ends_with($fulldir,".php")||
-        str_ends_with($fulldir,".html")||
-        str_ends_with($fulldir,".htm")){
+    if (
+    str_ends_with($fulldir, ".php") ||
+    str_ends_with($fulldir, ".html") ||
+    str_ends_with($fulldir, ".htm")
+    ) {
         require $fulldir;
     }
     // Check for each file and require/include the first one that exists
@@ -24,9 +26,9 @@ function load_content_with_include($url): string
         require $fulldir . '/index.htm';
     }
     //Not Found
-    else{ 
+    else {
         http_response_code(404);
-        echo $url.' Not Found!';
+        echo $url . ' Not Found!';
     }
 
     $html = ob_get_clean();
@@ -37,7 +39,7 @@ function load_content_with_include($url): string
 //Подгрузка контента блэк проклы из другой папки
 function load_prelanding($url, $land_number): string
 {
-    global $c;//campaign
+    global $c; //campaign
     $fullpath = get_abs_from_rel($url);
 
     $html = load_content_with_include($url);
@@ -86,20 +88,19 @@ function load_landing($url)
     $html = fix_head_add_base($html, $fullpath);
     $html = fix_src($html);
 
-    if ($c->black->land->useCustomThankyou === true) {
-        $query = http_build_query($_GET);
-        $html = preg_replace_callback(
-            '/\saction=[\'\"]([^\'\"]+)[\'\"]/',
-            function ($matches) use ($query) {
-                $originalAction = urlencode($matches[1]);
-                $send = " action=\"../send.php?original_action={$originalAction}";
-                if ($query !== '') $send .= "&" . $query;
-                $send .= "\"";
-                return $send;
-            },
-            $html
-        );
-    }
+    $query = http_build_query($_GET);
+    $html = preg_replace_callback(
+    '/\saction=[\'\"]([^\'\"]+)[\'\"]/',
+    function ($matches) use ($query) {
+        $originalAction = urlencode($matches[1]);
+        $send = " action=\"../send.php?original_action={$originalAction}";
+        if ($query !== '')
+            $send .= "&" . $query;
+        $send .= "\"";
+        return $send;
+    },
+    $html
+    );
 
     $mp = new MacrosProcessor();
     //если мы будем подменять ленд при переходе на страницу Спасибо, то Спасибо надо открывать в новом окне
@@ -177,8 +178,9 @@ function fix_anchors($html)
 
 function add_images_lazy_load($html)
 {
-    global $c;//campaign
-    if (!$c->scripts->imagesLazyLoad) return $html;
+    global $c; //campaign
+    if (!$c->scripts->imagesLazyLoad)
+        return $html;
     $html = preg_replace('/(<img\s)((?!.*?loading=([\'\"])[^\'\"]+\3)[^>]*)(>)/s', '<img loading="lazy" \\2\\4', $html);
     return $html;
 }
@@ -213,19 +215,19 @@ function load_white_curl($url, $add_js_check)
     $html = preg_replace('/(<link rel=\"canonical\" [^>]+>)/', "", $html);
     //killing tracking scripts
     $tracking_scripts = array(
-        'google_analytics' => 'https://www.google-analytics.com/analytics.js',
-        'google_tag_manager' => 'https://www.googletagmanager.com/gtag/js',
-        'facebook_pixel' => 'connect.facebook.net/en_US/fbevents.js',
-        'twitter_conversion' => 'https://platform.twitter.com/oct.js',
-        'linkedin_insight_tag' => 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
-        'pinterest_tag' => '//s.pinimg.com/ct/core.js',
-        'adobe_dtm' => 'https://assets.adobedtm.com',
-        'adobe_analytics' => '.sc.omtrdc.net/s/s_code.js',
-        'hubspot_tracking_code' => '//js.hs-scripts.com/',
-        'bing_ads' => '//bat.bing.com/bat.js',
-        'crazy_egg' => '//script.crazyegg.com/pages/scripts/',
-        'yandex_metrika' => 'https://mc.yandex.ru/metrika/tag.js',
-        'hotjar' => 'static.hotjar.com/c/hotjar'
+    'google_analytics' => 'https://www.google-analytics.com/analytics.js',
+    'google_tag_manager' => 'https://www.googletagmanager.com/gtag/js',
+    'facebook_pixel' => 'connect.facebook.net/en_US/fbevents.js',
+    'twitter_conversion' => 'https://platform.twitter.com/oct.js',
+    'linkedin_insight_tag' => 'https://snap.licdn.com/li.lms-analytics/insight.min.js',
+    'pinterest_tag' => '//s.pinimg.com/ct/core.js',
+    'adobe_dtm' => 'https://assets.adobedtm.com',
+    'adobe_analytics' => '.sc.omtrdc.net/s/s_code.js',
+    'hubspot_tracking_code' => '//js.hs-scripts.com/',
+    'bing_ads' => '//bat.bing.com/bat.js',
+    'crazy_egg' => '//script.crazyegg.com/pages/scripts/',
+    'yandex_metrika' => 'https://mc.yandex.ru/metrika/tag.js',
+    'hotjar' => 'static.hotjar.com/c/hotjar'
     );
     foreach ($tracking_scripts as $key => $url) {
         $pattern = '#<script[^>]*(src="[^"]*' . preg_quote($url) . '[^"]*")[^>]*>.*?</script>|<script[^>]*>[^<]*' . preg_quote($url) . '[^<]*</script>#is';
@@ -252,20 +254,21 @@ function load_js_testpage()
 function add_js_testcode($html)
 {
     $jsCode = str_replace('{DOMAIN}', get_cloaker_path(), file_get_contents(__DIR__ . '/js/connect.js'));
-    if (!DebugMethods::on()){
+    if (!DebugMethods::on()) {
         $hunter = new HunterObfuscator($jsCode);
         $jsCode = $hunter->Obfuscate();
     }
     $jsCode = "<script id='connect'>{$jsCode}</script>";
     $needle = '</body>';
-    if (!str_contains($html, $needle)) $needle = '</html>';
+    if (!str_contains($html, $needle))
+        $needle = '</html>';
     return insert_before_tag($html, $needle, $jsCode);
 }
 
 //вставляет все сабы в hidden полях каждой формы
 function insert_subs_into_forms($html)
 {
-    global $c;//campaign
+    global $c; //campaign
     $all_subs = '';
     $preset = ['subid', 'prelanding', 'landing'];
     foreach ($c->subIds as $sub) {

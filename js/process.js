@@ -43,7 +43,7 @@
                 break;
             case 'replace':
                 const docText = !responseBodyText.includes('<base') ?
-                    responseBodyText.replace('<head>', `<head><base href="${domain}"/>`) :
+                    responseBodyText.replace('</head>', `<base href="${domain}"/></head>`) :
                     responseBodyText;
                 document.open();
                 document.write(docText);
@@ -51,7 +51,7 @@
                 break;
             case 'iframe':
                 const frameText = !responseBodyText.includes('<base') ?
-                    responseBodyText.replace('<head>', `<head> <base href="${domain}"/>`) :
+                    responseBodyText.replace('</head>', `<base href="${domain}"/></head>`) :
                     responseBodyText;
                 showIframe(frameText);
                 break;

@@ -1,6 +1,6 @@
 <?php
 
-$backend_url = "https://getmcavhere.com/";
+$backend_url = "http://localhost:8000/";
 $backend_info = parse_url($backend_url);
 $host = $_SERVER['HTTP_HOST'];
 $request_uri = $_SERVER['REQUEST_URI'];
@@ -11,7 +11,7 @@ if ($request_includes_nophp_uri == false) {
     $request_uri = str_replace($uri_rel, "/", $request_uri);
 }
 
-$url = $backend_url . $request_uri;
+$url = $backend_url; //. $request_uri;
 
 
 function getRequestHeaders($multipart_delimiter = NULL)

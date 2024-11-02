@@ -1,0 +1,17 @@
+{
+  "columns": [
+    "name", 
+    "actions",  
+    "clicks",
+    "uniques",
+    "uniques_ratio",
+    "conversion",
+    "cra",
+    "epc",
+    "cpc",
+    "revenue",
+    "costs",
+    "profit",
+    "roi"
+  ]
+}

@@ -31,5 +31,5 @@ if ($c->white->jsChecks->enabled) {
         echo $hunter->Obfuscate();
     }
 } else {
-    include __DIR__.'/process.php';
+    require_once __DIR__.'/process.php';
 }
