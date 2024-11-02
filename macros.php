@@ -62,8 +62,7 @@ class MacrosProcessor
     private function get_macro_value($macro): string|bool
     {
         global $db;
-        $preset = ['subid', 'prelanding', 'landing'];
-        if (in_array($macro, $preset)) {
+        if ($macro === 'subid') {
             $cookie = get_cookie($macro);
             if (!empty($cookie) || $cookie !== '') {
                 add_log("macros", "Couldn't get macros $macro value from cookie.");
@@ -71,16 +70,30 @@ class MacrosProcessor
             }
             return $cookie;
         }
-        //we need to find click parameter with this name, we can do that only if we know subid
-        else if (str_starts_with($macro, "c.")) {
+
+        $clickParams = ['ip', 'country', 'lang', 'os', 'osver', 'client', 'clientver', 'device', 'brand', 'model', 'isp', 'ua', 'preland', 'land', 'status'];
+        if (in_array($macro, $clickParams)) {
             if (!isset($this->subid) || empty($this->subid)) {
                 add_log("macros", "Couldn't get macros $macro value from DB. Subid not set!");
                 return false;
             } else {
                 $clicks = $db->get_clicks_by_subid($this->subid, true);
-                if(count($clicks[0]['params'])==0){
-                    add_log("macros",
-                        "Couldn't find click macro $macro value. Subid:{$this->subid}, Params are EMPTY!");
+                return $clicks[0][$macro];
+            }
+        }
+
+        //we need to find click parameter with this name, we can do that only if we know subid
+        if (str_starts_with($macro, "c.")) {
+            if (!isset($this->subid) || empty($this->subid)) {
+                add_log("macros", "Couldn't get macros $macro value from DB. Subid not set!");
+                return false;
+            } else {
+                $clicks = $db->get_clicks_by_subid($this->subid, true);
+                if (count($clicks[0]['params']) == 0) {
+                    add_log(
+                    "macros",
+                    "Couldn't find click macro $macro value. Subid:{$this->subid}, Params are EMPTY!"
+                    );
                     return false;
                 }
                 $p = $clicks[0]['params'];
@@ -88,15 +101,22 @@ class MacrosProcessor
                 if (array_key_exists($cmacro, $p)) {
                     return $p[$cmacro];
                 } else {
-                    add_log("macros",
-                        "Couldn't find click macro $macro value. Subid:{$this->subid}, Params:" . json_encode($p)
+                    add_log(
+                    "macros",
+                    "Couldn't find click macro $macro value. Subid:{$this->subid}, Params:" . json_encode($p)
                     );
                     return false;
                 }
             }
-        } else if ($macro === 'domain') {
+        }
+        if ($macro === 'domain') {
             return $_SERVER['HTTP_HOST'];
-        } else if (str_starts_with($macro, "hash:")) {
+        }
+
+        if ($macro === 'time') {
+            return time();
+        }
+        if (str_starts_with($macro, "hash:")) {
             $toHash = substr($macro, 5);
             $toHashValue = $this->get_macro_value($toHash);
             if ($toHashValue === false) {
@@ -106,9 +126,16 @@ class MacrosProcessor
             $hashed = crypt($toHashValue);
             add_log("macros", "Hashing $toHashValue to $hashed");
             return $hashed;
-        } else { //some kind of strange macros, we need to log this situation
-            add_log("macros", "Couldn't find macros: $macro. Subid:{$this->subid}");
-            return false;
         }
+        if (str_starts_with($macro, "random:")) {
+            $range = explode('-', substr($macro, 7));
+            $selected = rand($range[0], $range[1]);
+            add_log("macros", "Got random $selected from range $range");
+            return $selected;
+        }
+
+        //some kind of strange macros, we need to log this situation
+        add_log("macros", "Couldn't find macros: $macro. Subid:{$this->subid}");
+        return false;
     }
 }
