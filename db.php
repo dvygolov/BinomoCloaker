@@ -2,6 +2,8 @@
 require_once __DIR__ . "/cookies.php";
 require_once __DIR__ . "/logging.php";
 require_once __DIR__ . "/settings.php";
+require_once __DIR__ . "/requestfunc.php";
+
 class Db
 {
     private $dbPath;
@@ -487,8 +489,7 @@ class Db
 
         // Bind parameters from the $click array to the prepared statement
         foreach ($click as $key => $value) {
-            $bound = $stmt->bindValue(':' . $key, $value);
-            if (!$bound) die("Couldn't bind $key to $value");
+            $stmt->bindValue(':' . $key, $value);
         }
 
         // Manually bind the lpclick and status parameters
@@ -678,8 +679,9 @@ class Db
         return $settings;
     }
 
-    public function get_campaign_by_domain($domain)
+    public function get_campaign_by_currentpath()
     {
+        $domain = get_cloaker_path(false,false);
         $query = "SELECT * FROM campaigns";
 
         $db = $this->open_db(true);

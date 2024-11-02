@@ -6,7 +6,7 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/main.php';
 
 global $db;
-$dbCamp = $db->get_campaign_by_domain($_SERVER['HTTP_HOST']);
+$dbCamp = $db->get_campaign_by_currentpath();
 if ($dbCamp===null)
     die("NO CAMPAIGN FOR THIS DOMAIN!");
 //TODO create a trafficback campaign option
