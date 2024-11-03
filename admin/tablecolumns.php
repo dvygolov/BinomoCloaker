@@ -12,7 +12,7 @@ function show_stats($startDate, $endDate, StatisticsSettings $ss):string
         $dJson = json_encode($dataset);
         $tName = $tSettings->name;
         $tColumns = get_stats_columns(
-            $tName, $tSettings->columns, $tSettings->groupby, $ss->timezone);
+            $tSettings->columns, $tName, $tSettings->groupby);
         $tableData.= <<<EOF
             <div id="t$tName"></div>
             <script>
@@ -96,17 +96,7 @@ EOF;
     return $tableData;
 }
 
-function get_table_settings(): array
-{
-    try {
-        $tables = json_decode(file_get_contents(__DIR__ . '/settings.json'), true, 512, JSON_THROW_ON_ERROR);
-    }
-    catch (JsonException $e) {
-        die($e->getMessage());
-    }
-    return $tables;
-}
-function get_stats_columns(string $tName, array $columns, array $groupby, $timezone): string
+function get_stats_columns(array $columns, string $tName=null, array $groupby=null): string
 {
     $columnSettings = [
         'preland' => [
@@ -379,7 +369,7 @@ function get_stats_columns(string $tName, array $columns, array $groupby, $timez
     ];
 
     $tabulatorColumns = [];
-    if (count($groupby) > 0)
+    if (!is_null($tName) && !is_null($groupby) && count($groupby) > 0)
         $tabulatorColumns[] = ["title" => $tName, "field" => "group"];
 
     foreach ($columns as $field) {
@@ -792,12 +782,8 @@ function get_campaigns_columns(): string
 JSON;
 
     $fieldsArr = json_decode(file_get_contents(__DIR__ . '/campaigns.json'),true);
-    foreach ($fieldsArr['columns'] as $clmn) {
-        $columnSettings .= <<<JSON
-            {"title": "$clmn","field": "$clmn"},
-JSON;
-    }
-    $columnSettings.="]";
+    $statColumns = get_stats_columns($fieldsArr['columns']);
+    $columnSettings.=substr($statColumns,1);
 
     return $columnSettings;
 }
