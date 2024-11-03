@@ -4,7 +4,9 @@ require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/tablecolumns.php';
 require_once __DIR__ . '/../settings.php';
 
-$dataset = $db->get_campaigns();
+global $startdate, $enddate;
+$fieldsArr = json_decode(file_get_contents(__DIR__ . '/campaigns.json'),true);
+$dataset = $db->get_campaigns($startdate->getTimestamp(),$enddate->getTimestamp(),$fieldsArr['columns']);
 ?>
 <!doctype html>
 <html lang="en">

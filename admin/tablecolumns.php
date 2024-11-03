@@ -788,8 +788,16 @@ function get_campaigns_columns(): string
                     <button class="btn btn-allowed" title="View allowed clicks"><i class="bi bi-person-circle"></i></button>
                     <button class="btn btn-blocked" title="View blocked clicks"><i class="bi bi-ban"></i></button>`;
             },
-        }
-    ]
+        },
 JSON;
+
+    $fieldsArr = json_decode(file_get_contents(__DIR__ . '/campaigns.json'),true);
+    foreach ($fieldsArr['columns'] as $clmn) {
+        $columnSettings .= <<<JSON
+            {"title": "$clmn","field": "$clmn"},
+JSON;
+    }
+    $columnSettings.="]";
+
     return $columnSettings;
 }

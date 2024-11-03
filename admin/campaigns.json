@@ -1,7 +1,5 @@
 {
   "columns": [
-    "name", 
-    "actions",  
     "clicks",
     "uniques",
     "uniques_ratio",

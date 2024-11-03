@@ -11,7 +11,7 @@ class Db
     public function __construct()
     {
         global $cloSettings;
-        $this->dbPath=  __DIR__ . '/'.$cloSettings['dbFileName'];
+        $this->dbPath = __DIR__ . '/' . $cloSettings['dbFileName'];
         if (!file_exists($this->dbPath)) {
             $this->create_new_db();
         }
@@ -168,25 +168,14 @@ class Db
         return $leads;
     }
 
-    public function get_statistics(
-        $selectedFields,
-        $groupByFields,
-        $campId,
-        $startDate,
-        $endDate,
-        $timezone
-    ) {
-        $baseQuery =
-        "SELECT %s FROM clicks WHERE campaign_id = :campid AND time BETWEEN :startDate AND :endDate";
+    private function get_stats_select_parts(array $selectedFields): array
+    {
         $selectParts = [];
-        $groupByParts = [];
-        $orderByParts = [];
-
         // Process selected fields
         foreach ($selectedFields as $field) {
             switch ($field) {
                 case 'clicks':
-                    $selectParts[] = "COUNT(*) AS clicks";
+                    $selectParts[] = "COUNT(c.id) AS clicks";
                     break;
                 case 'uniques':
                     $selectParts[] = "COUNT(DISTINCT subid) AS uniques";
@@ -195,56 +184,56 @@ class Db
                     $selectParts[] = "(COUNT(DISTINCT subid)*1.0/COUNT(*) * 100.0) AS uniques_ratio";
                     break;
                 case 'conversion':
-                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN id END) AS conversion";
+                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN subid END) AS conversion";
                     break;
                 case 'purchase':
-                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN id END) AS purchase";
+                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN subid END) AS purchase";
                     break;
                 case 'hold':
-                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status = 'Lead' THEN id END) AS hold";
+                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status = 'Lead' THEN subid END) AS hold";
                     break;
                 case 'reject':
-                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status = 'Reject' THEN id END) AS reject";
+                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status = 'Reject' THEN subid END) AS reject";
                     break;
                 case 'trash':
-                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status = 'Trash' THEN id END) AS trash";
+                    $selectParts[] = "COUNT(DISTINCT CASE WHEN status = 'Trash' THEN subid END) AS trash";
                     break;
                 case 'lpclicks':
-                    $selectParts[] = "COUNT(DISTINCT CASE WHEN lpclick = 1 THEN id END) AS lpclicks";
+                    $selectParts[] = "COUNT(DISTINCT CASE WHEN lpclick = 1 THEN c.id END) AS lpclicks";
                     break;
                 case 'lpctr':
-                    $selectParts[] = "(COUNT(DISTINCT CASE WHEN lpclick = 1 THEN id END) * 100.0 / COUNT(*)) AS lpctr";
+                    $selectParts[] = "(COUNT(DISTINCT CASE WHEN lpclick = 1 THEN c.id END) * 100.0 / COUNT(*)) AS lpctr";
                     break;
                 case 'cra':
-                    $selectParts[] = "(COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN id END) * 100.0 / COUNT(*)) AS cra";
+                    $selectParts[] = "(COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN c.id END) * 100.0 / COUNT(*)) AS cra";
                     break;
                 case 'crs':
-                    $selectParts[] = "(COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN id END) * 100.0 / COUNT(*)) AS crs";
+                    $selectParts[] = "(COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN c.id END) * 100.0 / COUNT(*)) AS crs";
                     break;
                 case 'appt':
                     $selectParts[] = "CASE
-                            WHEN COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN id END) = 0
-                                 OR (COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN id END) - COUNT(DISTINCT CASE WHEN status = 'Trash' THEN id END)) = 0
+                            WHEN COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN c.id END) = 0
+                                 OR (COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN c.id END) - COUNT(DISTINCT CASE WHEN status = 'Trash' THEN c.id END)) = 0
                             THEN 0
-                            ELSE (COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN id END) * 100.0 / (COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN id END) - COUNT(DISTINCT CASE WHEN status = 'Trash' THEN id END)))
+                            ELSE (COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN c.id END) * 100.0 / (COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN c.id END) - COUNT(DISTINCT CASE WHEN status = 'Trash' THEN c.id END)))
                        END AS appt";
                     break;
                 case 'app':
                     $selectParts[] = "CASE
-                            WHEN COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN id END) = 0
-                                 OR COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN id END) = 0
+                            WHEN COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN c.id END) = 0
+                                 OR COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN c.id END) = 0
                             THEN 0
-                            ELSE (COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN id END) * 100.0 / COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN id END))
+                            ELSE (COUNT(DISTINCT CASE WHEN status = 'Purchase' THEN c.id END) * 100.0 / COUNT(DISTINCT CASE WHEN status IS NOT NULL THEN c.id END))
                        END AS app";
                     break;
                 case 'cpc':
-                    $selectParts[] = "(SUM(cost) * 1.0 / COUNT(id)) AS cpc";
+                    $selectParts[] = "(SUM(cost) * 1.0 / COUNT(c.id)) AS cpc";
                     break;
                 case 'costs':
                     $selectParts[] = "SUM(cost) AS costs";
                     break;
                 case 'epc':
-                    $selectParts[] = "(SUM(payout) * 1.0 / COUNT(id)) AS epc";
+                    $selectParts[] = "(SUM(payout) * 1.0 / COUNT(c.id)) AS epc";
                     break;
                 case 'epuc':
                     $selectParts[] = "(SUM(payout) * 1.0 / COUNT(DISTINCT(subid))) AS epuc";
@@ -260,6 +249,24 @@ class Db
                     break;
             }
         }
+        return $selectParts;
+    }
+
+    public function get_statistics(
+    $selectedFields,
+    $groupByFields,
+    $campId,
+    $startDate,
+    $endDate,
+    $timezone
+    ) {
+        $baseQuery =
+        "SELECT %s FROM clicks c WHERE campaign_id = :campid AND time BETWEEN :startDate AND :endDate";
+        $selectParts = [];
+        $groupByParts = [];
+        $orderByParts = [];
+
+        $selectParts = $this->get_stats_select_parts($selectedFields);
 
         // Process group by fields
         foreach ($groupByFields as $field) {
@@ -440,7 +447,7 @@ class Db
         return $sumArray;
     }
 
-    public function add_white_click($data, $reason, $campId):bool
+    public function add_white_click($data, $reason, $campId): bool
     {
         // Prepare click data
         $click = $this->prepare_click_data($data, $campId);
@@ -468,7 +475,7 @@ class Db
         return true;
     }
 
-    public function add_black_click($subid, $data, $preland, $land, $campId):bool
+    public function add_black_click($subid, $data, $preland, $land, $campId): bool
     {
         // Prepare click data with the provided data and configuration
         $click = $this->prepare_click_data($data, $campId);
@@ -608,7 +615,7 @@ class Db
         $db = $this->open_db();
         $stmt = $db->prepare($query);
 
-        $settingsJson = file_get_contents(__DIR__.'/default.json');
+        $settingsJson = file_get_contents(__DIR__ . '/default.json');
 
         $stmt->bindValue(':name', $name, SQLITE3_TEXT);
         $stmt->bindValue(':settings', $settingsJson, SQLITE3_TEXT);
@@ -681,7 +688,7 @@ class Db
 
     public function get_campaign_by_currentpath()
     {
-        $domain = get_cloaker_path(false,false);
+        $domain = get_cloaker_path(false, false);
         $query = "SELECT * FROM campaigns";
 
         $db = $this->open_db(true);
@@ -702,10 +709,13 @@ class Db
         }
 
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            if (empty($row['settings'])) continue;
+            if (empty($row['settings']))
+                continue;
             $settings = json_decode($row['settings'], true);
-            if (!isset($settings['domains']))continue;
-            if (!$this->match_domain($settings['domains'], $domain)) continue;
+            if (!isset($settings['domains']))
+                continue;
+            if (!$this->match_domain($settings['domains'], $domain))
+                continue;
 
             $db->close();
             $row['settings'] = json_decode($row['settings'], true);
@@ -797,12 +807,24 @@ class Db
         return true;
     }
 
-    public function get_campaigns()
+    public function get_campaigns($startDate, $endDate, array $selectFields)
     {
-        $query = "SELECT id,name FROM campaigns";
+        $query = "SELECT cmp.name, %s FROM clicks c INNER JOIN campaigns cmp ON c.campaign_id=cmp.id WHERE c.time BETWEEN :startDate AND :endDate GROUP BY cmp.name";
+
+        $selectClause = implode(',', $this->get_stats_select_parts($selectFields));
+        $query = sprintf($query, $selectClause);
 
         $db = $this->open_db(true);
         $stmt = $db->prepare($query);
+        if ($stmt === false) {
+            $errorMessage = $db->lastErrorMsg();
+            add_log("errors", "Couldn't prepare statement for getting campaigns: $errorMessage");
+            $db->close();
+            return [];
+        }
+        $stmt->bindValue(':startDate', $startDate, SQLITE3_INTEGER);
+        $stmt->bindValue(':endDate', $endDate, SQLITE3_INTEGER);
+        
         $result = $stmt->execute();
 
         if ($result === false) {
