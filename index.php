@@ -4,12 +4,20 @@ require_once __DIR__ . '/campaign.php';
 require_once __DIR__ . '/core.php';
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/main.php';
+require_once __DIR__ . '/settings.php';
+require_once __DIR__ . '/redirect.php';
 
-global $db;
+global $db, $cloSettings;
 $dbCamp = $db->get_campaign_by_currentpath();
-if ($dbCamp===null)
-    die("NO CAMPAIGN FOR THIS DOMAIN!");
-//TODO create a trafficback campaign option
+if ($dbCamp===null){
+    if (empty($cloSettings['trafficBackUrl']))
+        die("NO CAMPAIGN FOR THIS DOMAIN AND TRAFFICBACK NOT SET!");
+    else{
+        redirect($cloSettings['trafficBackUrl'],302,true);
+        exit();
+    }
+        
+}
 
 $c = new Campaign($dbCamp['id'],$dbCamp['settings']);
 $cloaker = new Cloaker($c->filters);

@@ -23,6 +23,7 @@ $cloSettings =
 
 //
 "statsPrecision" => 2,
+"trafficBackUrl" => "https://google.com",
 
 //if true the cloaker will:
 //- show any PHP error if any,
