@@ -40,7 +40,8 @@ $dataset = $db->get_campaigns(
             },
             columnResized: function (column) {
                 saveColumnWidths();
-            }
+            },
+            columnCalcs:"both"
         });
 
         table.on("columnResized", function (column) {
