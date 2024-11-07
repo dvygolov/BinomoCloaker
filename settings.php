@@ -18,7 +18,11 @@ $cloSettings =
 //and put it here
 "maxMindKey" => "",
 
+//if you want to use universal thankyou page (UTP) instead of the thankyou pages from your landings, then put the relative path to UTP folder here
 "thankyouFolder" => "thankyou",
+
+//
+"statsPrecision" => 2,
 
 //if true the cloaker will:
 //- show any PHP error if any,

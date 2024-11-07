@@ -1,15 +1,48 @@
 {
-  "columns": [
-    "clicks",
-    "uniques",
-    "uniques_ratio",
-    "conversion",
-    "cra",
-    "epc",
-    "cpc",
-    "revenue",
-    "costs",
-    "profit",
-    "roi"
-  ]
+    "columns": [
+        {
+            "field": "clicks",
+            "width": 115
+        },
+        {
+            "field": "uniques",
+            "width": 101
+        },
+        {
+            "field": "uniques_ratio",
+            "width": 71
+        },
+        {
+            "field": "conversion",
+            "width": -1
+        },
+        {
+            "field": "cra",
+            "width": -1
+        },
+        {
+            "field": "epc",
+            "width": -1
+        },
+        {
+            "field": "cpc",
+            "width": -1
+        },
+        {
+            "field": "revenue",
+            "width": -1
+        },
+        {
+            "field": "costs",
+            "width": -1
+        },
+        {
+            "field": "profit",
+            "width": -1
+        },
+        {
+            "field": "roi",
+            "width": -1
+        }
+    ]
 }

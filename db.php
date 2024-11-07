@@ -809,7 +809,11 @@ class Db
 
     public function get_campaigns($startDate, $endDate, array $selectFields)
     {
-        $query = "SELECT cmp.name, %s FROM clicks c INNER JOIN campaigns cmp ON c.campaign_id=cmp.id WHERE c.time BETWEEN :startDate AND :endDate GROUP BY cmp.name";
+        $query = "
+        SELECT cmp.id, cmp.name, %s 
+        FROM campaigns cmp 
+        LEFT JOIN clicks c ON c.campaign_id=cmp.id AND c.time BETWEEN :startDate AND :endDate 
+        GROUP BY cmp.id";
 
         $selectClause = implode(',', $this->get_stats_select_parts($selectFields));
         $query = sprintf($query, $selectClause);

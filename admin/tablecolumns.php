@@ -12,7 +12,7 @@ function show_stats($startDate, $endDate, StatisticsSettings $ss):string
         $dJson = json_encode($dataset);
         $tName = $tSettings->name;
         $tColumns = get_stats_columns(
-            $tSettings->columns, $tName, $tSettings->groupby);
+            $tSettings->columns, null, $tName, $tSettings->groupby);
         $tableData.= <<<EOF
             <div id="t$tName"></div>
             <script>
@@ -96,7 +96,7 @@ EOF;
     return $tableData;
 }
 
-function get_stats_columns(array $columns, string $tName=null, array $groupby=null): string
+function get_stats_columns(array $columns, array $widths=null, string $tName=null, array $groupby=null): string
 {
     $columnSettings = [
         'preland' => [
@@ -372,13 +372,18 @@ function get_stats_columns(array $columns, string $tName=null, array $groupby=nu
     if (!is_null($tName) && !is_null($groupby) && count($groupby) > 0)
         $tabulatorColumns[] = ["title" => $tName, "field" => "group"];
 
-    foreach ($columns as $field) {
-        if (array_key_exists($field, $columnSettings)) {
-            $tabulatorColumns[] = $columnSettings[$field];
+    for($i=0; $i<count($columns); $i++)
+    {
+        $clmn = $columns[$i];
+        $width = $widths[$i]??-1;
+        if (array_key_exists($clmn, $columnSettings)) {
+            $tabulatorColumns[] = $columnSettings[$clmn];
         }
         else{
-            $tabulatorColumns[] = ["title"=>$field,"field"=>$field];
+            $tabulatorColumns[] = ["title"=>$clmn,"field"=>$clmn];
         }
+        if ($width===-1) continue;
+        $tabulatorColumns[count($tabulatorColumns)-1]["width"] = $width;
     }
     return json_encode($tabulatorColumns);
 }
@@ -745,9 +750,9 @@ JSON;
     return $columns;
 }
 
-function get_campaigns_columns(): string
+function get_campaigns_columns(array $clmnWidths): string
 {
-    $columnSettings = <<<JSON
+    $defaultClmns = <<<JSON
     [
         {
             "title": "ID",
@@ -763,6 +768,7 @@ function get_campaigns_columns(): string
             },
             "field": "name",
             "headerFilter": "input",
+            "width": 90
         },
         {
             "title": "Actions",
@@ -778,12 +784,13 @@ function get_campaigns_columns(): string
                     <button class="btn btn-allowed" title="View allowed clicks"><i class="bi bi-person-circle"></i></button>
                     <button class="btn btn-blocked" title="View blocked clicks"><i class="bi bi-ban"></i></button>`;
             },
+            "width":280
         },
 JSON;
 
-    $fieldsArr = json_decode(file_get_contents(__DIR__ . '/campaigns.json'),true);
-    $statColumns = get_stats_columns($fieldsArr['columns']);
-    $columnSettings.=substr($statColumns,1);
-
-    return $columnSettings;
+    $statColumns = get_stats_columns(
+        array_column($clmnWidths,'field'), array_column($clmnWidths,'width'));
+    
+    $defaultClmns.=substr($statColumns,1);
+    return $defaultClmns;
 }

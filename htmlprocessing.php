@@ -112,7 +112,8 @@ function load_landing($url)
     //добавляем во все формы сабы
     $html = insert_subs_into_forms($html);
 
-    $html = fix_anchors($html);
+    $html = insert_file_content($html, "fixanchors.js", "<body", false, true);
+    
     $html = $mp->replace_html_macros($html);
     //заменяем поле с телефоном на более удобный тип - tel + добавляем autocomplete
     $html = fix_phone_and_name($html);
@@ -168,12 +169,6 @@ function fix_phone_and_name($html)
     $html = add_input_attribute($html, $nameregex, 'required');
 
     return $html;
-}
-
-
-function fix_anchors($html)
-{
-    return insert_file_content($html, "replaceanchorswithsmoothscroll.js", "<body", false, true);
 }
 
 function add_images_lazy_load($html)

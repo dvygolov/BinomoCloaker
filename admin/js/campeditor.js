@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (campName)
             await campEditor('add', null, campName);
     };
+
+    
+    document.getElementById("columnsSelect").onclick = () => {
+        openPopup();
+    };
 });
 
 async function campEditor(action, campId=null, name=null) {
