@@ -2,11 +2,11 @@
     "columns": [
         {
             "field": "clicks",
-            "width": 115
+            "width": 81
         },
         {
             "field": "uniques",
-            "width": 101
+            "width": 90
         },
         {
             "field": "uniques_ratio",
@@ -26,7 +26,7 @@
         },
         {
             "field": "cpc",
-            "width": -1
+            "width": 76
         },
         {
             "field": "revenue",

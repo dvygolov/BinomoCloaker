@@ -1,7 +1,7 @@
 <?php
 $cloSettings =
 [
-//password of the cloaker's admin pages
+//password for the cloaker's admin page
 "adminPassword" => "12345qweasd",
 
 //WARNING:if you are using nginx either change your website's config so that it prevents people from
@@ -12,8 +12,6 @@ $cloSettings =
 //default timezone to show statistics for all campaigns on the admin's index.php page
 "timezone" => "Europe/Moscow",
 
-"deeplApiKey" => "",
-
 //if you want to automatically update MaxMind's geobases then go to maxmind.com, register, get API key
 //and put it here
 "maxMindKey" => "",
@@ -23,6 +21,9 @@ $cloSettings =
 
 //
 "statsPrecision" => 2,
+
+//If the cloaker won't find any suitable campaign for the incoming traffic - 
+//it will be redirected to the traffcback url
 "trafficBackUrl" => "https://google.com",
 
 //if true the cloaker will:

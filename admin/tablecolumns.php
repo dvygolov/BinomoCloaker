@@ -768,7 +768,8 @@ function get_campaigns_columns(array $clmnWidths): string
             },
             "field": "name",
             "headerFilter": "input",
-            "width": 90
+            "width": 90,
+            "bottomCalc":() => "TOTAL"
         },
         {
             "title": "Actions",

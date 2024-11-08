@@ -17,7 +17,6 @@ $dataset = $db->get_campaigns(
 <?php include "head.php" ?>
 
 <body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <?php include "header.php" ?>
     <div class="all-content-wrapper">
         <div class="buttons-block">
