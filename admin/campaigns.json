@@ -9,6 +9,34 @@
             "width": 90
         },
         {
+            "field": "lpclicks",
+            "width": 90
+        },
+        {
+            "field": "lpctr",
+            "width": 90
+        },
+        {
+            "field": "cra",
+            "width": -1
+        },
+        {
+            "field": "crs",
+            "width": -1
+        },
+        {
+            "field": "epc",
+            "width": -1
+        },
+        {
+            "field": "appt",
+            "width": -1
+        },
+        {
+            "field": "app",
+            "width": -1
+        },
+        {
             "field": "uniques_ratio",
             "width": 71
         },
@@ -17,11 +45,19 @@
             "width": -1
         },
         {
-            "field": "cra",
+            "field": "purchase",
             "width": -1
         },
         {
-            "field": "epc",
+            "field": "hold",
+            "width": -1
+        },
+        {
+            "field": "reject",
+            "width": -1
+        },
+        {
+            "field": "trash",
             "width": -1
         },
         {
