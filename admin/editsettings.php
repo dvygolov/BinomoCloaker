@@ -884,27 +884,16 @@ global $c;
             <br />
             <hr />
             <h4>#6 Subids (utms) settings</h4>
-            <p>
-                Кло берёт из адресной строки те субметки, что слева и:<br />
-                1. Если у вас локальный ленд, то кло записывает значения меток в
-                каждую форму на ленде в поля с именами, которые справа<br />
-                2. Если у вас ленд в ПП, то кло дописывает значения меток к ссылке
-                ПП с именами, которые справа<br />
-                Таким образом мы передаём значения субметок в ПП, чтобы в стате ПП
-                отображалась нужная нам инфа <br />
-                Ну и плюс это нужно для того, чтобы передавать subid для
-                постбэка<br />
-                Есть 3 "зашитые" метки: <br />
-                - subid - уникальный идентификатор пользователя, создаётся при
-                заходе пользователя на блэк, хранится в куки<br />
-                - prelanding - название папки преленда<br />
-                - landing - название папки ленда<br /><br />
-                Пример: <br />
-                у вас в адресной строке было https://xxx.com?cn=MyCampaign<br />
-                вы написали в настройке: cn => utm_campaign <br />
-                в форме на ленде добавится
-                <pre>&lt;input type="hidden" name="utm_campaign" value="MyCampaign"/&gt;</pre>
-            </p>
+            <div class="form-group-inner">
+                <div class="row">
+                    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <label class="login2 pull-left pull-left-pro">
+                <img src="img/info.ico" title="The cloaker takes subs from the url and rewrites them so that their name change to the one you provide. The value remains the same. Example:  you had in your request https://xxx.com?cn=MyCampaign you configured it like: cn => utm_campaign       now on your local landing you'll have a field <input type='hidden' name='utm_campaign' value='MyCampaign'/> and if the landing was a redirect, then it will be now: https://redirect.com?utm_campaign=MyCampaign"/> Parameters rewrite
+            </label>
+                    </div>
+                </div>
+            </div>
+ 
             <div id="subs_container">
                 <?php for ($i = 0; $i < count($c->subIds); $i++) {
                         $sn = $c->subIds[$i]->name;
