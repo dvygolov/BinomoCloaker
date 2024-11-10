@@ -6,20 +6,30 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/redirect.php';
 require_once __DIR__ . '/abtest.php';
 require_once __DIR__ . '/cookies.php';
+require_once __DIR__ . '/campaign.php';
 
-global $c, $db;
+global $db;
+$campId = $_GET['campId']??'';
+if (empty($campId))
+    die('NO CAMPAIGN ID FOUND!');
+
+$settings = $db->get_campaign_settings($campId);
+$c = new Campaign($campId, $settings);
 //adding the fact that user reached landing to the database
-$db->add_lpctr(get_cookie('subid'));
+$subid = get_cookie('subid');
+$db->add_lpctr($subid);
 
 $l = $_GET['l'] ?? -1;
+$ls = $c->black->land;
 
-switch ($c->black->land->action) {
+switch ($ls->action) {
     case 'folder':
-        $landing = select_item_by_index($c->black->land->folderNames, $l, true);
+        $landing = select_item_by_index($ls->folderNames, $l, true);
         echo load_landing($landing);
         break;
     case 'redirect':
-        $fullpath = select_item_by_index($c->black->land->redirectUrls, $l, false);
-        redirect($fullpath, $$c->black->land->redirectType, true);
+        $redirectUrl = select_item_by_index($ls->redirectUrls, $l, false);
+        $fullUrl = insert_subs_into_url($_GET, $redirectUrl);
+        redirect($fullUrl, $ls->redirectType, true);
         break;
 }

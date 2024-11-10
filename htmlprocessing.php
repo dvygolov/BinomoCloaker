@@ -61,7 +61,7 @@ function load_prelanding($url, $land_number): string
     $cloaker = get_cloaker_path();
     $querystr = $_SERVER['QUERY_STRING'];
     //замена макроса {offer} на прокле на универсальную ссылку ленда landing.php
-    $replacement = $cloaker . 'landing.php?l=' . $land_number . (!empty($querystr) ? '&' . $querystr : '');
+    $replacement = $cloaker . 'landing.php?l=' . $land_number ."&campId=".$c->campaignId. (!empty($querystr) ? '&' . $querystr : '');
 
     //если мы будем подменять преленд при переходе на ленд, то ленд надо открывать в новом окне
     if ($c->scripts->replacePrelanding) {
@@ -279,11 +279,12 @@ function insert_subs_into_forms($html)
         }
     }
     if (!empty($all_subs)) {
-        $needle = '<form';
-        return insert_after_tag($html, $needle, $all_subs);
+        return insert_after_tag($html, '<form', $all_subs);
     }
     return $html;
 }
+
+
 
 //переписываем все относительные src и href (не начинающиеся с http или с //)
 function rewrite_relative_urls($html, $url)

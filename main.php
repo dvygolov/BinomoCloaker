@@ -27,10 +27,11 @@ function white($use_js_checks)
         $curdomain = $_SERVER['HTTP_HOST'];
         if (str_ends_with($curdomain, ':' . $_SERVER['SERVER_PORT'])) {
             $portLength = strlen(':' . $_SERVER['SERVER_PORT']);
-            $curdomain = substr($curdomain, 0, - $portLength);
+            $curdomain = substr($curdomain, 0, -$portLength);
         }
         foreach ($ws->domainSpecific as $wds) {
-            if ($wds->name !== $curdomain) continue;
+            if ($wds->name !== $curdomain)
+                continue;
             $wtd_arr = explode(":", $wds->action, 2);
             $action = $wtd_arr[0];
             switch ($action) {
@@ -93,7 +94,7 @@ function white($use_js_checks)
 function black(array $clickparams)
 {
     global $c, $db; //Campaign
-    
+
     send_access_control_headers();
 
     $cursubid = set_subid();
@@ -122,13 +123,15 @@ function black(array $clickparams)
                     echo load_landing($landing);
                     break;
                 case 'redirect':
-                    redirect($landing,$bl->redirectType,true);
+                    $redirectUrl = insert_subs_into_url($_GET, $landing);
+                    redirect($redirectUrl, $bl->redirectType, true);
                     break;
             }
             break;
         case 'folder': //если мы используем локальные проклы
             $prelandings = $bp->folderNames;
-            if (empty($prelandings)) break;
+            if (empty($prelandings))
+                break;
             $res = select_item($prelandings, $c->saveUserFlow, 'prelanding', true);
             $prelanding = $res[0];
             $res = select_item($landings, $c->saveUserFlow, 'landing', $isfolderland);

@@ -100,7 +100,7 @@ function get($url): array
     CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => false,
     CURLOPT_REFERER => $_SERVER['REQUEST_URI'],
-    CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/84.0.4147.89 Safari/537.36'
+    CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
     );
     curl_setopt_array($curl, $optArray);
     $content = curl_exec($curl);
@@ -128,7 +128,7 @@ function post($url, $postfields): array
     CURLOPT_POSTFIELDS => $postfields,
     CURLOPT_REFERER => $_SERVER['REQUEST_URI'],
     CURLOPT_HTTPHEADER => get_request_headers(true),
-    CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/84.0.4147.89 Safari/537.36'
+    CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
     )
     );
 
