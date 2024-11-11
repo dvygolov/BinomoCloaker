@@ -9,6 +9,56 @@ var tdsFilters = [
         size: 50
     },
     {
+        id: 'osver',
+        label: 'OS version',
+        input: 'number',
+        type: 'integer',
+        operators: ['equal', 'not_equal','less_or_equal','greater_or_equal'],
+        placeholder: 10,
+        size: 50
+    },
+    {
+        id: 'device',
+        label: 'Device',
+        input: 'text',
+        type: 'string',
+        operators: ['in', 'not_in'],
+        placeholder: 'desktop,mobile',
+        size: 100
+    },
+    {
+        id: 'brand',
+        label: 'Brand',
+        input: 'text',
+        type: 'string',
+        operators: ['contains', 'not_contains'],
+        size: 100
+    },
+    {
+        id: 'model',
+        label: 'Model',
+        input: 'text',
+        type: 'string',
+        operators: ['contains', 'not_contains'],
+        size: 100
+    },
+    {
+        id: 'client',
+        label: 'Client',
+        input: 'text',
+        type: 'string',
+        operators: ['contains', 'not_contains'],
+        size: 100
+    },
+    {
+        id: 'clientver',
+        label: 'ClientVer',
+        input: 'text',
+        type: 'string',
+        operators: ['contains', 'not_contains'],
+        size: 100
+    },
+    {
         id: 'country',
         label: 'Country',
         input: 'text',

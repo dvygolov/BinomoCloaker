@@ -24,3 +24,6 @@ $cssPath = get_cloaker_path().'css';
     <!--Data tables-->
     <link rel="stylesheet" href="<?=$cssPath?>/tabulator_clo.css?v=<?=filemtime($cssFsPath.'/tabulator_clo.css') ?>" >
     <link rel="stylesheet" href="<?=$cssPath?>/tabulator_midnight.css?v=<?=filemtime($cssFsPath.'/tabulator_midnight.css') ?>" >
+
+    <!--JQuery Modal-->
+    <link rel="stylesheet" href="<?=$cssPath?>/jquery.modal.min.css">

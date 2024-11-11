@@ -1,13 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-
-    document.getElementById("newcampaign").onclick = async () => {
+    document.getElementById("newCampaign").onclick = async () => {
         let campName = prompt("Enter new campaign name:");
         if (campName)
             await campEditor('add', null, campName);
     };
-
     
     document.getElementById("columnsSelect").onclick = () => {
+        openPopup();
+    };
+
+    document.getElementById("trafficBack").onclick = () => {
         openPopup();
     };
 });

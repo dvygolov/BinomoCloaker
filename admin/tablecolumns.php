@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../db.php';
+
 function show_stats($startDate, $endDate, StatisticsSettings $ss):string
 {
     global $db, $campId;
@@ -749,6 +750,7 @@ JSON;
     }
     return $columns;
 }
+
 
 function get_campaigns_columns(array $clmnWidths): string
 {

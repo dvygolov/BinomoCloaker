@@ -6,32 +6,77 @@ require_once __DIR__ . '/../campaign.php';
 
 $passOk = check_password(false);
 if (!$passOk)
-    return send_camp_result("Error: password check not passed!",true);
+    return send_clmn_result("Error: password check not passed!",true);
 
-$action = $_REQUEST['action'];
-$name = $_REQUEST['name']??'';
+$availableGroupBy = [ 
+    "date", "preland", "land", "isp", "country", "lang", "os" 
+];
+
+$availableColumns = [
+  "clicks",
+  "uniques",
+  "uniques_ratio",
+  "lpclicks",
+  "lpctr",
+  "cra",
+  "crs",
+  "epc",
+  "uepc",
+  "cpc",
+  "ucpc",
+  "appt",
+  "app",
+  "conversion",
+  "purchase",
+  "hold",
+  "reject",
+  "trash",
+  "cpa",
+  "ec",
+  "revenue",
+  "costs",
+  "profit",
+  "roi"
+];
+
 $campId = $_REQUEST['campId']??-1;
+$action = $_REQUEST['action'];
+$tName = $_REQUEST['tName']??'';
 
 switch ($action) {
-    case 'add':
-        $campId = $db->add_campaign($name);
-        if ($campId===false)
-            return send_camp_result("Error adding new campaign!",true);
+    case 'width':
+$updatedColumn = json_decode(file_get_contents('php://input'), true);
+
+// Load existing JSON
+$filePath = __DIR__ . '/campaigns.json';
+$currentData = json_decode(file_get_contents($filePath), true);
+
+// Update widths
+foreach ($currentData['columns'] as &$column) {
+    if ($column['field'] !== $updatedColumn['field'])
+        continue;
+    $column['width'] = $updatedColumn['width'];
+    break;
+}
+
+// Save back to JSON file
+file_put_contents($filePath, json_encode($currentData, JSON_PRETTY_PRINT));
+echo json_encode(["status" => "success"]);
         break;
     case 'dup':
         $clonedId = $db->clone_campaign($campId);
         if ($clonedId===false)
-            return send_camp_result("Error duplicating campaign!",true);
+            return send_clmn_result("Error duplicating campaign!",true);
         break;
     case 'del':
         $delRes = $db->delete_campaign($campId);
         if ($delRes===false)
-            return send_camp_result("Error deleting campaign!",true);
+            return send_clmn_result("Error deleting campaign!",true);
         break;
     case 'ren':
         $renRes = $db->rename_campaign($campId, $name);
         if ($renRes===false)
-            return send_camp_result("Error renaming campaign!",true);
+            return send_clmn_result("Error renaming campaign!",true);
         break;
     case 'save':
         $s = $db->get_campaign_settings($campId);
@@ -46,14 +91,14 @@ switch ($action) {
         $c = new Campaign($campId,$s);
         $saveRes = $db->save_campaign_settings($campId, $s);
         if($saveRes===false)
-            return send_camp_result("Error saving campaign!",true);
+            return send_clmn_result("Error saving campaign!",true);
         break;
     default:
-        return send_camp_result("Error: wrong action!",true);
+        return send_clmn_result("Error: wrong action!",true);
 }
-return send_camp_result("OK");
+return send_clmn_result("OK");
 
-function send_camp_result($msg,$error=false): void
+function send_clmn_result($msg,$error=false): void
 {
     $res = ["result" => $msg];
     if ($error){
@@ -68,7 +113,7 @@ function send_camp_result($msg,$error=false): void
 function setArrayValue(&$array, $underscoreString, $newValue) {
     // Split the underscrore notation string into keys
     $keys = explode('_', $underscoreString);
-    
+
     // Traverse the array using each key
     $current = &$array;
     foreach ($keys as $key) {
