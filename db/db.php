@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . "/cookies.php";
-require_once __DIR__ . "/logging.php";
-require_once __DIR__ . "/settings.php";
-require_once __DIR__ . "/requestfunc.php";
+require_once __DIR__ . "/../cookies.php";
+require_once __DIR__ . "/../logging.php";
+require_once __DIR__ . "/../settings.php";
+require_once __DIR__ . "/../requestfunc.php";
 
 class Db
 {
@@ -810,9 +810,9 @@ class Db
     public function get_campaigns($startDate, $endDate, array $selectFields)
     {
         $query = "
-        SELECT cmp.id, cmp.name, %s 
-        FROM campaigns cmp 
-        LEFT JOIN clicks c ON c.campaign_id=cmp.id AND c.time BETWEEN :startDate AND :endDate 
+        SELECT cmp.id, cmp.name, %s
+        FROM campaigns cmp
+        LEFT JOIN clicks c ON c.campaign_id=cmp.id AND c.time BETWEEN :startDate AND :endDate
         GROUP BY cmp.id";
 
         $selectClause = implode(',', $this->get_stats_select_parts($selectFields));
@@ -828,7 +828,7 @@ class Db
         }
         $stmt->bindValue(':startDate', $startDate, SQLITE3_INTEGER);
         $stmt->bindValue(':endDate', $endDate, SQLITE3_INTEGER);
-        
+
         $result = $stmt->execute();
 
         if ($result === false) {
@@ -850,6 +850,24 @@ class Db
         return $campaigns;
     }
 
+    public function get_global_settings(): array
+    {
+        $query= "SELECT settings FROM global";
+        $db = $this->open_db(true);
+        $stmt = $db->prepare($query);
+        $result = $stmt->execute();
+        if ($result === false) {
+            $errorMessage = $db->lastErrorMsg();
+            add_log("errors", "Couldn't get global settings: $errorMessage");
+            $db->close();
+            return [];
+        }
+        $row = $result->fetchArray(SQLITE3_ASSOC);
+        $s = json_decode($row['settings'], true);
+        $db->close();
+        return $s;
+    }
+
     private function open_db(bool $readOnly = false): SQLite3
     {
         $db = new SQLite3($this->dbPath, $readOnly ? SQLITE3_OPEN_READONLY : SQLITE3_OPEN_READWRITE);
@@ -857,81 +875,9 @@ class Db
         return $db;
     }
 
-    private function create_new_db()
+    private function create_new_db(): bool
     {
-        $createTableSQL = "
-            CREATE TABLE campaigns
-            (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                settings TEXT NOT NULL
-            );
-
-            CREATE TABLE IF NOT EXISTS clicks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                campaign_id INTEGER,
-                time INTEGER NOT NULL,
-                ip TEXT NOT NULL,
-                country TEXT NOT NULL,
-                lang TEXT NOT NULL,
-                os TEXT NOT NULL,
-                osver TEXT NOT NULL,
-                device TEXT NOT NULL,
-                brand TEXT NOT NULL,
-                model TEXT NOT NULL,
-                isp TEXT NOT NULL,
-                client TEXT NOT NULL,
-                clientver TEXT NOT NULL,
-                ua TEXT NOT NULL,
-                subid TEXT NOT NULL,
-                preland TEXT,
-                land TEXT,
-                params TEXT,
-                leaddata TEXT,
-                lpclick BOOLEAN,
-                status TEXT,
-                cost NUMERIC DEFAULT 0,
-                payout NUMERIC DEFAULT 0,
-                FOREIGN KEY (campaign_id)  REFERENCES campaigns (id) ON DELETE CASCADE
-            );
-            CREATE INDEX IF NOT EXISTS idx_subid ON clicks (subid);
-            CREATE INDEX IF NOT EXISTS idx_time ON clicks (time);
-            CREATE INDEX IF NOT EXISTS idx_date ON clicks (date(time, 'unixepoch'));
-            CREATE INDEX IF NOT EXISTS idx_country ON clicks (country);
-            CREATE INDEX IF NOT EXISTS idx_lang ON clicks (lang);
-            CREATE INDEX IF NOT EXISTS idx_lang ON clicks (client);
-            CREATE INDEX IF NOT EXISTS idx_lang ON clicks (clientver);
-            CREATE INDEX IF NOT EXISTS idx_lang ON clicks (device);
-            CREATE INDEX IF NOT EXISTS idx_lang ON clicks (brand);
-            CREATE INDEX IF NOT EXISTS idx_lang ON clicks (model);
-            CREATE INDEX IF NOT EXISTS idx_os ON clicks (os);
-            CREATE INDEX IF NOT EXISTS idx_os ON clicks (osver);
-            CREATE INDEX IF NOT EXISTS idx_isp ON clicks (isp);
-
-
-            CREATE TABLE IF NOT EXISTS blocked (
-                id INTEGER PRIMARY KEY,
-                campaign_id INTEGER,
-                time INTEGER NOT NULL,
-                ip TEXT NOT NULL,
-                country TEXT,
-                lang TEXT,
-                os TEXT,
-                osver TEXT,
-                device TEXT,
-                brand TEXT,
-                model TEXT,
-                isp TEXT,
-                client TEXT,
-                clientver TEXT,
-                ua TEXT,
-                params TEXT,
-                reason TEXT,
-                FOREIGN KEY (campaign_id)  REFERENCES campaigns (id) ON DELETE CASCADE
-            );
-            CREATE INDEX IF NOT EXISTS idx_btime ON blocked (time);
-            PRAGMA journal_mode = wal;
-            ";
+        $createTableSQL = get_file_content(__DIR__."/db.sql");
         $db = new SQLite3($this->dbPath, SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
         $db->busyTimeout(5000);
         $result = $db->exec($createTableSQL);
@@ -939,7 +885,21 @@ class Db
             $errorMessage = $db->lastErrorMsg();
             die("Can't create DB: $errorMessage");
         }
+
+        $query = "INSERT INTO global (settings) VALUES (:settings)";
+        $stmt = $db->prepare($query);
+        $settingsJson = file_get_contents(__DIR__ . '/global.json');
+        $stmt->bindValue(':settings', $settingsJson, SQLITE3_TEXT);
+        $result = $stmt->execute();
+
+        if ($result === false) {
+            $errorMessage = $db->lastErrorMsg();
+            add_log("errors", "Couldn't add global settings to DB: $errorMessage");
+            $db->close();
+            return false;
+        }
         $db->close();
+        return true;
     }
 }
 

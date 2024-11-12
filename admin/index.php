@@ -1,14 +1,13 @@
 <?php
 require_once __DIR__ . '/passwordcheck.php';
-require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../db/db.php';
 require_once __DIR__ . '/tablecolumns.php';
-require_once __DIR__ . '/../settings.php';
+require_once __DIR__ . '/dates.php';
 
-global $startdate, $enddate;
-
-$dataset = $db->get_campaigns(
-    $startdate->getTimestamp(),$enddate->getTimestamp(),
-    array_column($campColumnSettings['currentColumns'],'field'));
+$s = $db->get_global_settings();
+$timeRange = get_time_range($s['statistics']['timezone']);
+$dataset = $db->get_campaigns($timeRange[0],$timeRange[1],
+    array_column($s['statistics']['table'],'field'));
 ?>
 <!doctype html>
 <html lang="en">

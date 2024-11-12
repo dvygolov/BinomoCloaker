@@ -36,8 +36,23 @@ class DebugMethods
         if (version_compare($ver, '8.2.0', '<'))
             die("PHP version should be 8.2 or higher! Change your PHP version and return.");
     }
+    
+    public static function check_sqlite():void
+    {
+        if (!extension_loaded('sqlite3')) 
+            die("SQLite extension NOT FOUND! Use another hosting or enable SQLite.");
+    }
+    
+    public static function check_dirs():void
+    {
+        if (!is_writable(__DIR__)) 
+            die("PHP doesn't have write access for the current directory. Change access rights!");
+    }
 }
 if (DebugMethods::on()){
     DebugMethods::display_errors();
 }
+
 DebugMethods::check_php();
+DebugMethods::check_sqlite();
+DebugMethods::check_dirs();

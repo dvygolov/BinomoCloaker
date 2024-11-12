@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../db/db.php';
 
 function show_stats($startDate, $endDate, StatisticsSettings $ss):string
 {

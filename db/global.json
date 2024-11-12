@@ -1,0 +1,88 @@
+{
+  "statistics": {
+    "timezone": "Europe/Moscow",
+    "table": [
+      {
+        "field": "clicks",
+        "width": 81
+      },
+      {
+        "field": "uniques",
+        "width": 90
+      },
+      {
+        "field": "lpclicks",
+        "width": 90
+      },
+      {
+        "field": "lpctr",
+        "width": 90
+      },
+      {
+        "field": "cra",
+        "width": -1
+      },
+      {
+        "field": "crs",
+        "width": -1
+      },
+      {
+        "field": "epc",
+        "width": -1
+      },
+      {
+        "field": "appt",
+        "width": -1
+      },
+      {
+        "field": "app",
+        "width": -1
+      },
+      {
+        "field": "uniques_ratio",
+        "width": 71
+      },
+      {
+        "field": "conversion",
+        "width": -1
+      },
+      {
+        "field": "purchase",
+        "width": -1
+      },
+      {
+        "field": "hold",
+        "width": -1
+      },
+      {
+        "field": "reject",
+        "width": -1
+      },
+      {
+        "field": "trash",
+        "width": -1
+      },
+      {
+        "field": "cpc",
+        "width": 76
+      },
+      {
+        "field": "revenue",
+        "width": -1
+      },
+      {
+        "field": "costs",
+        "width": -1
+      },
+      {
+        "field": "profit",
+        "width": -1
+      },
+      {
+        "field": "roi",
+        "width": -1
+      }
+    ]
+  },
+  "trafficBackUrl": "https://google.com"
+}

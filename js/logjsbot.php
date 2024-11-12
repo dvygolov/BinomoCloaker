@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../debug.php';
 require_once __DIR__ . '/../settings.php';
 require_once __DIR__ . '/../core.php';
-require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../db/db.php';
 
 //Добавляем, по какому из js-событий мы поймали бота
 $reason = $_GET['reason'] ?? 'js_tests';
