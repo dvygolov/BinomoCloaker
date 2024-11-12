@@ -868,6 +868,25 @@ class Db
         return $s;
     }
 
+    public function set_global_settings(array $s): bool
+    {
+        $js = json_encode($s);
+        $query= "UPDATE global SET settings=:settings";
+        $db = $this->open_db();
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(':settings', $js, SQLITE3_TEXT);
+        $result = $stmt->execute();
+        if ($result === false) {
+            $errorMessage = $db->lastErrorMsg();
+            add_log("errors", "Couldn't update global settings: $errorMessage");
+            $db->close();
+            return false;
+        }
+        $db->close();
+        return true;
+        
+    }
+
     private function open_db(bool $readOnly = false): SQLite3
     {
         $db = new SQLite3($this->dbPath, $readOnly ? SQLITE3_OPEN_READONLY : SQLITE3_OPEN_READWRITE);

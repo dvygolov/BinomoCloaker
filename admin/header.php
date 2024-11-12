@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__.'/dates.php';
+?>
 <div class="header-advance-area">
     <div class="header-top-area">
         <div class="container-fluid">
@@ -17,7 +20,7 @@
                                 <a class="nav-link" href="#" id='litepicker'>
                                     <i class="bi bi-calendar"></i>
                                     <span>
-                                        Date:&nbsp;&nbsp;<?= get_calend_date() ?>
+                                        Date:&nbsp;&nbsp;<?= Dates::get_calend_date() ?>
                                     </span>
                                 </a>
                                 <a class="nav-link" href="" onclick="location.reload()">
@@ -61,17 +64,6 @@
     }
 </script>
 <?php
-function get_calend_date()
-{
-    global $startdate;
-    $calendsd = $_GET['startdate'] ?? '';
-    $calended = $_GET['enddate'] ?? '';
-    if ($calendsd !== '' && $calended !== '') {
-        return $calendsd === $calended ? $calendsd : "{$calendsd} - {$calended}";
-    } else {
-        return $startdate->format('d.m.y');
-    }
-}
 
 
 ?>

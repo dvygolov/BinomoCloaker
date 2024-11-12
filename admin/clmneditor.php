@@ -45,23 +45,16 @@ $tName = $_REQUEST['tName']??'';
 
 switch ($action) {
     case 'width':
-$updatedColumn = json_decode(file_get_contents('php://input'), true);
-
-// Load existing JSON
-$filePath = __DIR__ . '/campaigns.json';
-$currentData = json_decode(file_get_contents($filePath), true);
-
-// Update widths
-foreach ($currentData['columns'] as &$column) {
-    if ($column['field'] !== $updatedColumn['field'])
-        continue;
-    $column['width'] = $updatedColumn['width'];
-    break;
-}
-
-// Save back to JSON file
-file_put_contents($filePath, json_encode($currentData, JSON_PRETTY_PRINT));
-echo json_encode(["status" => "success"]);
+        $updatedColumn = json_decode(file_get_contents('php://input'), true);
+        $s = $db->get_global_settings();
+        // Update widths
+        foreach ($s['statistics']['table'] as &$column) {
+            if ($column['field'] !== $updatedColumn['field'])
+                continue;
+            $column['width'] = $updatedColumn['width'];
+            break;
+        }
+        $db->set_global_settings($s);
         break;
     case 'dup':
         $clonedId = $db->clone_campaign($campId);

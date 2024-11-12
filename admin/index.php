@@ -5,7 +5,7 @@ require_once __DIR__ . '/tablecolumns.php';
 require_once __DIR__ . '/dates.php';
 
 $s = $db->get_global_settings();
-$timeRange = get_time_range($s['statistics']['timezone']);
+$timeRange = Dates::get_time_range($s['statistics']['timezone']);
 $dataset = $db->get_campaigns($timeRange[0],$timeRange[1],
     array_column($s['statistics']['table'],'field'));
 ?>
@@ -26,7 +26,7 @@ $dataset = $db->get_campaigns($timeRange[0],$timeRange[1],
     </div>
     <script>
         let tableData = <?= json_encode($dataset) ?>;
-        let tableColumns = <?= get_campaigns_columns($campColumnSettings['currentColumns']) ?>;
+        let tableColumns = <?= get_campaigns_columns($s['statistics']['table']) ?>;
         let table = new Tabulator('#campaigns', {
             layout: "fitColumns",
             columns: tableColumns,
@@ -44,7 +44,7 @@ $dataset = $db->get_campaigns($timeRange[0],$timeRange[1],
 
         table.on("columnResized", function (column) {
             let updatedColumn = { field: column.getField(), width: column.getWidth() };
-            fetch("savewidth.php", {
+            fetch("clmneditor.php?action=width", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
