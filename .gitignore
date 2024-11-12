@@ -362,3 +362,6 @@ healthchecksdb
 /black
 /inner
 /test.db
+/db/clicks.db
+/db/clicks.db-shm
+/db/clicks.db-wal
