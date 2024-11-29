@@ -766,7 +766,7 @@ function get_campaigns_columns(array $clmnWidths): string
             "formatter": "link",
             "formatterParams": {
                 "urlField":"id",
-                "urlPrefix":"editsettings.php?campId="
+                "urlPrefix":"campsettings.php?campId="
             },
             "field": "name",
             "headerFilter": "input",

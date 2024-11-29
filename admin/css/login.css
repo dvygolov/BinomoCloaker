@@ -1,0 +1,66 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    background: #1b2a47;
+}
+
+#main {
+    margin-top: 50px;
+}
+
+#title {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+#version {
+    font-size: 15px;
+    margin-bottom: 20px;
+    color: white;
+}
+
+#login-form {
+    display: inline-block;
+}
+
+#password {
+    width: 300px;
+    height: 40px;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+h5, label {
+    font-size: 20px;
+    color: white;
+}
+
+button {
+    width: 300px;
+    height: 40px;
+    font-size: 20px;
+    position: relative;
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.loading-img {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    display: none;
+}
+
+button.loading .loading-img {
+    display: inline;
+}
+
+button.loading span {
+    display: none;
+}

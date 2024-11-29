@@ -342,26 +342,13 @@ ASALocalRun/
 .localhistory/
 
 # BeatPulse healthcheck temp database
-healthchecksdb
-/logs/blackclicks
-/thankyou/upsell/img
-/logs/leads
-/logs/whiteclicks
-/logs/lpctr
-/selection.txt
-/lrlpl
-/chiaogoo
-/knit
 /land
 /preland
-/white2
-/clicks.db
-/shop
-/clicks.db-shm
-/clicks.db-wal
 /black
-/inner
-/test.db
 /db/clicks.db
 /db/clicks.db-shm
 /db/clicks.db-wal
+bases/update.txt
+bases/GeoLite2-ASN.mmdb
+bases/GeoLite2-City.mmdb
+bases/GeoLite2-Country.mmdb

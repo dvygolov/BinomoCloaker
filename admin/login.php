@@ -2,10 +2,10 @@
 require_once __DIR__."/password.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (check_password()) {
-        header("Location: index.php");
-        exit();
-    }
+    header('Content-Type: application/json');
+    $result = array('success' => check_password(false));
+    echo json_encode($result);
+    exit();
 }
 ?>
 
@@ -13,59 +13,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <title>Yellow Cloaker Login</title>
-    <style>
-    body {
-        text-align: center;
-        font-family: Arial, sans-serif;
-        font-size: 20px;
-        background: #1b2a47;
-    }
-
-    #main {
-        margin-top: 50px;
-    }
-
-    #title {
-        font-size: 40px;
-        margin-bottom: 40px;
-        color: white;
-    }
-
-    #login-form {
-        display: inline-block;
-    }
-
-    #password {
-        width: 300px;
-        height: 40px;
-        font-size: 20px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-
-    label {
-        font-size: 20px;
-        color: white;
-    }
-
-    button {
-        width: 300px;
-        height: 40px;
-        font-size: 20px;
-    }
-
-    </style>
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="css/login.css">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('login-form');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Disable button and show loading state
+                submitButton.disabled = true;
+                submitButton.classList.add('loading');
+                
+                const password = document.getElementById('password').value;
+                const formData = new FormData();
+                formData.append('password', password);
+                
+                try {
+                    const response = await fetch('login.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.href = 'index.php';
+                    } else {
+                        alert('Wrong password!');
+                        // Re-enable button and hide loading state
+                        submitButton.disabled = false;
+                        submitButton.classList.remove('loading');
+                    }
+                } catch (error) {
+                    alert('Error occurred during login');
+                    // Re-enable button and hide loading state
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('loading');
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <div id="main">
         <div id="title">
             <img src="img/logobig.png" />
         </div>
-        <form id="login-form" method="post" action="./login.php">
+        <?php include __DIR__."/version.php"; ?>
+        <form id="login-form">
             <label for="password">Enter Admin Password👇</label><br />
-            <input type="password" id="password" name="password" required/ /><br />
-            <button type="submit">Login</button>
+            <input type="password" id="password" name="password" required/><br />
+            <button type="submit">
+                <img src="img/loading.apng" class="loading-img" alt="Loading..." />
+                <span>Login</span>
+            </button>
         </form>
     </div>
 </body>

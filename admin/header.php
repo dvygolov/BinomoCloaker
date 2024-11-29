@@ -1,5 +1,14 @@
 <?php
 require_once __DIR__.'/dates.php';
+
+function get_bases_version(): string
+{
+    $updateFile = __DIR__ . "/../bases/update.txt";
+    if (!file_exists($updateFile)) {
+        return "Unknown";
+    }
+    return file_get_contents($updateFile);
+}
 ?>
 <div class="header-advance-area">
     <div class="header-top-area">
@@ -7,9 +16,15 @@ require_once __DIR__.'/dates.php';
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                     <div class="logo-pro">
-                        <a href="index.php">
-                            <img class="main-logo" src="<?=get_cloaker_path()?>img/logo.png" alt="" />
-                        </a>
+                        <div class="logo-container">
+                            <a href="index.php" class="logo-link">
+                                <img class="main-logo" src="<?=get_cloaker_path()?>img/logo.png" alt="" />
+                            </a>
+                            <div class="geo-version">
+                                GeoBases: <a href="#" id="updateBases" title="Update bases"><?= get_bases_version() ?></a>
+                                <img style="width:30px; height:30px;display:none;" src="img/loading.apng" id="loadingAnimation" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -62,8 +77,50 @@ require_once __DIR__.'/dates.php';
         searchParams.set('enddate', d2);
         window.location.search = searchParams.toString();
     }
+
+    // Geo database update functionality
+    var updElement = document.getElementById("updateBases");
+    var loadingAnimation = document.getElementById("loadingAnimation");
+
+    updElement.onclick = async () => {
+        // Show loading animation
+        updElement.style.display = 'none';
+        loadingAnimation.style.display = '';
+
+        let res = await fetch("../bases/update.php", {
+            method: "GET",
+        });
+        let js = await res.json();
+        if (!js["error"]) {
+            loadingAnimation.style.display = 'none';
+            alert(js["result"]);
+            window.location.reload();
+        } else {
+            loadingAnimation.style.display = 'none';
+            updElement.style.display = '';
+            alert(`An error occured: ${js["result"]}`);
+        }
+    };
 </script>
-<?php
-
-
-?>
+<style>
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.logo-link {
+    flex-shrink: 0;
+}
+.geo-version {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+}
+.geo-version a {
+    color: #337ab7;
+    text-decoration: none;
+}
+.geo-version a:hover {
+    text-decoration: underline;
+}
+</style>

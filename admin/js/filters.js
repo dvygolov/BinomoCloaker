@@ -24,7 +24,7 @@ var tdsFilters = [
         type: 'string',
         operators: ['in', 'not_in'],
         placeholder: 'desktop,mobile',
-        size: 100
+        size: 70
     },
     {
         id: 'brand',
@@ -32,7 +32,7 @@ var tdsFilters = [
         input: 'text',
         type: 'string',
         operators: ['contains', 'not_contains'],
-        size: 100
+        size: 70
     },
     {
         id: 'model',
@@ -40,7 +40,7 @@ var tdsFilters = [
         input: 'text',
         type: 'string',
         operators: ['contains', 'not_contains'],
-        size: 100
+        size: 70
     },
     {
         id: 'client',
@@ -48,7 +48,7 @@ var tdsFilters = [
         input: 'text',
         type: 'string',
         operators: ['contains', 'not_contains'],
-        size: 100
+        size: 70
     },
     {
         id: 'clientver',
@@ -56,7 +56,7 @@ var tdsFilters = [
         input: 'text',
         type: 'string',
         operators: ['contains', 'not_contains'],
-        size: 100
+        size: 50
     },
     {
         id: 'country',
@@ -81,7 +81,7 @@ var tdsFilters = [
         input: 'text',
         type: 'string',
         operators: ['contains', 'not_contains'],
-        size: 100
+        size: 70
     },
     {
         id: 'useragent',
@@ -89,7 +89,7 @@ var tdsFilters = [
         input: 'text',
         type: 'string',
         operators: ['contains', 'not_contains'],
-        size: 100,
+        size: 70,
         placeholder: 'facebook,facebot,curl,gce-spider,yandex.com,odklbot'
     },
     {
@@ -98,7 +98,7 @@ var tdsFilters = [
         input: 'text',
         type: 'string',
         operators: ['contains', 'not_contains'],
-        size: 100,
+        size: 70,
         placeholder: 'facebook,google,yandex,amazon,azure,digitalocean,microsoft'
     },
     {
@@ -110,7 +110,7 @@ var tdsFilters = [
         validation: {
             allow_empty_value: true
         },
-        size: 100
+        size: 70
     },
     {
         id: 'vpntor',
@@ -128,7 +128,7 @@ var tdsFilters = [
         label: 'IP Base',
         type: 'string',
         operators: ['contains', 'not_contains'],
-        placeholder: 'path to base file(s) in bases folder: bots.txt',
-        size: 100
+        placeholder: 'path to base file(s) in bases folder: bots1.txt,bots2.txt',
+        size: 70
     }
 ];

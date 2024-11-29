@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../debug.php";
+require_once __DIR__ . "/../settings.php";
 require_once __DIR__ . "/../admin/password.php";
 
 function downloadAndExtractMaxMindDB($licenseKey, $directory, $editionIds): string
@@ -72,9 +73,9 @@ function save_update_version(): void
     file_put_contents(__DIR__ . "/update.txt", $formattedDate);
 }
 
-function send_update_result($msg): void
+function send_update_result($msg, $error = false): void
 {
-    $res = ["result" => $msg];
+    $res = ["result" => $msg, "error" => $error];
     header('Content-type: application/json');
     http_response_code(200);
     echo json_encode($res);
@@ -82,16 +83,15 @@ function send_update_result($msg): void
 
 $passOk = check_password(false);
 if (!$passOk) {
-    send_update_result("Error: password check not passed!");
+    send_update_result("Password check not passed!", true);
     exit;
 }
 
-$cloSettings = json_decode(file_get_contents(__DIR__ . '/../settings.json'), true);
 if (empty($cloSettings["maxMindKey"])) {
-    send_update_result("Error: MaxMind key not set, edit 'settings.json'!");
+    send_update_result("MaxMind key not set, edit 'settings.php'!", true);
     exit;
 }
 
 $editionIds = ['GeoLite2-ASN', 'GeoLite2-City', 'GeoLite2-Country'];
 $result = downloadAndExtractMaxMindDB($cloSettings["maxMindKey"], __DIR__, $editionIds);
-send_update_result("OK");
+send_update_result($result, false);

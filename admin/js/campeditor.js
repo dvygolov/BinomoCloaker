@@ -21,7 +21,14 @@ async function campEditor(action, campId=null, name=null) {
     if (name)
         body += `&name=${name}`;
 
-    let res = await fetch("campeditor.php", {
+    let curPath = window.location.href;
+    if (curPath.endsWith(".php"))
+        curPath = curPath.split('/').slice(0, -1).join('/');
+    if (!curPath.endsWith("/"))
+        curPath += "/";
+    curPath+="campeditor.php";
+
+    let res = await fetch(curPath, {
         method: "POST",
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -48,6 +55,7 @@ async function campActionsHandler(e, cell) {
 
     if (target.classList.contains('btn-rename')) {
         const newName = prompt("Enter new campaign name:");
+        if (newName==null) return;
         if (newName) {
             await campEditor('ren', campaignId, newName);
         }
