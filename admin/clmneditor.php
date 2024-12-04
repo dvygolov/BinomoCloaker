@@ -16,7 +16,7 @@ $tName = $_REQUEST['tName']??'';
 switch ($action) {
     case 'width':
         $updatedColumn = json_decode(file_get_contents('php://input'), true);
-        $s = $db->get_global_settings();
+        $s = $db->get_common_settings();
         // Update widths
         foreach ($s['statistics']['table'] as &$column) {
             if ($column['field'] !== $updatedColumn['field'])

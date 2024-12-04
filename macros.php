@@ -2,6 +2,7 @@
 require_once __DIR__ . '/cookies.php';
 require_once __DIR__ . '/db/db.php';
 require_once __DIR__ . '/logging.php';
+require_once __DIR__ . '/bases/ipcountry.php';
 
 class MacrosProcessor
 {
@@ -59,13 +60,13 @@ class MacrosProcessor
         return $new_url;
     }
 
-    private function get_macro_value($macro): string|bool
+    private function get_macro_value($macro,$is_s2s = false): string|bool
     {
         global $db;
         if ($macro === 'subid') {
             $cookie = get_cookie($macro);
-            if (!empty($cookie) || $cookie !== '') {
-                add_log("macros", "Couldn't get macros $macro value from cookie.");
+            if (empty($cookie)) {
+                add_log("macros", "Couldn't get subid macros value from cookie.");
                 return false;
             }
             return $cookie;
@@ -73,7 +74,7 @@ class MacrosProcessor
 
         $clickParams = ['ip', 'country', 'lang', 'os', 'osver', 'client', 'clientver', 'device', 'brand', 'model', 'isp', 'ua', 'preland', 'land', 'status'];
         if (in_array($macro, $clickParams)) {
-            if (!isset($this->subid) || empty($this->subid)) {
+            if (empty($this->subid)) {
                 add_log("macros", "Couldn't get macros $macro value from DB. Subid not set!");
                 return false;
             } else {
@@ -84,7 +85,7 @@ class MacrosProcessor
 
         //we need to find click parameter with this name, we can do that only if we know subid
         if (str_starts_with($macro, "c.")) {
-            if (!isset($this->subid) || empty($this->subid)) {
+            if (empty($this->subid)) {
                 add_log("macros", "Couldn't get macros $macro value from DB. Subid not set!");
                 return false;
             } else {

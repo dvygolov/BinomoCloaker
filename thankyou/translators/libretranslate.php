@@ -20,7 +20,7 @@ class LibreTranslate
             return 'error';
         }
 
-        $json = json_decode($res['html']);
+        $json = json_decode($res['content']);
         if (isset($json->error)) //this language is not supported so we show an english version
             return 'error';
         else

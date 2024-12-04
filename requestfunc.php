@@ -107,7 +107,7 @@ function get($url): array
     $info = curl_getinfo($curl);
     $error = curl_error($curl);
     curl_close($curl);
-    return ["html" => $content, "info" => $info, "error" => $error];
+    return ["content" => $content, "info" => $info, "error" => $error];
 }
 
 function post($url, $postfields): array
@@ -136,6 +136,6 @@ function post($url, $postfields): array
     $info = curl_getinfo($curl);
     $error = curl_error($curl);
     curl_close($curl);
-    return ["html" => $content, "info" => $info, "error" => $error];
+    return ["content" => $content, "info" => $info, "error" => $error];
 }
 

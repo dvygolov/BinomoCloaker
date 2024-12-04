@@ -3,6 +3,7 @@ require_once __DIR__ . '/macros.php';
 
 function redirect($url, $redirect_type = 302, $rep_macros = false): void
 {
+    $url = urldecode($url);
     if ($rep_macros) {
         $mp = new MacrosProcessor();
         $url = $mp->replace_url_macros($url);
@@ -11,9 +12,18 @@ function redirect($url, $redirect_type = 302, $rep_macros = false): void
     header('Location: ' . $url, true, $redirect_type);
 }
 
-function jsredirect($url): void
+function jsredirect($url, $add_script_tag=true, $rep_macros = false): void
 {
-    echo "<script type='text/javascript'> window.location='$url';</script>";
+    $url = urldecode($url);
+    if ($rep_macros) {
+        $mp = new MacrosProcessor();
+        $url = $mp->replace_url_macros($url);
+    }
+    if ($add_script_tag) {
+        echo "<script type='text/javascript'> window.location='$url';</script>";
+    } else {
+        echo "window.location='$url'";
+    }
 }
 
 function insert_subs_into_url(array $currentParams, string $redirectUrl)
@@ -36,10 +46,8 @@ function insert_subs_into_url(array $currentParams, string $redirectUrl)
         }
     }
 
-    // Формируем новый query string с обновленными параметрами
     $newQuery = http_build_query($redirectParams);
 
-    // Собираем новый URL для редиректа
     $finalRedirectUrl = $redirectParsed['scheme'] . '://' . $redirectParsed['host'] . $redirectParsed['path'];
     if (!empty($newQuery)) {
         $finalRedirectUrl .= '?' . $newQuery;

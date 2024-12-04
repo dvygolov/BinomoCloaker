@@ -7,16 +7,18 @@ require_once __DIR__ . '/main.php';
 require_once __DIR__ . '/settings.php';
 require_once __DIR__ . '/redirect.php';
 
-global $db, $cloSettings;
+global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
 if ($dbCamp===null){
-    if (empty($cloSettings['trafficBackUrl']))
+    $c = new Cloaker();
+    $db->add_trafficback_click($c->click_params);
+    $cs = $db->get_common_settings();
+    if (empty($cs['trafficBackUrl']))
         die("NO CAMPAIGN FOR THIS DOMAIN AND TRAFFICBACK NOT SET!");
     else{
-        redirect($cloSettings['trafficBackUrl'],302,true);
+        redirect($cs['trafficBackUrl'],302,true);
         exit();
     }
-        
 }
 
 $c = new Campaign($dbCamp['id'],$dbCamp['settings']);

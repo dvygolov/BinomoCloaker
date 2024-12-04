@@ -202,7 +202,7 @@ function load_white_content($url, $add_js_check)
 function load_white_curl($url, $add_js_check)
 {
     $res = get($url);
-    $html = $res['html'];
+    $html = $res['content'];
     $html = rewrite_relative_urls($html, $url);
 
     //remove everything unneeded

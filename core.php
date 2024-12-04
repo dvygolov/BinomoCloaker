@@ -38,10 +38,9 @@ class Cloaker
     var string $block_reason = "";
     var array $click_params = [];
 
-    public function __construct(array $s)
+    public function __construct(array $s=[])
     {
         DebugMethods::start("YWBCoreConstruct");
-        ClientHints::requestClientHints();
         $this->s = $s;
         $this->click_params = Cloaker::get_click_params();
         DebugMethods::stop("YWBCoreConstruct");
@@ -49,6 +48,7 @@ class Cloaker
 
     public static function get_click_params(): array
     {
+        ClientHints::requestClientHints();
         $a = [];
         $a['ua'] = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
         $a['referer'] = get_referer();

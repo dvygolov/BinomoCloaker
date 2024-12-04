@@ -4,7 +4,7 @@ require_once __DIR__ . '/../db/db.php';
 require_once __DIR__ . '/tablecolumns.php';
 require_once __DIR__ . '/dates.php';
 
-$gs = $db->get_global_settings();
+$gs = $db->get_common_settings();
 $timeRange = Dates::get_time_range($gs['statistics']['timezone']);
 $dataset = $db->get_campaigns($timeRange[0],$timeRange[1],
     array_column($gs['statistics']['table'],'field'));

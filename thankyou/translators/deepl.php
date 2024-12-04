@@ -36,7 +36,7 @@ class Deepl
             );
             return 'error';
         }
-        $json = json_decode($res['html']);
+        $json = json_decode($res['content']);
         if (!isset($json))
             return 'error';
         else

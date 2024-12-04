@@ -77,12 +77,12 @@ switch ($res["info"]["http_code"]) {
         if (!empty($customThankyou)) {
             jsredirect($customThankyou."/index.php?" . http_build_query($_GET));
         } else {
-            echo $res["html"];
+            echo $res["content"];
         }
         break;
     default:
         echo $fullpath."<br/>";
-        var_dump($res["html"]);
+        var_dump($res["content"]);
         echo '<br/>';
         var_dump($res["error"]);
         echo '<br/>';

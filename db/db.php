@@ -17,6 +17,41 @@ class Db
         }
     }
 
+    public function get_trafficback_clicks($startdate, $enddate): array
+    {
+        $query = "SELECT * FROM trafficback WHERE time BETWEEN :startDate AND :endDate ORDER BY time DESC";
+
+        $db = $this->open_db(true);
+        // Prepare statement
+        $stmt = $db->prepare($query);
+
+        // Bind parameters to the prepared statement
+        $stmt->bindValue(':startDate', $startdate, SQLITE3_INTEGER);
+        $stmt->bindValue(':endDate', $enddate, SQLITE3_INTEGER);
+
+        // Execute the query and fetch the results
+        $result = $stmt->execute();
+
+        if ($result === false) {
+            $errorMessage = $db->lastErrorMsg();
+            add_log("errors", "Get Trafficback Clicks: $startdate $enddate $errorMessage");
+            return [];
+        }
+        // Initialize an array to hold the results
+        $trafficbackClicks = [];
+
+        // Fetch each row and add it to the array
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            if (!empty($row['params'])) {
+                $row['params'] = json_decode($row['params'], true);
+            }
+            $trafficbackClicks[] = $row;
+        }
+        $db->close();
+
+        return $trafficbackClicks;
+    }
+
 
     public function get_white_clicks($startdate, $enddate, $campId): array
     {
@@ -447,6 +482,33 @@ class Db
         return $sumArray;
     }
 
+    public function add_trafficback_click($data): bool
+    {
+        // Prepare click data
+        $click = $this->prepare_click_data($data);
+
+        // Prepare SQL insert statement
+        $query = "INSERT INTO trafficback (time, ip, country, lang, os, osver, brand, model, isp,client, clientver, ua, params) VALUES (:time, :ip, :country, :lang, :os, :osver, :brand, :model, :isp, :client, :clientver, :ua, :params)";
+
+        $db = $this->open_db();
+        $stmt = $db->prepare($query);
+
+        // Bind parameters
+        foreach ($click as $key => $value) {
+            $stmt->bindValue(':' . $key, $value);
+        }
+
+        $result = $stmt->execute();
+        if ($result === false) {
+            // Prepare failed, get and display the error message
+            $errorMessage = $db->lastErrorMsg();
+            add_log("errors", "Couldn't add trafficback click: $errorMessage:" . json_encode($click));
+            return false;
+        }
+        $db->close();
+        return true;
+    }
+
     public function add_white_click($data, $reason, $campId): bool
     {
         // Prepare click data
@@ -589,10 +651,10 @@ class Db
         return ($row['count'] > 0);
     }
 
-    private function prepare_click_data($data, $campId): array
+    private function prepare_click_data($data, $campId=null): array
     {
         $data["time"] = (new DateTime())->getTimestamp();
-        $data["campaign_id"] = $campId;
+        if (!is_null($campId)) $data["campaign_id"] = $campId;
 
         $query = [];
         if (!empty($_SERVER['QUERY_STRING'])) {
@@ -850,15 +912,15 @@ class Db
         return $campaigns;
     }
 
-    public function get_global_settings(): array
+    public function get_common_settings(): array
     {
-        $query= "SELECT settings FROM global";
+        $query= "SELECT settings FROM common";
         $db = $this->open_db(true);
         $stmt = $db->prepare($query);
         $result = $stmt->execute();
         if ($result === false) {
             $errorMessage = $db->lastErrorMsg();
-            add_log("errors", "Couldn't get global settings: $errorMessage");
+            add_log("errors", "Couldn't get common settings: $errorMessage");
             $db->close();
             return [];
         }
@@ -868,17 +930,17 @@ class Db
         return $s;
     }
 
-    public function set_global_settings(array $s): bool
+    public function set_common_settings(array $s): bool
     {
         $js = json_encode($s);
-        $query= "UPDATE global SET settings=:settings";
+        $query= "UPDATE common SET settings=:settings";
         $db = $this->open_db();
         $stmt = $db->prepare($query);
         $stmt->bindValue(':settings', $js, SQLITE3_TEXT);
         $result = $stmt->execute();
         if ($result === false) {
             $errorMessage = $db->lastErrorMsg();
-            add_log("errors", "Couldn't update global settings: $errorMessage");
+            add_log("errors", "Couldn't update common settings: $errorMessage");
             $db->close();
             return false;
         }
@@ -905,15 +967,15 @@ class Db
             die("Can't create DB: $errorMessage");
         }
 
-        $query = "INSERT INTO global (settings) VALUES (:settings)";
+        $query = "INSERT INTO common (settings) VALUES (:settings)";
         $stmt = $db->prepare($query);
-        $settingsJson = file_get_contents(__DIR__ . '/global.json');
+        $settingsJson = file_get_contents(__DIR__ . '/common.json');
         $stmt->bindValue(':settings', $settingsJson, SQLITE3_TEXT);
         $result = $stmt->execute();
 
         if ($result === false) {
             $errorMessage = $db->lastErrorMsg();
-            add_log("errors", "Couldn't add global settings to DB: $errorMessage");
+            add_log("errors", "Couldn't add common settings to DB: $errorMessage");
             $db->close();
             return false;
         }

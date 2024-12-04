@@ -69,7 +69,26 @@ CREATE TABLE IF NOT EXISTS blocked (
 );
 CREATE INDEX IF NOT EXISTS idx_btime ON blocked (time);
 
-CREATE TABLE IF NOT EXISTS global (
+CREATE TABLE IF NOT EXISTS trafficback (
+	id INTEGER PRIMARY KEY,
+	time INTEGER NOT NULL,
+	ip TEXT NOT NULL,
+	country TEXT,
+	lang TEXT,
+	os TEXT,
+	osver REAL,
+	device TEXT,
+	brand TEXT,
+	model TEXT,
+	isp TEXT,
+	client TEXT,
+	clientver REAL,
+	ua TEXT,
+	params TEXT,
+);
+CREATE INDEX IF NOT EXISTS idx_btime ON trafficback (time);
+
+CREATE TABLE IF NOT EXISTS common (
     settings TEXT
 );
 PRAGMA journal_mode = wal;
