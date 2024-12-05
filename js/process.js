@@ -1,6 +1,5 @@
 (async function() {
     const domain = '{DOMAIN}';
-    const reason = '{REASON}';
     let url = `${domain}js/jsprocessing.php`;
     const params = new URLSearchParams();
     params.append('uri', window.location.href);
@@ -10,9 +9,6 @@
     }
     if (window.location.search) {
         params.append('search', window.location.search.substring(1));
-    }
-    if (reason) {
-        params.append('reason', reason);
     }
     url += `?${params.toString()}`;
 

