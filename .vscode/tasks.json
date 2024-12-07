@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Launch PHP Server",
+			"type": "shell",
+			"command": "php -S localhost:80 -t ${workspaceFolder}",
+			"isBackground": true,
+			"problemMatcher": {
+				"pattern": {
+					"regexp": "^.*$",
+					"file": 1,
+					"location": 2,
+					"message": 3
+				},
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": ".",
+					"endsPattern": "."
+				}
+			}
+		}
+	]
+}

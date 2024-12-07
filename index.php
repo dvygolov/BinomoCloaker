@@ -10,8 +10,7 @@ require_once __DIR__ . '/redirect.php';
 global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
 if ($dbCamp===null){
-    $c = new Cloaker();
-    $db->add_trafficback_click($c->click_params);
+    $db->add_trafficback_click(Cloaker::get_click_params());
     $cs = $db->get_common_settings();
     if (empty($cs['trafficBackUrl']))
         die("NO CAMPAIGN FOR THIS DOMAIN AND TRAFFICBACK NOT SET!");
@@ -25,9 +24,9 @@ $c = new Campaign($dbCamp['id'],$dbCamp['settings']);
 $cloaker = new Cloaker($c->filters);
 
 if ($c->white->jsChecks->enabled) {
-    white(true);
+    takeAction(white(true));
 } else if ($cloaker->is_bad_click()) { 
     $db->add_white_click($cloaker->click_params, $cloaker->block_reason, $c->campaignId);
-    white(false);
+    takeAction(white(false));
 } else
-    black($cloaker->click_params);
+    takeAction(black($cloaker->click_params));

@@ -1,21 +1,10 @@
 <?php
 
-function get_file_content($scriptname): string
-{
-    $code_file_name = __DIR__ . '/scripts/' . $scriptname;
-    if (!file_exists($code_file_name)) {
-        echo 'File Not Found: ' . $code_file_name;
-        return '';
-    }
-
-    return file_get_contents($code_file_name) ?: '';
-}
-
 function insert_file_content($html, $scriptname, $needle,
                              $before = true, $add_script_tags = false,
                              $search = null, $replacement = null): string
 {
-    $content = get_file_content($scriptname);
+    $content = file_get_contents(__DIR__.'/scripts/'.$scriptname);
     if (empty($content)) {
         return $html;
     }

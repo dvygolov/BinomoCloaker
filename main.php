@@ -8,7 +8,7 @@ require_once __DIR__ . '/redirect.php';
 require_once __DIR__ . '/abtest.php';
 require_once __DIR__ . '/requestfunc.php';
 
-function white($use_js_checks)
+function white(bool $use_js_checks):CloakerAction
 {
     global $c; //Campaign
     $ws = $c->white;
@@ -52,50 +52,50 @@ function white($use_js_checks)
         }
     }
 
-    //if we have Javascript bot tests enabled then we use a special white page
+    //if we have Javascript bot tests enabled 
+    //then we should use a special white page
     //or add the test code into an existing white page
     if ($use_js_checks) {
         switch ($action) {
             case 'error':
             case 'redirect':
-                echo load_js_testpage();
+                $page = load_js_testpage();
                 break;
             case 'folder':
                 $curfolder = select_item($folder_names, $c->saveUserFlow, 'white', true);
-                echo load_white_content($curfolder[0], $use_js_checks);
+                $page = load_white_content($curfolder[0]);
                 break;
             case 'curl':
                 $cururl = select_item($curl_urls, $c->saveUserFlow, 'white', false);
-                echo load_white_curl($cururl[0], $use_js_checks);
+                $page = load_white_curl($cururl[0]);
                 break;
-        }
+        };
+        return new CloakerAction('html',add_js_testcode($page));
     } else {
         switch ($action) {
             case 'error':
                 $curcode = select_item($error_codes, $c->saveUserFlow, 'white', true);
-                http_response_code($curcode[0]);
+                return new CloakerAction('error',$curcode[0]);
                 break;
             case 'folder':
                 $curfolder = select_item($folder_names, $c->saveUserFlow, 'white', true);
-                echo load_white_content($curfolder[0], false);
+                return new CloakerAction('html', load_white_content($curfolder[0]));
                 break;
             case 'curl':
                 $cururl = select_item($curl_urls, $c->saveUserFlow, 'white', false);
-                echo load_white_curl($cururl[0], false);
+                return new CloakerAction('html', load_white_curl($cururl[0]));
                 break;
             case 'redirect':
                 $cururl = select_item($redirect_urls, $c->saveUserFlow, 'white', false);
-                redirect($cururl[0], $ws->redirectType);
+                return new CloakerAction('redirect',$cururl[0], $ws->redirectType);
                 break;
         }
     }
 }
 
-function black(array $clickparams)
+function black(array $clickparams):CloakerAction
 {
     global $c, $db; //Campaign
-
-    send_access_control_headers();
 
     $cursubid = set_subid();
     set_px();
@@ -120,15 +120,13 @@ function black(array $clickparams)
 
             switch ($bl->action) {
                 case 'folder':
-                    echo load_landing($landing);
-                    break;
+                    return new CloakerAction('html',load_landing($landing));
                 case 'redirect':
                     $redirectUrl = insert_subs_into_url($_GET, $landing);
-                    redirect($redirectUrl, $bl->redirectType, true);
-                    break;
+                    return new CloakerAction('redirect',$redirectUrl,$bl->redirectType);
             }
             break;
-        case 'folder': //если мы используем локальные проклы
+        case 'folder': //local prelandings
             $prelandings = $bp->folderNames;
             if (empty($prelandings))
                 break;
@@ -138,8 +136,36 @@ function black(array $clickparams)
             $landing = $res[0];
             $t = $res[1];
 
-            echo load_prelanding($prelanding, $t);
             $db->add_black_click($cursubid, $clickparams, $prelanding, $landing, $c->campaignId);
+            return new CloakerAction('html', load_prelanding($prelanding, $t));
             break;
+    }
+}
+
+function takeAction(CloakerAction $ca){
+    switch ($ca->action){
+        case 'html':
+            echo $ca->value;
+            break;
+        case 'redirect':
+            redirect($ca->value,$ca->type,true);
+            break;
+        case 'error':
+            http_response_code($ca->type);
+            break;
+    }
+}
+
+class CloakerAction
+{
+    public string $action;
+    public string $value;
+    public int $type;
+    
+    public function __construct(string $action, string $value, int $type=0)
+    {
+        $this->action = $action;
+        $this->value = $value;
+        $this->type = $type;
     }
 }

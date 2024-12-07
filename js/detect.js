@@ -211,18 +211,18 @@ class BotDetector {
 }
 
 let callback = function(detector) {
-    let domain = '{DOMAIN}';
+  let domain = '{DOMAIN}';
+  if (detector.isBot) {
+    detector.log("You Shall Not Pass! Reason:" + detector.reason);
     let scrpt = document.createElement('script');
     scrpt.setAttribute('id', 'ywb_process');
-    if (detector.isBot) {
-        detector.log("You Shall Not Pass! Reason:" + detector.reason);
-        scrpt.setAttribute('src', `${domain}js/logjsbot.php?reason=${detector.reason}`);
-    } else {
-        detector.log("You are a real human!");
-        scrpt.setAttribute('src', `${domain}js/process.php`);
-    }
+    scrpt.setAttribute('src', `${domain}js/logjsbot.php?reason=${detector.reason}`);
     document.body.appendChild(scrpt);
     document.getElementById('ywb_process').remove();
+  } else {
+    detector.log("You are a real human!");
+    processRequest();
+  }
 };
 
 let botDetector = new BotDetector({

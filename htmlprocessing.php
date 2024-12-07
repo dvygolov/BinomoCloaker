@@ -180,26 +180,23 @@ function add_images_lazy_load($html)
     return $html;
 }
 
-//Подгрузка контента вайта ИЗ ПАПКИ
-function load_white_content($url, $add_js_check)
+//load white page from FOLDER
+function load_white_content($url):string
 {
     $html = load_content_with_include($url);
     $baseurl = '/' . $url . '/';
     //переписываем все относительные src и href (не начинающиеся с http)
     $html = rewrite_relative_urls($html, $baseurl);
 
-    //добавляем в <head> пару доп. метатегов
+    //adding no-referer,noindex,nofollow
     $html = str_replace('<head>', '<head><meta name="referrer" content="no-referrer"><meta name="robots" content="noindex, nofollow">', $html);
     $html = remove_scrapbook($html);
 
-    if ($add_js_check) {
-        $html = add_js_testcode($html);
-    }
     return $html;
 }
 
-//когда подгружаем вайт методом CURL
-function load_white_curl($url, $add_js_check)
+//loading white page with CURL
+function load_white_curl(string $url):string
 {
     $res = get($url);
     $html = $res['content'];
@@ -234,30 +231,21 @@ function load_white_curl($url, $add_js_check)
     //adding some additional tags to head
     $html = str_replace('<head>', '<head><meta name="referrer" content="no-referrer"><meta name="robots" content="noindex, nofollow">', $html);
 
-    if ($add_js_check) {
-        $html = add_js_testcode($html);
-    }
     return $html;
 }
 
-function load_js_testpage()
+function load_js_testpage():string
 {
     $test_page = load_content_with_include('js/tests/page.html');
     return add_js_testcode($test_page);
 }
 
-function add_js_testcode($html)
+function add_js_testcode(string $html):string
 {
-    $jsCode = str_replace('{DOMAIN}', get_cloaker_path(), file_get_contents(__DIR__ . '/js/connect.js'));
-    if (!DebugMethods::on()) {
-        $hunter = new HunterObfuscator($jsCode);
-        $jsCode = $hunter->Obfuscate();
-    }
-    $jsCode = "<script id='connect'>{$jsCode}</script>";
-    $needle = '</body>';
-    if (!str_contains($html, $needle))
-        $needle = '</html>';
-    return insert_before_tag($html, $needle, $jsCode);
+    $jsCode = "<script src='./js/index.php'></script>";
+    $needle = '<head>';
+    if (!str_contains($html,$needle)) $needle = '<body>';
+    return insert_after_tag($html, $needle, $jsCode);
 }
 
 //вставляет все сабы в hidden полях каждой формы

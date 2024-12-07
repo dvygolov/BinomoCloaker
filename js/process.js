@@ -1,4 +1,4 @@
-(async function() {
+async function processRequest() {
     const domain = '{DOMAIN}';
     let url = `${domain}js/jsprocessing.php`;
     const params = new URLSearchParams();
@@ -55,7 +55,9 @@
     } catch (error) {
         console.log(`An error occured: ${error}`);
     }
-})();
+}
+
+processRequest();
 
 function showIframe(html) {
     function hideElementDelayed(selector) {

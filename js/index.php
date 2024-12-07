@@ -44,18 +44,26 @@ if($cloaker->is_bad_click()){
 
 $jsChecks = $c->white->jsChecks;
 if ($jsChecks->enabled) {
-    $jsCode = file_get_contents(__DIR__.'/detect.js');
-    $jsCode = str_replace('{DEBUG}', DebugMethods::on() ? 'true' : 'false', $jsCode);
-    $jsCode = str_replace('{DOMAIN}', get_cloaker_path(), $jsCode);
-    $js_checks_str=	implode('", "', $jsChecks->events);
-    $jsCode = str_replace('{JSCHECKS}', $js_checks_str, $jsCode);
-    $jsCode = str_replace('{JSTIMEOUT}', $jsChecks->timeout, $jsCode);
-    $jsCode = str_replace('{JSTZMIN}', $jsChecks->tzMin, $jsCode);
-    $jsCode = str_replace('{JSTZMAX}', $jsChecks->tzMax, $jsCode);
+    // Load process.js first
+    $processJs = file_get_contents(__DIR__.'/process.js');
+    $processJs = str_replace('{DOMAIN}', get_cloaker_path(), $processJs);
+    $processJs = str_replace('processRequest();', '', $processJs);
+    
+    // Load and configure detect.js
+    $detectJs = file_get_contents(__DIR__.'/detect.js');
+    $detectJs = str_replace('{DEBUG}', DebugMethods::on() ? 'true' : 'false', $detectJs);
+    $detectJs = str_replace('{DOMAIN}', get_cloaker_path(), $detectJs);
+    $js_checks_str = implode('", "', $jsChecks->events);
+    $detectJs = str_replace('{JSCHECKS}', $js_checks_str, $detectJs);
+    $detectJs = str_replace('{JSTIMEOUT}', $jsChecks->timeout, $detectJs);
+    $detectJs = str_replace('{JSTZMIN}', $jsChecks->tzMin, $detectJs);
+    $detectJs = str_replace('{JSTZMAX}', $jsChecks->tzMax, $detectJs);
+    
+    // Combine both scripts
+    $jsCode = $processJs . "\n" . $detectJs;
 }
-else{
-    $jsCode= str_replace('{DOMAIN}', get_cloaker_path(), file_get_contents(__DIR__.'/process.js'));
-}
+else 
+    $jsCode = str_replace('{DOMAIN}', get_cloaker_path(), file_get_contents(__DIR__.'/process.js'));
 
 if (!DebugMethods::on()) {
     $hunter = new HunterObfuscator($jsCode);

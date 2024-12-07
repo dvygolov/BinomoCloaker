@@ -10,8 +10,8 @@ $dbCamp = $db->get_campaign_by_currentpath();
 if ($dbCamp === null)
     die("NO CAMPAIGN FOR THIS DOMAIN!");
 $reason = isset($_GET['reason']) ? $_GET['reason'] : 'js_checks';
-$db->add_white_click(Cloaker::get_click_params(), $reason, $dbCamp['id']);
+$added = $db->add_white_click(Cloaker::get_click_params(), $reason, $dbCamp['id']);
 if (DebugMethods::on()) {
-    echo $added ? "OK" : "Error";
+    echo ($added ? "console.log('Debug: White click logged.');" : "console.log('Debug: Error adding white click!');");
 }
 exit();

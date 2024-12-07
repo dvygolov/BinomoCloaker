@@ -958,7 +958,7 @@ class Db
 
     private function create_new_db(): bool
     {
-        $createTableSQL = get_file_content(__DIR__."/db.sql");
+        $createTableSQL = file_get_contents(__DIR__."/db.sql");
         $db = new SQLite3($this->dbPath, SQLITE3_OPEN_CREATE | SQLITE3_OPEN_READWRITE);
         $db->busyTimeout(5000);
         $result = $db->exec($createTableSQL);

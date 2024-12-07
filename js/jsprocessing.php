@@ -32,52 +32,27 @@ if ($dbCamp===null){
 
 $c = new Campaign($dbCamp['id'],$dbCamp['settings']);
 $cloaker = new Cloaker($c->filters);
-//Проверяем зашедшего пользователя
 $is_bad_click = $cloaker->is_bad_click();
 
-//Добавляем, по какому из js-событий пользователь прошёл сюда
-if (isset($_GET['reason']))
-    $cloaker->block_reason[] = $_GET['reason'];
-
 send_access_control_headers();
+header("Access-Control-Expose-Headers: YWBAction", false, 200);
 
 if ($is_bad_click) {
-    //это бот, который прошёл javascript-проверку
+    //somehow it passed our javascript tests!
     $db->add_white_click($cloaker->click_params, $cloaker->block_reason, $c->campaignId);
-    header("Access-Control-Expose-Headers: YWBAction", false, 200);
     header("YWBAction: none", true, 200);
     return http_response_code(200);
-} else { //Обычный юзверь
-    if ($c->black->jsconnectAction === 'redirect') { //если в настройках JS-подключения у нас редирект
-        $url = rtrim(get_cloaker_path(), '/');
-        $from = rtrim(strtok($_GET['uri'], '?'), '/');
-        //если у нас одинаковый адрес, откуда мы вызываем скрипт и наш собственный
-        //значит у нас просто включена JS-проверка и нам не нужно опять редиректить
-        if ($url !== $from) {
-            header("Access-Control-Expose-Headers: YWBAction", false, 200);
-            header("Access-Control-Expose-Headers: YWBLocation", false, 200);
-            header("YWBAction: redirect", true, 200);
-            header("YWBLocation: " . $url, true, 200);
-            return http_response_code(200);
-        }
+} else { //common user
+    $ca = black($cloaker->click_params);
+    if ($ca->action==='html'){
+        header("YWBAction: " . $c->black->jsconnectAction, true, 200);
+        echo $ca->value;
     }
-    //если в настройках JS-подключения у нас подмена или iframe
-    header("Access-Control-Expose-Headers: YWBAction", false, 200);
-    header("YWBAction: " . $c->black->jsconnectAction, true, 200);
-    black($cloaker->click_params);
+    else{
+        header("YWBAction: redirect", true, 200);
+        header("Access-Control-Expose-Headers: YWBLocation", false, 200);
+        header("YWBLocation: " . $ca->value, true, 200);
+    }
 
-    if (!headers_sent()) {
-        //если в настройках кло для блэка стоит редирект, то для js xhr запроса надо его модифицировать
-        $all_headers = implode(',', headers_list());
-        if (str_contains($all_headers, "Location")) {
-            header_remove("Location"); //удаляем редирект
-            $matches = [];
-            preg_match("/Location: ([^ ]+)/", $all_headers, $matches);
-            $redirect_url = $matches[1];
-            header("Access-Control-Expose-Headers: YWBLocation", false, 200);
-            header("YWBAction: redirect", true, 200);
-            header("YWBLocation: " . $redirect_url, true, 200);
-            return http_response_code(200);
-        }
-    }
+    return http_response_code(200);
 }
