@@ -59,7 +59,7 @@ function load_prelanding($url, $land_number): string
     $html = preg_replace('/(<a[^>]+)(target="_blank")/i', "\\1", $html);
 
     $cloaker = get_cloaker_path();
-    $querystr = $_SERVER['QUERY_STRING'];
+    $querystr = $_SERVER['QUERY_STRING']??'';
     //замена макроса {offer} на прокле на универсальную ссылку ленда landing.php
     $replacement = $cloaker . 'landing.php?l=' . $land_number ."&campId=".$c->campaignId. (!empty($querystr) ? '&' . $querystr : '');
 
