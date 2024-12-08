@@ -25,6 +25,23 @@ $dataset = $db->get_campaigns($timeRange[0],$timeRange[1],
         <div id="campaigns"></div>
     </div>
     <script>
+        document.getElementById("trafficBack").onclick = async () => {
+            let tbUrl = prompt("Enter trafficback url:","<?=$gs['trafficBackUrl']?>");
+            if (tbUrl!==false){
+                let res = await fetch("commoneditor.php?action=trafficback", {
+                    method: "POST",
+                    body: tbUrl,
+                });
+                if (!res['error']) {
+                    alert('TrafficBack url saved!');
+                    window.location.reload();
+                }
+                else
+                    alert('Error saving trafficback url:'+res['msg']);
+            }
+        };
+    </script>
+    <script>
         let tableData = <?= json_encode($dataset) ?>;
         let tableColumns = <?= get_campaigns_columns($gs['statistics']['table']) ?>;
         let table = new Tabulator('#campaigns', {
@@ -36,15 +53,12 @@ $dataset = $db->get_campaigns($timeRange[0],$timeRange[1],
             columnDefaults:{
                 tooltip:true,
             },
-            columnResized: function (column) {
-                saveColumnWidths();
-            },
             columnCalcs:"both"
         });
 
-        table.on("columnResized", function (column) {
+        table.on("columnResized", async function (column) {
             let updatedColumn = { field: column.getField(), width: column.getWidth() };
-            fetch("clmneditor.php?action=width", {
+            await fetch("commoneditor.php?action=width", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

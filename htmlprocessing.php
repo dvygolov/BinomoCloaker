@@ -76,6 +76,7 @@ function load_prelanding($url, $land_number): string
     return $html;
 }
 
+//TODO:Add Backfix
 //Подгрузка контента блэк ленда из другой папки
 function load_landing($url)
 {
