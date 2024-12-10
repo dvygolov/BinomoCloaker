@@ -2,8 +2,17 @@
 require_once __DIR__ . '/passwordcheck.php';
 require_once __DIR__ . '/../settings.php';
 require_once __DIR__ . '/tablecolumns.php';
-require_once __DIR__ . '/campinit.php';
-global $c, $startdate, $enddate;
+global $startdate, $enddate;
+
+if (isset($_GET['campId'])) {
+    require_once __DIR__ . '/campinit.php';
+    global $c;
+    $stats = $c->statistics;
+} else {
+    require_once __DIR__ .'../db/db.php';
+    $gs = $db->get_common_settings();
+    $stats = $gs['statistics'];
+}
 ?>
 
 <!doctype html>

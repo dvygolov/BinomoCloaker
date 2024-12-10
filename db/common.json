@@ -82,6 +82,60 @@
         "field": "roi",
         "width": -1
       }
+    ],
+    "trafficBack":[
+      {
+        "field": "time",
+        "width": -1
+      },
+      {
+        "field": "ip",
+        "width": -1
+      },
+      {
+        "field": "country",
+        "width": -1
+      },
+      {
+        "field": "lang",
+        "width": -1
+      },
+      {
+        "field": "os",
+        "width": -1
+      },
+      {
+        "field": "osver",
+        "width": -1
+      },
+      {
+        "field": "brand",
+        "width": -1
+      },
+      {
+        "field": "model",
+        "width": -1
+      },
+      {
+        "field": "isp",
+        "width": -1
+      },
+      {
+        "field": "client",
+        "width": -1
+      },
+      {
+        "field": "clientver",
+        "width": -1
+      },
+      {
+        "field": "ua",
+        "width": -1
+      },
+      {
+        "field": "params",
+        "width": -1
+      }
     ]
   },
   "trafficBackUrl": "https://google.com"

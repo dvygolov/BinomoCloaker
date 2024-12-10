@@ -53,6 +53,9 @@ function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
     $ets = $endDate->getTimestamp();
     $filter = $_GET['filter'] ?? '';
     switch ($filter) {
+        case 'traficback':
+            $dataset = $db->get_trafficback_clicks($sts, $ets);
+            break;
         case 'leads':
             $dataset = $db->get_leads($sts, $ets, $campId);
             break;
@@ -69,7 +72,7 @@ function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
     }
     
     $dJson = json_encode($dataset);
-    $tName = "blocked";
+    $tName = empty($filter) ? 'allowed' : $filter;
     $tColumns = get_clicks_columns($campId, $filter, $ss->timezone);
     $tableData = <<<EOF
         <div id="t$tName"></div>

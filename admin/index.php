@@ -1,4 +1,12 @@
 <?php
+require_once __DIR__ . '/../settings.php';
+if (isset($cloSettings['adminDomain']) && !empty($cloSettings['adminDomain'])) {
+    $currentDomain = $_SERVER['SERVER_NAME'] ?? '';
+    if ($currentDomain !== $cloSettings['adminDomain']) {
+        http_response_code(404);
+        die();
+    }
+}
 require_once __DIR__ . '/passwordcheck.php';
 require_once __DIR__ . '/../db/db.php';
 require_once __DIR__ . '/tablecolumns.php';
@@ -13,21 +21,20 @@ $dataset = $db->get_campaigns($timeRange[0],$timeRange[1],
 <html lang="en">
 
 <?php include "head.php" ?>
-
 <body>
     <?php include "header.php" ?>
     <div class="all-content-wrapper">
         <div class="buttons-block">
             <button id="newCampaign" title="Create new campaign" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> New</button>
             <button id="columnsSelect" title="Campaigns table view settings" class="btn btn-info" rel="modal:open"><i class="bi bi-layout-three-columns"></i></button>
-            <button id="trafficBack" title="Set url of trafficback" class="btn btn-info"><i class="bi bi-exclude"></i></button>
+            <button id="trafficBack" title="Trafficback settings" class="btn btn-info"><i class="bi bi-exclude"></i></button>
         </div>
         <div id="campaigns"></div>
     </div>
     <script>
         document.getElementById("trafficBack").onclick = async () => {
             let tbUrl = prompt("Enter trafficback url:","<?=$gs['trafficBackUrl']?>");
-            if (tbUrl!==false){
+            if (tbUrl!==null){
                 let res = await fetch("commoneditor.php?action=trafficback", {
                     method: "POST",
                     body: tbUrl,

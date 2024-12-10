@@ -4,6 +4,10 @@ $cloSettings =
 //password for the cloaker's admin page
 "adminPassword" => "12345qweasd",
 
+//if you add a domain here, then only users from this domain will be able to access the admin page
+//all others will get a 404
+"adminDomain" => "",
+
 //WARNING:if you are using nginx either change your website's config so that it prevents people from
 //downloading your database, or just rename the db file so security through obscurity will work! :-D
 //TODO: add an ability to quickly switch from SQLite to MySQL
@@ -17,7 +21,7 @@ $cloSettings =
 "thankyouFolder" => "thankyou",
 
 //if true the cloaker will:
-//- show any PHP error if any,
+//- show PHP errors if any,
 //- won't obfuscate any javascript code
 //- will add YWB headers to the response, where you'll be able to see, how long does it take to process requests
 "debug" => true
