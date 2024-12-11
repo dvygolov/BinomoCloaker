@@ -373,6 +373,8 @@ function get_stats_columns(array $columns, array $widths=null, string $tName=nul
     ];
 
     $tabulatorColumns = [];
+    
+    //if we have a groupby parameter, then we should add a group column with a specific name
     if (!is_null($tName) && !is_null($groupby) && count($groupby) > 0)
         $tabulatorColumns[] = ["title" => $tName, "field" => "group"];
 
@@ -794,8 +796,10 @@ function get_campaigns_columns(array $clmnWidths): string
         },
 JSON;
 
-    $statColumns = get_stats_columns(
-        array_column($clmnWidths,'field'), array_column($clmnWidths,'width'));
+
+    $names = array_column($clmnWidths,'field');
+    $widths = array_column($clmnWidths,'width');
+    $statColumns = get_stats_columns($names,$widths);
     
     $defaultClmns.=substr($statColumns,1);
     return $defaultClmns;

@@ -22,6 +22,46 @@ switch ($action) {
         }
         $db->set_common_settings($s);
         break;
+    case 'savecolumns':
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!isset($data['type']) || !isset($data['columns'])) {
+            return send_common_result("Error: missing type or columns data", true);
+        }
+        
+        $s = $db->get_common_settings();
+        
+        // Update columns based on type
+        switch ($data['type']) {
+            case 'blocked':
+            case 'allowed':
+            case 'trafficback':
+                // Create new table array with updated columns
+                $newTable = [];
+                foreach ($data['columns'] as $field) {
+                    $width = -1;
+                    // Preserve existing width if column exists
+                    foreach ($s['statistics']['table'] as $oldColumn) {
+                        if ($oldColumn['field'] === $field) {
+                            $width = $oldColumn['width'];
+                            break;
+                        }
+                    }
+                    $newTable[] = ['field' => $field, 'width' => $width];
+                }
+                $s['statistics']['table'] = $newTable;
+                break;
+            
+            case 'group':
+                $s['statistics']['groupBy'] = $data['columns'];
+                break;
+                
+            case 'statistics':
+                $s['statistics']['stats'] = $data['columns'];
+                break;
+        }
+        
+        $db->set_common_settings($s);
+        break;
     case 'trafficback':
         $tbUrl = file_get_contents('php://input');
         $s = $db->get_common_settings();

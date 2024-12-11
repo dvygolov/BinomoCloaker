@@ -1,8 +1,7 @@
 <?php
-class AvailbleColumns
+class AvailableColumns
 {
-  
-  public $blockedColumns = [
+  public static $blockedColumns = [
     "clicks",
     "ip",
     "country",
@@ -19,8 +18,8 @@ class AvailbleColumns
     "params",
     "reason"
   ];
-  
-  public $allowedColumns = [
+
+  public static $allowedColumns = [
     "clicks",
     "ip",
     "country",
@@ -43,8 +42,8 @@ class AvailbleColumns
     "cost",
     "payout"
   ];
-  
-  public $trafficbackColumns = [
+
+  public static $trafficbackColumns = [
     "clicks",
     "ip",
     "country",
@@ -60,8 +59,8 @@ class AvailbleColumns
     "ua",
     "params"
   ];
-  
-  public $groupByColumns = [
+
+  public static $groupbyColumns = [
     "date",
     "preland",
     "land",
@@ -71,7 +70,7 @@ class AvailbleColumns
     "os"
   ];
 
-  public $statsColumns = [
+  public static $statsColumns = [
     "clicks",
     "uniques",
     "uniques_ratio",
@@ -97,5 +96,10 @@ class AvailbleColumns
     "profit",
     "roi"
   ];
+
+  public static function get_columns_for_type($type)
+  {
+    $clmnsName = $type.'Columns';
+    return self::$$clmnsName;
+  }
 }
-?>

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/passwordcheck.php';
+require_once __DIR__ . '/securitycheck.php';
 require_once __DIR__ . '/../settings.php';
 require_once __DIR__ . '/tablecolumns.php';
 require_once __DIR__ . '/campinit.php';
