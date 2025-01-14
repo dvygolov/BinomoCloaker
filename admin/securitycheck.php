@@ -7,7 +7,11 @@ global $cloSettings;
 if (isset($cloSettings['adminDomain']) && !empty($cloSettings['adminDomain'])) {
     $currentDomain = $_SERVER['SERVER_NAME'] ?? '';
     if ($currentDomain !== $cloSettings['adminDomain']) {
-        http_response_code(404);
+        if ($cloSettings['debug'] === true) {
+            echo "Admin Domain ".$cloSettings['adminDomain']." is set, but your domain is $currentDomain. You are not allowed to access this page!";
+        } else {
+            http_response_code(404);
+        }
         die();
     }
 }

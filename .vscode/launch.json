@@ -11,12 +11,14 @@
             "port": 9003,
             "pathMappings": {
                 "/": "${workspaceRoot}"
-            }
+            },
+            "runtimeExecutable": "C:\\Program Files\\IIS Express\\PHP\\v8.4\\php.exe"
         },
         {
             "name": "Launch Built-in web server",
             "type": "php",
             "request": "launch",
+            "runtimeExecutable": "C:\\Program Files\\IIS Express\\PHP\\v8.4\\php.exe",
             "runtimeArgs": [
                 "-dxdebug.mode=debug",
                 "-dxdebug.client_host=127.0.0.1",

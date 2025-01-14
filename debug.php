@@ -33,14 +33,24 @@ class DebugMethods
     public static function check_php():void
     {
         $ver=phpversion();
+        if (str_ends_with($ver, '-dev'))
+            $ver = str_replace('-dev', '', $ver);
+
         if (version_compare($ver, '8.2.0', '<'))
-            die("PHP version should be 8.2 or higher! Change your PHP version and return.");
+            die("PHP version should be 8.2.0 or higher! Change your PHP version and return.");
     }
     
     public static function check_sqlite():void
     {
         if (!extension_loaded('sqlite3')) 
             die("SQLite extension NOT FOUND! Use another hosting or enable SQLite.");
+    }
+
+    public static function check_curl():void
+    {
+        $exts = get_loaded_extensions();
+        if (!extension_loaded('curl')) 
+            die("cURL extension NOT FOUND! Use another hosting or enable cURL.");
     }
     
     public static function check_dirs():void
@@ -54,5 +64,6 @@ if (DebugMethods::on()){
 }
 
 DebugMethods::check_php();
+DebugMethods::check_curl();
 DebugMethods::check_sqlite();
 DebugMethods::check_dirs();

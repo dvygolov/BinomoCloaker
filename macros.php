@@ -119,12 +119,12 @@ class MacrosProcessor
         }
         if (str_starts_with($macro, "hash:")) {
             $toHash = substr($macro, 5);
-            $toHashValue = $this->get_macro_value($toHash);
+            $toHashValue = $this->get_macro_value($toHash, $is_s2s);
             if ($toHashValue === false) {
                 add_log("macros", "Couldn't find  macro $toHash value to hash. Subid:{$this->subid}");
                 return false;
             }
-            $hashed = crypt($toHashValue);
+            $hashed = md5($toHashValue);
             add_log("macros", "Hashing $toHashValue to $hashed");
             return $hashed;
         }
