@@ -3,16 +3,30 @@ require_once __DIR__ . '/../logging.php';
 require_once __DIR__ . '/../settings.php';
 require_once __DIR__ . '/../cookies.php';
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    header('Content-Type: application/json');
+    $result = array('success' => check_password(false));
+    echo json_encode($result);
+    exit();
+}
+
 function check_password($die = true): bool
 {
     global $cloSettings;
     $pwd = $cloSettings['adminPassword'];
-    get_session();
     $debug = $cloSettings['debug'];
+    get_session();
 
     if (!empty($_SESSION['loggedin']) && $_SESSION['loggedin'] === true){
-        if ($debug) header("YWBLogin: Already logged in!");
+        if ($debug) header("YWBLoginSession: Already logged in!");
         return true;
+    }else{
+        if ($debug) {
+            if (empty($_SESSION["loggedin"]))
+                header("YWBLoginSession: Loggedin is empty!");
+            else if ($_SESSION["loggedin"]!==true)
+                header("YWBLoginSession: Loggedin is not true!");
+        }
     }
 
     if (empty($pwd)){

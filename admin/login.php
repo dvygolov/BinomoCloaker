@@ -1,12 +1,5 @@
 ﻿<?php
 require_once __DIR__."/password.php";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    header('Content-Type: application/json');
-    $result = array('success' => check_password(false));
-    echo json_encode($result);
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -33,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 formData.append('password', password);
                 
                 try {
-                    const response = await fetch('login.php', {
+                    const response = await fetch('password.php', {
                         method: 'POST',
                         body: formData
                     });
@@ -43,16 +36,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         window.location.href = 'index.php';
                     } else {
                         alert('Wrong password!');
-                        // Re-enable button and hide loading state
-                        submitButton.disabled = false;
-                        submitButton.classList.remove('loading');
                     }
                 } catch (error) {
                     alert('Error occurred during login');
-                    // Re-enable button and hide loading state
-                    submitButton.disabled = false;
-                    submitButton.classList.remove('loading');
                 }
+                submitButton.disabled = false;
+                submitButton.classList.remove('loading');
             });
         });
     </script>
