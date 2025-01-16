@@ -1,5 +1,12 @@
-﻿<?php
+<?php
 require_once __DIR__."/password.php";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $result = array('success' => check_password(false));
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +33,7 @@ require_once __DIR__."/password.php";
                 formData.append('password', password);
                 
                 try {
-                    const response = await fetch('password.php', {
+                    const response = await fetch('login.php', {
                         method: 'POST',
                         body: formData
                     });

@@ -100,7 +100,7 @@ EOF;
     return $tableData;
 }
 
-function get_stats_columns(array $columns, array $widths=null, string $tName=null, array $groupby=null): string
+function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=null, ?array $groupby=null): string
 {
     $columnSettings = [
         'preland' => [

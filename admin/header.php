@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/dates.php';
+require_once __DIR__.'/../debug.php';
 
 function get_bases_version(): string
 {
@@ -23,6 +24,9 @@ function get_bases_version(): string
                             <div class="geo-version">
                                 GeoBases: <a href="#" id="updateBases" title="Update bases"><?= get_bases_version() ?></a>
                                 <img style="width:30px; height:30px;display:none;" src="img/loading.apng" id="loadingAnimation" />
+                                <?php if (DebugMethods::on()): ?>
+                                <span style="color: red; margin-left: 10px;">Debug Mode</span>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

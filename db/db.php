@@ -674,26 +674,33 @@ class Db
     {
         $query = "INSERT INTO campaigns (name, settings) VALUES (:name, :settings)";
 
-        $db = $this->open_db();
-        $stmt = $db->prepare($query);
+        $db = null;
+        try {
+            $db = $this->open_db();
+            $db->exec('BEGIN IMMEDIATE');
+            $stmt = $db->prepare($query);
 
-        $settingsJson = file_get_contents(__DIR__ . '/default.json');
+            $settingsJson = file_get_contents(__DIR__ . '/default.json');
 
-        $stmt->bindValue(':name', $name, SQLITE3_TEXT);
-        $stmt->bindValue(':settings', $settingsJson, SQLITE3_TEXT);
+            $stmt->bindValue(':name', $name, SQLITE3_TEXT);
+            $stmt->bindValue(':settings', $settingsJson, SQLITE3_TEXT);
 
-        $result = $stmt->execute();
+            $result = $stmt->execute();
 
-        if ($result === false) {
-            $errorMessage = $db->lastErrorMsg();
-            add_log("errors", "Couldn't add campaign $name: $errorMessage");
-            $db->close();
+            if ($result === false) 
+                throw new Exception($db->lastErrorMsg());
+            
+            $db->exec('COMMIT');
+            $newCampaignId = $db->lastInsertRowID();
+            add_log("trace", "Added new campaign $name: " . $newCampaignId);
+            return $newCampaignId;
+        } catch (Exception $e) {
+            if (isset($db)) $db->exec('ROLLBACK');
+            add_log("errors", "Couldn't add campaign $name: " . $e->getMessage());
             return false;
+        } finally {
+            if (isset($db)) $db->close();
         }
-
-        $newCampaignId = $db->lastInsertRowID();
-        $db->close();
-        return $newCampaignId;
     }
 
     public function clone_campaign($id)

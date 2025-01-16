@@ -1,7 +1,10 @@
 <?php
 require_once __DIR__ . '/bases/ipcountry.php';
+require_once __DIR__ . '/debug.php';
 function add_log($subdir, $msg, $logIp = false)
 {
+    if ($subdir ==='trace' && !DebugMethods::on())
+        return;
     $dir = __DIR__ . "/logs/$subdir";
     if (!file_exists($dir)) 
         mkdir($dir, 0777, true);

@@ -3,6 +3,7 @@ require_once __DIR__ . '/password.php';
 require_once __DIR__ . '/../settings.php';
 require_once __DIR__ . '/../db/db.php';
 require_once __DIR__ . '/../campaign.php';
+require_once __DIR__ . '/../logging.php';
 
 $passOk = check_password(false);
 if (!$passOk)
@@ -11,7 +12,7 @@ if (!$passOk)
 $action = $_REQUEST['action'];
 $name = $_REQUEST['name']??'';
 $campId = $_REQUEST['campId']??-1;
-
+add_log('trace','CampEditor action: '.$action.', name: '.$name.', campId: '.$campId);
 switch ($action) {
     case 'add':
         $campId = $db->add_campaign($name);
