@@ -38,13 +38,8 @@ switch ($action) {
         $s = $db->get_campaign_settings($campId);
         foreach($_POST as $key=>$value){
             if ($key==="filters"){ //special case cause we store filters in json format
-                if (is_null($value)){
-                    $s['filters'] = [];
-                }
-                else{
-                    $arrFilters=json_decode($value,true);
-                    $s['filters'] = $arrFilters;
-                }
+                $arrFilters=json_decode($value,true);
+                $s['filters'] = $arrFilters;
             }
             else
                 setArrayValue($s,$key,$value);
