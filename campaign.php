@@ -22,7 +22,7 @@ class Campaign implements JsonSerializable
         $this->campaignId = $campId;
 
         $this->domains = $s['domains'];
-        $this->filters = $s['filters'];
+        $this->filters = $s['filters']??[];
         $this->saveUserFlow = $s['saveuserflow'];
         $this->apiKey = $s['apikey'];
 

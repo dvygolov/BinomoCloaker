@@ -1178,7 +1178,11 @@ global $c;
 
         $('#filtersbuilder').queryBuilder({
             filters: tdsFilters,
-            rules: rules_basic
+            <?php
+            if (!empty($c->filters)) {
+                echo 'rules: rules_basic';
+            }
+            ?>
         });
 
     </script>

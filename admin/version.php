@@ -1,5 +1,5 @@
 <div id="version">
- Ver. 28.11.24
+ Ver. <?= file_get_contents(__DIR__.'/version.txt') ?>
  <br />
  PHP: <?= phpversion() ?>
 <?php
