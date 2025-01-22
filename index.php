@@ -10,12 +10,15 @@ require_once __DIR__ . '/redirect.php';
 global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
 if ($dbCamp===null){
-    $db->add_trafficback_click(Cloaker::get_click_params());
+    $clickParams = Cloaker::get_click_params();
+    $db->add_trafficback_click($clickParams);
     $cs = $db->get_common_settings();
     if (empty($cs['trafficBackUrl']))
         die("NO CAMPAIGN FOR THIS DOMAIN AND TRAFFICBACK NOT SET!");
     else{
-        redirect($cs['trafficBackUrl'],302,true);
+        $mp = new MacrosProcessor(null,$clickParams);
+        $url = $mp->replace_url_macros($cs['trafficBackUrl']);
+        redirect($url,302);
         exit();
     }
 }

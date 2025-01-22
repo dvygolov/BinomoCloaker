@@ -6,10 +6,12 @@ require_once __DIR__ . '/bases/ipcountry.php';
 
 class MacrosProcessor
 {
-    private string $subid;
-    public function __construct($subid = null)
+    private ?string $subid;
+    private ?array $clickParams;
+    public function __construct(?string $subid = null, ?array $clickParams = null)
     {
         $this->subid = $subid ?? get_cookie('subid');
+        $this->clickParams = $clickParams;
     }
 
     public function replace_html_macros($html): string
@@ -72,11 +74,15 @@ class MacrosProcessor
             return $cookie;
         }
 
-        $clickParams = ['ip', 'country', 'lang', 'os', 'osver', 'client', 'clientver', 'device', 'brand', 'model', 'isp', 'ua', 'preland', 'land', 'status'];
-        if (in_array($macro, $clickParams)) {
+        $clickParamNames = ['ip', 'country', 'lang', 'os', 'osver', 'client', 'clientver', 'device', 'brand', 'model', 'isp', 'ua', 'preland', 'land', 'status'];
+        if (in_array($macro, $clickParamNames)) {
             if (empty($this->subid)) {
-                add_log("macros", "Couldn't get macros $macro value from DB. Subid not set!");
-                return false;
+                if (empty($this->clickParams)){
+                    add_log("macros", "Couldn't get macros $macro value from DB. Subid not set!");
+                    return false;
+                }
+                else 
+                    return $this->clickParams[$macro];
             } else {
                 $clicks = $db->get_clicks_by_subid($this->subid, true);
                 return $clicks[0][$macro];
