@@ -28,6 +28,8 @@ $dataset = $db->get_campaigns(
                     class="bi bi-layout-three-columns"></i></button>
             <button id="trafficBack" title="Trafficback settings" class="btn btn-info"><i
                     class="bi bi-exclude"></i></button>
+            <button id="downloadCsv" title="Download table as CSV" class="btn btn-success" style="float: right;"><i
+                    class="bi bi-download"></i></button>
         </div>
         <div id="campaigns"></div>
     </div>
@@ -46,6 +48,10 @@ $dataset = $db->get_campaigns(
             }
             else
                 alert('Error saving trafficback url:' + res['msg']);
+        };
+
+        document.getElementById("downloadCsv").onclick = () => {
+            table.download("csv", "campaigns_data.csv");
         };
 
         document.getElementById("columnsSelect").onclick = async () => {

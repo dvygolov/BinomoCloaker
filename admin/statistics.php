@@ -3,9 +3,11 @@ require_once __DIR__ . '/securitycheck.php';
 require_once __DIR__ . '/../settings.php';
 require_once __DIR__ . '/tablecolumns.php';
 require_once __DIR__ . '/campinit.php';
+require_once __DIR__ . '/dates.php';
 
-global $c, $startdate, $enddate;
-
+global $c;
+$timeRange = Dates::get_time_range($c->statistics->timezone);
+$statsHtml = show_stats($timeRange[0],$timeRange[1],$c->statistics);
 ?>
 <!doctype html>
 <html lang="en">
@@ -14,7 +16,7 @@ global $c, $startdate, $enddate;
 <body>
     <?php include "header.php" ?>
     <div class="all-content-wrapper">
-        <?=show_stats($startdate,$enddate,$c->statistics);?>
+        <?=$statsHtml?>
     </div>
 </body>
 

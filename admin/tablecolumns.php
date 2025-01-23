@@ -9,13 +9,18 @@ function show_stats($startDate, $endDate, StatisticsSettings $ss):string
     foreach ($ss->tables as $tSettings) {
         $dataset = $db->get_statistics(
             $tSettings->columns, $tSettings->groupby, $campId,
-            $startDate->getTimestamp(),$endDate->getTimestamp(), $ss->timezone);
+            $startDate,$endDate, $ss->timezone);
         $dJson = json_encode($dataset);
         $tName = $tSettings->name;
         $tColumns = get_stats_columns(
             $tSettings->columns, null, $tName, $tSettings->groupby);
         $tableData.= <<<EOF
-            <div id="t$tName"></div>
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <button id="download{$tName}" title="Download table data as CSV" class="btn btn-success">
+                    <i class="bi bi-download"></i>
+                </button>
+            </div>
+            <div id="t$tName" style="clear: both;"></div>
             <script>
                 let t{$tName}Data = $dJson;
                 let t{$tName}Columns = $tColumns;
@@ -37,6 +42,10 @@ function show_stats($startDate, $endDate, StatisticsSettings $ss):string
                         tooltip:true,
                     }
                 });
+
+                document.getElementById("download{$tName}").onclick = () => {
+                    t{$tName}Table.download("csv", "{$tName}_data.csv");
+                };
             </script>
             <br/>
             <br/>
@@ -49,25 +58,23 @@ function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
 {
     global $db, $campId;
 
-    $sts = $startDate->getTimestamp();
-    $ets = $endDate->getTimestamp();
     $filter = $_GET['filter'] ?? '';
     switch ($filter) {
         case 'traficback':
-            $dataset = $db->get_trafficback_clicks($sts, $ets);
+            $dataset = $db->get_trafficback_clicks($startDate, $endDate);
             break;
         case 'leads':
-            $dataset = $db->get_leads($sts, $ets, $campId);
+            $dataset = $db->get_leads($startDate, $endDate, $campId);
             break;
         case 'blocked':
-            $dataset = $db->get_white_clicks($sts, $ets, $campId);
+            $dataset = $db->get_white_clicks($startDate, $endDate, $campId);
             break;
         case 'single':
             $clickId = $_GET['subid'] ?? '';
             $dataset = $db->get_clicks_by_subid($clickId);
             break;
         default:
-            $dataset = $db->get_black_clicks($sts, $ets, $campId);
+            $dataset = $db->get_black_clicks($startDate, $endDate, $campId);
             break;
     }
     
@@ -75,27 +82,36 @@ function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
     $tName = empty($filter) ? 'allowed' : $filter;
     $tColumns = get_clicks_columns($campId, $filter, $ss->timezone);
     $tableData = <<<EOF
-        <div id="t$tName"></div>
-        <script>
-            let t{$tName}Data = $dJson;
-            let t{$tName}Columns = $tColumns;
-            let t{$tName}Table = new Tabulator('#t{$tName}', {
-                layout: "fitColumns",
-                columns: t{$tName}Columns,
-                columnCalcs: "both",
-                pagination: "local",
-                paginationSize: 500,
-                paginationSizeSelector: [25, 50, 100, 200, 500, 1000, 2000, 5000],
-                paginationCounter: "rows",
-                height: "100%",
-                data: t{$tName}Data,
-                columnDefaults:{
-                    tooltip:true,
-                }
-            });
-        </script>
-        <br/>
-        <br/>
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <button id="download{$tName}" title="Download table as CSV" class="btn btn-success">
+                    <i class="bi bi-download"></i> Download CSV
+                </button>
+            </div>
+            <div id="t$tName" style="clear: both;"></div>
+            <script>
+                let t{$tName}Data = $dJson;
+                let t{$tName}Columns = $tColumns;
+                let t{$tName}Table = new Tabulator('#t{$tName}', {
+                    layout: "fitColumns",
+                    columns: t{$tName}Columns,
+                    columnCalcs: "both",
+                    pagination: "local",
+                    paginationSize: 500,
+                    paginationSizeSelector: [25, 50, 100, 200, 500, 1000, 2000, 5000],
+                    paginationCounter: "rows",
+                    height: "100%",
+                    data: t{$tName}Data,
+                    columnDefaults:{
+                        tooltip:true,
+                    }
+                });
+
+                document.getElementById("download{$tName}").onclick = () => {
+                    t{$tName}Table.download("csv", "{$tName}_data.csv");
+                };
+            </script>
+            <br/>
+            <br/>
 EOF;
     return $tableData;
 }
