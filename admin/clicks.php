@@ -1,20 +1,24 @@
 <?php
-require_once __DIR__ . '/passwordcheck.php';
+require_once __DIR__ . '/securitycheck.php';
 require_once __DIR__ . '/../settings.php';
 require_once __DIR__ . '/tablecolumns.php';
+require_once __DIR__ . '/dates.php';
 
-global $startdate, $enddate;
 
 if (isset($_GET['campId'])) {
     require_once __DIR__ . '/campinit.php';
     global $c;
     $stats = $c->statistics;
+    $tz = $stats->timezone;
 
 } else {
     require_once __DIR__ .'../db/db.php';
     $gs = $db->get_common_settings();
     $stats = $gs['statistics'];
+    $tz = $stats['timezone'];
 }
+
+$timeRange = Dates::get_time_range($tz);
 ?>
 
 
@@ -26,7 +30,7 @@ if (isset($_GET['campId'])) {
     <?php include "header.php" ?>
     <div class="all-content-wrapper">
         <div id="clicks"></div>
-        <?=show_clicks($startdate, $enddate, $stats);?>
+        <?=show_clicks($timeRange[0], $timeRange[1], $stats);?>
     </div>
 </body>
 </html>

@@ -82,9 +82,9 @@ function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
     $tName = empty($filter) ? 'allowed' : $filter;
     $tColumns = get_clicks_columns($campId, $filter, $ss->timezone);
     $tableData = <<<EOF
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                <button id="download{$tName}" title="Download table as CSV" class="btn btn-success">
-                    <i class="bi bi-download"></i> Download CSV
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <button id="download{$tName}" title="Download table data as CSV" class="btn btn-success">
+                    <i class="bi bi-download"></i>
                 </button>
             </div>
             <div id="t$tName" style="clear: both;"></div>
