@@ -13,12 +13,12 @@ global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
 if ($dbCamp===null){
     $cs = $db->get_common_settings();
-    $c = new Cloaker();
-    $db->add_trafficback_click($c->click_params);
+    $cp = Cloaker::get_click_params();
+    $db->add_trafficback_click($cp);
     if (empty($cs['trafficBackUrl']))
         die("NO CAMPAIGN FOR THIS DOMAIN AND TRAFFICBACK NOT SET!");
     else{
-        $mp = new MacrosProcessor();
+        $mp = new MacrosProcessor(null,$cp);
         $url = urldecode($cs['trafficBackUrl']);
         $url = $mp->replace_url_macros($url);
         header("Access-Control-Expose-Headers: YWBAction", false, 200);

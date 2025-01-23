@@ -22,11 +22,14 @@ $dbCamp = $db->get_campaign_by_currentpath();
 if ($dbCamp===null){
     //we couldn't find a campaign for this domain, so we send back js code to redirect to trafficback if any
     $cs = $db->get_common_settings();
+    $cp = Cloaker::get_click_params();
     $db->add_trafficback_click(Cloaker::get_click_params());
     if (empty($cs['trafficBackUrl']))
         die("NO CAMPAIGN FOR THIS DOMAIN AND TRAFFICBACK NOT SET!");
     else{
-        jsredirect($cs['trafficBackUrl'],false,true);
+        $mp = new MacrosProcessor(null,$cp);
+        $url = urldecode($cs['trafficBackUrl']);
+        jsredirect($cs['trafficBackUrl'],false);
         exit();
     }
 }
