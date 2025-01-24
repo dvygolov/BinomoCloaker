@@ -60,16 +60,35 @@ function load_prelanding($url, $land_number): string
 
     $cloaker = get_cloaker_path();
     $querystr = $_SERVER['QUERY_STRING']??'';
-    //замена макроса {offer} на прокле на универсальную ссылку ленда landing.php
-    $replacement = $cloaker . 'landing.php?l=' . $land_number ."&campId=".$c->campaignId. (!empty($querystr) ? '&' . $querystr : '');
+    
+    // Function to generate landing URL with specific landing number
+    $getLandingUrl = function($landNum) use ($cloaker, $c, $querystr) {
+        return $cloaker . 'landing.php?l=' . $landNum . "&campId=" . $c->campaignId . (!empty($querystr) ? '&' . $querystr : '');
+    };
+
+    // Generate base replacement for {offer}
+    $replacement = $getLandingUrl($land_number);
 
     //если мы будем подменять преленд при переходе на ленд, то ленд надо открывать в новом окне
     if ($c->scripts->replacePrelanding) {
-        $replacement = $replacement . '" target="_blank"';
+        $replacement .= '" target="_blank"';
         $url = $mp->replace_url_macros($c->scripts->replacePrelandingAddress); //заменяем макросы
         $html = insert_file_content($html, 'replaceprelanding.js', '</body>', true, true, '{REDIRECT}', $url);
     }
+
+    // replace the default {offer} macro
     $html = preg_replace('/\{offer\}/', $replacement, $html);
+    
+    // replace all numbered offers {offer:N} with corresponding landing numbers (N-1)
+    $html = preg_replace_callback('/\{offer:(\d+)\}/', function($matches) use ($getLandingUrl, $c) {
+        $landNum = intval($matches[1]) - 1; // Convert offer number to 0-based landing number
+        $replacement = $getLandingUrl($landNum);
+        if ($c->scripts->replacePrelanding) {
+            $replacement .= '" target="_blank"';
+        }
+        return $replacement;
+    }, $html);
+
 
     $html = add_images_lazy_load($html);
 
