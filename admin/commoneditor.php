@@ -24,41 +24,12 @@ switch ($action) {
         break;
     case 'savecolumns':
         $data = json_decode(file_get_contents('php://input'), true);
-        if (!isset($data['type']) || !isset($data['columns'])) {
-            return send_common_result("Error: missing type or columns data", true);
+        if (!isset($data['columns'])) {
+            return send_common_result("Error: missing columns data", true);
         }
         
         $s = $db->get_common_settings();
-        
-        // Update columns based on type
-        switch ($data['type']) {
-            case 'blocked':
-            case 'allowed':
-            case 'trafficback':
-                // Create new table array with updated columns
-                $newTable = [];
-                foreach ($data['columns'] as $field) {
-                    $width = -1;
-                    // Preserve existing width if column exists
-                    foreach ($s['statistics']['table'] as $oldColumn) {
-                        if ($oldColumn['field'] === $field) {
-                            $width = $oldColumn['width'];
-                            break;
-                        }
-                    }
-                    $newTable[] = ['field' => $field, 'width' => $width];
-                }
-                $s['statistics']['table'] = $newTable;
-                break;
-            
-            case 'group':
-                $s['statistics']['groupBy'] = $data['columns'];
-                break;
-                
-            case 'statistics':
-                $s['statistics']['stats'] = $data['columns'];
-                break;
-        }
+        $s['statistics']['table'] = $data['columns'];
         
         $db->set_common_settings($s);
         break;

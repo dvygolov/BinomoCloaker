@@ -12,7 +12,7 @@ if (isset($_GET['campId'])) {
     $tz = $stats->timezone;
 
 } else {
-    require_once __DIR__ .'../db/db.php';
+    require_once __DIR__ .'/../db/db.php';
     $gs = $db->get_common_settings();
     $stats = $gs['statistics'];
     $tz = $stats['timezone'];

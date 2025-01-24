@@ -648,6 +648,104 @@ JSON;
             ]
 JSON;
             break;
+        case 'traficback':
+            $columns = <<<JSON
+            [
+                {
+                    "title": "Time",
+                    "field": "time",
+                    "formatter": "datetime",
+                    "formatterParams": {
+                        "inputFormat": "unix",
+                        "outputFormat": "yyyy-MM-dd HH:mm:ss",
+                        "timezone": "$timezone"
+                    },
+                    "sorter": "datetime",
+                    "sorterParams": {
+                        "format": "unix"
+                    }
+                },
+                {
+                    "title": "IP",
+                    "field": "ip",
+                    "headerFilter": "input",
+                    "width": "120"
+                },
+                {
+                    "title": "Country",
+                    "field": "country",
+                    "headerFilter": "input",
+                    "width": "80"
+                },
+                {
+                    "title": "Lang",
+                    "field": "lang",
+                    "headerFilter": "input",
+                    "width": "50"
+                },
+                {
+                    "title": "ISP",
+                    "field": "isp",
+                    "headerFilter": "input"
+                },
+                {
+                    "title": "OS",
+                    "field": "os",
+                    "headerFilter": "input",
+                    "width": "100"
+                },
+                {
+                    "title": "OSVer",
+                    "field": "osver",
+                    "headerFilter": "input",
+                    "width": "100"
+                },
+                {
+                    "title": "UA",
+                    "field": "ua",
+                    "headerFilter": "input",
+                    "formatter": "textarea",
+                    "width":"200"
+                },
+                {
+                    "title": "Subs",
+                    "field": "params",
+                    "headerFilter": "input",
+                    "headerFilterFunc": function(headerValue, rowValue, rowData, filterParams){
+                        if (rowValue.length===0) return false;
+                        return JSON.stringify(rowValue).includes(headerValue);
+                    },
+                    "headerSort":false,
+                    "tooltip": function(e, cell, onRendered){
+                        var data = cell.getValue();
+
+                        var keys = Object.keys(data).sort();
+                        var formattedData = "";
+
+                        keys.forEach(function(key) {
+                            if (data.hasOwnProperty(key)) {
+                                formattedData += key + "=" + data[key] + "<br>";
+                            }
+                        });
+                        return formattedData;
+                    },
+                    "formatter": function(cell, formatterParams, onRendered) {
+                        var data = cell.getValue();
+
+                        var keys = Object.keys(data).sort();
+                        var formattedData = "";
+
+                        keys.forEach(function(key) {
+                            if (data.hasOwnProperty(key)) {
+                                formattedData += key + "=" + data[key] + "<br>";
+                            }
+                        });
+                        return formattedData;
+                    }
+                }
+            ]
+JSON;
+            break;
         default:
             $columns = <<<JSON
             [

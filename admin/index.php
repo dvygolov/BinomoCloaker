@@ -26,8 +26,10 @@ $dataset = $db->get_campaigns(
                     class="bi bi-plus-circle-fill"></i> New</button>
             <button id="columnsSelect" title="Campaigns table view settings" class="btn btn-info"><i
                     class="bi bi-layout-three-columns"></i></button>
-            <button id="trafficBack" title="Trafficback settings" class="btn btn-info"><i
+            <button id="trafficBack" title="Trafficback url" class="btn btn-info"><i
                     class="bi bi-exclude"></i></button>
+            <button id="trafficBackStats" title="Trafficback statistics" class="btn btn-info"><i
+                    class="bi bi-graph-up"></i></button>
             <button id="downloadCsv" title="Download table as CSV" class="btn btn-success" style="float: right;"><i
                     class="bi bi-download"></i></button>
         </div>
@@ -50,15 +52,19 @@ $dataset = $db->get_campaigns(
                 alert('Error saving trafficback url:' + res['msg']);
         };
 
+        document.getElementById("trafficBackStats").onclick = () => {
+            window.location.href = "clicks.php?filter=trafficback";
+        };
+
         document.getElementById("downloadCsv").onclick = () => {
             table.download("csv", "campaigns_data.csv");
         };
 
         document.getElementById("columnsSelect").onclick = async () => {
             $('#columnModal').modal({
-  fadeDuration: 250,
-  fadeDelay: 0.80
-});
+                fadeDuration: 250,
+                fadeDelay: 0.80
+            });
         }
 
         
@@ -89,10 +95,7 @@ $dataset = $db->get_campaigns(
             $('#columnsList .sortable-item').each(function () {
                 const $checkbox = $(this).find('input[type="checkbox"]');
                 if ($checkbox.is(':checked')) {
-                    selectedColumns.push({
-                        field: $checkbox.val(),
-                        width: -1 // Default width
-                    });
+                    selectedColumns.push($checkbox.val());
                 }
             });
             return selectedColumns;
@@ -109,7 +112,6 @@ $dataset = $db->get_campaigns(
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    type: 'stats',
                     columns: selectedColumns
                 })
             });
