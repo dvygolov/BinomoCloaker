@@ -103,3 +103,54 @@ class AvailableColumns
     return self::$$clmnsName;
   }
 }
+
+class TableColumn{
+  public string $title;
+  public string $field;
+  public int $width;
+  public string $viewModel;
+
+  public function __construct($title, $field, $width, $viewModel) {
+    $this->title = $title;
+    $this->field = $field;
+    $this->width = $width;
+    $this->viewModel = $viewModel;
+  }
+
+  public function ToDbJson(): string {
+    return json_encode([
+      "field" => $this->field,
+      "width" => $this->width
+    ]);
+  }
+  
+  public function ToTabulatorJson(): string {
+    $commonPart = [
+      "title" => $this->title,
+      "field" => $this->field,
+      "width" => $this->width,
+    ];
+    $tabulatorPart = json_decode("{$this->viewModel}");
+    return json_encode(array_merge($commonPart, $tabulatorPart));
+  }
+}
+
+public static class TableColumns{
+  public static array $clmns = [
+    "subid"=>new TableColumn("Subid", "subid", 100, <<<JSON
+                {
+                    "formatter": "link",
+                    "formatterParams": {
+                        "urlPrefix": "clicks.php?campId=$campId&filter=single&subid="
+                    }
+                }
+JSON)
+"),
+
+  ];
+}
+
+class StatsTable{
+  public array $tableColumns;
+
+}

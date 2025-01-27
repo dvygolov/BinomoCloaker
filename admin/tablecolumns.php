@@ -121,11 +121,13 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
     $columnSettings = [
         'preland' => [
             "title" => "Preland",
+            "headerTooltip" => "Chosen prelanding",
             "field" => "preland",
             "headerFilter" => "input",
         ],
         'land' => [
             "title" => "Land",
+            "headerTooltip" => "Chosen landing",
             "field" => "land",
             "headerFilter" => "input",
         ],
@@ -137,12 +139,14 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'lang' => [
             "title" => "Lang",
+            "headerTooltip" => "Browser language",
             "field" => "lang",
             "headerFilter" => "input",
             "width" => "50",
         ],
         'isp' => [
             "title" => "ISP",
+            "headerTooltip" => "Internet Service Provider",
             "field" => "isp",
             "headerFilter" => "input",
         ],
@@ -157,24 +161,28 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'os' => [
             "title" => "OS",
+            "headerTooltip" => "Operating System",
             "field" => "os",
             "headerFilter" => "input",
             "width" => "100",
         ],
         'clicks' => [
             "title" => "Clicks",
+            "headerTooltip" => "Number of visitors",
             "field" => "clicks",
             "width"=>"90",
             "bottomCalc"=>"sum"
         ],
         'uniques' => [
             "title" => "Uniques",
+            "headerTooltip" => "Number of unique visitors",
             "field" => "uniques",
             "width"=>"90",
             "bottomCalc"=>"sum"
         ],
         'uniques_ratio' => [
             "title" => "U/C",
+            "headerTooltip" => "Unique visitors / visitors",
             "field" => "uniques_ratio",
             "width"=>"90",
             "formatter"=> "money",
@@ -189,42 +197,49 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'conversion' => [
             "title" => "CV",
+            "headerTooltip" => "Conversions",
             "field" => "conversion",
             "width" => "60",
             "bottomCalc"=>"sum"
         ],
         'purchase' => [
             "title" => "P",
+            "headerTooltip" => "Purchases",
             "field" => "purchase",
             "width" => "50",
             "bottomCalc"=>"sum"
         ],
         'hold' => [
             "title" => "H",
+            "headerTooltip" => "Holds",
             "field" => "hold",
             "width" => "50",
             "bottomCalc"=>"sum"
         ],
         'reject' => [
             "title" => "R",
+            "headerTooltip" => "Rejects",
             "field" => "reject",
             "width" => "50",
             "bottomCalc"=>"sum"
         ],
         'trash' => [
             "title" => "T",
+            "headerTooltip" => "Trashes",
             "field" => "trash",
             "width" => "50",
             "bottomCalc"=>"sum"
         ],
         'lpclicks' => [
             "title" => "LPClicks",
+            "headerTooltip" => "Landing page visitors",
             "field" => "lpclicks",
             "width" => "70",
             "bottomCalc"=>"sum"
         ],
         'lpctr' => [
             "title" => "LPCTR",
+            "headerTooltip" => "Landing page visitors percentage",
             "field" => "lpctr",
             "width"=>"90",
             "formatter"=> "money",
@@ -239,6 +254,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'cra' => [
             "title" => "CRa",
+            "headerTooltip" => "Total conversion rate",
             "field" => "cra",
             "width"=>"90",
             "formatter"=> "money",
@@ -253,6 +269,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'crs' => [
             "title" => "CRs",
+            "headerTooltip" => "Conversion into Sales rate",
             "field" => "crs",
             "width"=>"90",
             "formatter"=> "money",
@@ -267,6 +284,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'appt' => [
             "title" => "App(t)",
+            "headerTooltip" => "Approve rate without Trash conversions",
             "field" => "appt",
             "width"=>"90",
             "formatter"=> "money",
@@ -281,6 +299,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'app' => [
             "title" => "App",
+            "headerTooltip" => "Approve rate",
             "field" => "app",
             "width"=>"90",
             "formatter"=> "money",
@@ -295,6 +314,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'cpc' => [
             "title" => "CPC",
+            "headerTooltip" => "Cost per click",
             "field" => "cpc",
             "width"=>"90",
             "formatter"=> "money",
@@ -307,6 +327,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'costs' => [
             "title" => "Costs",
+            "headerTooltip" => "Traffic costs",
             "field" => "costs",
             "width" => "100",
             "formatter"=> "money",
@@ -322,6 +343,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'epc' => [
             "title" => "EPC",
+            "headerTooltip" => "Earnings Per Click",
             "field" => "epc",
             "width"=>"90",
             "formatter"=> "money",
@@ -334,6 +356,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'epuc' => [
             "title" => "EPuC",
+            "headerTooltip" => "Earnings Per Unique Click",
             "field" => "epuc",
             "width"=>"90",
             "formatter"=> "money",
@@ -346,6 +369,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'revenue' => [
             "title" => "Rev.",
+            "headerTooltip" => "Revenue",
             "field" => "revenue",
             "width" => "100",
             "formatter"=> "money",
@@ -361,6 +385,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'profit' => [
             "title" => "Profit",
+            "headerTooltip" => "Profit",
             "field" => "profit",
             "width" => "100",
             "formatter"=> "money",
@@ -376,6 +401,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
         ],
         'roi' => [
             "title" => "ROI",
+            "headerTooltip" => "Return On Investment",
             "field" => "roi",
             "width"=>"90",
             "formatter"=> "money",
