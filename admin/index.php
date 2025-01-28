@@ -1,4 +1,11 @@
 <?php
+//we always need a slash at the end of the url, otherwise links will not work
+$url = $_SERVER['REQUEST_URI'];
+if (substr($url, -1) != "/" && substr($url, -10) != "index.php") {
+    header("Location: " . $url . "/");
+    exit();
+}
+
 require_once __DIR__ . '/securitycheck.php';
 require_once __DIR__ . '/../db/db.php';
 require_once __DIR__ . '/clmns.php';

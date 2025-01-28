@@ -143,6 +143,10 @@ class TableColumn{
     $this->viewModel = $viewModel;
   }
 
+  public static function Create(string $title, string $field, string $description, int $width, ?string $viewModel): TableColumn {
+    return new TableColumn($title, $field, $description, $width, $viewModel);
+  }
+
   public function ToDbJson(): string {
     return json_encode([
       "field" => $this->field,
@@ -165,7 +169,9 @@ class TableColumn{
 
 class TableColumns{
   public static array $clickClmns = [
-    "subid"=>new TableColumn("Subid", "subid", "Unique click ID",-1, <<<JSON
+    // "subid" => TableColumn::Create("Subid", "subid", "Unique click ID",-1, ""),
+    /*
+    <<<JSON
                 {
                     "formatter": "link",
                     "formatterParams": {
@@ -173,21 +179,22 @@ class TableColumns{
                     }
                 }
 JSON),
+*/
     //TODO: TIMEZONE!!!
-    "time"=>new TableColumn("Time", "time", "Click time", -1, <<<JSON
-                {
-                    "formatter": "datetime",
-                    "formatterParams": {
-                        "inputFormat": "unix",
-                        "outputFormat": "yyyy-MM-dd HH:mm:ss",
-                        "timezone": "$timezone"
-                    },
-                    "sorter": "datetime",
-                    "sorterParams": {
-                        "format": "unix"
-                    }
-                }
-JSON),
+//     "time"=> TableColumn::Create("Time", "time", "Click time", -1, <<<JSON
+//                 {
+//                     "formatter": "datetime",
+//                     "formatterParams": {
+//                         "inputFormat": "unix",
+//                         "outputFormat": "yyyy-MM-dd HH:mm:ss",
+//                         "timezone": "$timezone"
+//                     },
+//                     "sorter": "datetime",
+//                     "sorterParams": {
+//                         "format": "unix"
+//                     }
+//                 }
+// JSON)
   ];
   
   public static array $statsClmns = [

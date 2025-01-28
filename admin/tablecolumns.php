@@ -1,13 +1,10 @@
 <?php
 require_once __DIR__ . '/../db/db.php';
-
-function show_clicks($startDate, $endDate, StatisticsSettings $ss):string
-{
-}
+require_once __DIR__ . '/clmns.php';
 
 function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=null, ?array $groupby=null): string
 {
-
+    $columnSettings = TableColumns::$statsClmns;
     $tabulatorColumns = [];
     
     //if we have a groupby parameter, then we should add a group column with a specific name

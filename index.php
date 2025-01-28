@@ -1,4 +1,11 @@
 <?php
+//handle robots.txt requests
+if (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] == '/robots.txt') {
+    header('Content-Type: text/plain');
+    echo "User-agent: *\nDisallow: /\n";
+    exit();
+}
+
 require_once __DIR__ . '/debug.php';
 require_once __DIR__ . '/campaign.php';
 require_once __DIR__ . '/core.php';
