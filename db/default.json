@@ -107,8 +107,228 @@
   ],
   "statistics": {
     "timezone": "Europe/Moscow",
-    "allowed": [],
-    "blocked": [],
+    "blocked": [
+      {
+        "field": "time",
+        "width": -1
+      },
+      {
+        "field": "ip",
+        "width": -1
+      },
+      {
+        "field": "country",
+        "width": -1
+      },
+      {
+        "field": "lang",
+        "width": -1
+      },
+      {
+        "field": "os",
+        "width": -1
+      },
+      {
+        "field": "osver",
+        "width": -1
+      },
+      {
+        "field": "device",
+        "width": -1
+      },
+      {
+        "field": "brand",
+        "width": -1
+      },
+      {
+        "field": "model",
+        "width": -1
+      },
+      {
+        "field": "isp",
+        "width": -1
+      },
+      {
+        "field": "client",
+        "width": -1
+      },
+      {
+        "field": "clientver",
+        "width": -1
+      },
+      {
+        "field": "ua",
+        "width": -1
+      },
+      {
+        "field": "params",
+        "width": -1
+      },
+      {
+        "field": "reason",
+        "width": -1
+      }
+    ],
+    "allowed": [
+      {
+        "field": "subid",
+        "width": -1
+      },
+      {
+        "field": "time",
+        "width": -1
+      },
+      {
+        "field": "ip",
+        "width": -1
+      },
+      {
+        "field": "country",
+        "width": -1
+      },
+      {
+        "field": "lang",
+        "width": -1
+      },
+      {
+        "field": "os",
+        "width": -1
+      },
+      {
+        "field": "osver",
+        "width": -1
+      },
+      {
+        "field": "brand",
+        "width": -1
+      },
+      {
+        "field": "model",
+        "width": -1
+      },
+      {
+        "field": "isp",
+        "width": -1
+      },
+      {
+        "field": "client",
+        "width": -1
+      },
+      {
+        "field": "clientver",
+        "width": -1
+      },
+      {
+        "field": "ua",
+        "width": -1
+      },
+      {
+        "field": "params",
+        "width": -1
+      },
+      {
+        "field": "preland",
+        "width": -1
+      },
+      {
+        "field": "land",
+        "width": -1
+      },
+      {
+        "field": "lpclick",
+        "width": -1
+      },
+      {
+        "field": "status",
+        "width": -1
+      },
+      {
+        "field": "cost",
+        "width": -1
+      },
+      {
+        "field": "payout",
+        "width": -1
+      }
+    ],
+    "leads":[
+      {
+        "field": "subid",
+        "width": -1
+      },
+      {
+        "field": "time",
+        "width": -1
+      },
+      {
+        "field": "ip",
+        "width": -1
+      },
+      {
+        "field": "country",
+        "width": -1
+      },
+      {
+        "field": "lang",
+        "width": -1
+      },
+      {
+        "field": "os",
+        "width": -1
+      },
+      {
+        "field": "osver",
+        "width": -1
+      },
+      {
+        "field": "brand",
+        "width": -1
+      },
+      {
+        "field": "model",
+        "width": -1
+      },
+      {
+        "field": "isp",
+        "width": -1
+      },
+      {
+        "field": "client",
+        "width": -1
+      },
+      {
+        "field": "clientver",
+        "width": -1
+      },
+      {
+        "field": "ua",
+        "width": -1
+      },
+      {
+        "field": "params",
+        "width": -1
+      },
+      {
+        "field": "preland",
+        "width": -1
+      },
+      {
+        "field": "land",
+        "width": -1
+      },
+      {
+        "field": "lpclick",
+        "width": -1
+      },
+      {
+        "field": "status",
+        "width": -1
+      },
+      {
+        "field": "payout",
+        "width": -1
+      }
+    ],
     "tables": [
       {
         "name": "Date",
