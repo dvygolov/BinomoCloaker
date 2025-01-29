@@ -31,11 +31,11 @@ $dataset = $db->get_campaigns(
         <div class="buttons-block">
             <button id="newCampaign" title="Create new campaign" class="btn btn-primary"><i
                     class="bi bi-plus-circle-fill"></i> New</button>
-            <button id="columnsSelect" title="Campaigns table view settings" class="btn btn-info"><i
+            <button id="columnsSelect" title="Select and order columns" class="btn btn-info"><i
                     class="bi bi-layout-three-columns"></i></button>
             <button id="trafficBack" title="Trafficback url" class="btn btn-info"><i
                     class="bi bi-exclude"></i></button>
-            <button id="trafficBackStats" title="Trafficback statistics" class="btn btn-info"><i
+            <button id="trafficBackStats" title="Show trafficback statistics" class="btn btn-info"><i
                     class="bi bi-graph-up"></i></button>
             <button id="downloadCsv" title="Download table as CSV" class="btn btn-success" style="float: right;"><i
                     class="bi bi-download"></i></button>

@@ -27,7 +27,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
     return json_encode($tabulatorColumns);
 }
 
-function get_clicks_columns(int $campId, string $filter, $timezone): string
+function get_clicks_columns(?int $campId, string $filter, $timezone): string
 {
     $columns = [];
     switch ($filter) {

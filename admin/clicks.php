@@ -16,6 +16,7 @@ if (isset($_GET['campId'])) {
     $gs = $db->get_common_settings();
     $stats = $gs['statistics'];
     $tz = $stats['timezone'];
+    $campId = null;
 }
 
 $timeRange = Dates::get_time_range($tz);
