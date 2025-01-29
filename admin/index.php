@@ -1,7 +1,7 @@
 <?php
-//we always need a slash at the end of the url, otherwise links will not work
+//we always need a slash at the end of the url, otherwise links will not work properly
 $url = $_SERVER['REQUEST_URI'];
-if (substr($url, -1) != "/" && substr($url, -10) != "index.php") {
+if ($url==='/admin'){
     header("Location: " . $url . "/");
     exit();
 }
@@ -80,14 +80,27 @@ $dataset = $db->get_campaigns(
             let selectedClmns = <?= json_encode($gs['statistics']['table']) ?>;
 
             let $list = $('#columnsList');
-            availableClmns.forEach(column => {
-                const isSelected = selectedClmns.some(sc => sc.field === column);
+            
+            // First add selected columns in their saved order
+            selectedClmns.forEach(column => {
                 const $item = $(`
                     <li class="sortable-item">
-                        <input type="checkbox" value="${column}" ${isSelected ? 'checked' : ''}>
-                        <span>${column}</span>
+                        <input type="checkbox" value="${column.field}" checked>
+                        <span>${column.field}</span>
                     </li>`);
                 $list.append($item);
+            });
+
+            // Then add unselected columns
+            availableClmns.forEach(column => {
+                if (!selectedClmns.some(sc => sc.field === column)) {
+                    const $item = $(`
+                        <li class="sortable-item">
+                            <input type="checkbox" value="${column}">
+                            <span>${column}</span>
+                        </li>`);
+                    $list.append($item);
+                }
             });
             
             let sortableList = new Sortable(document.getElementById('columnsList'), {

@@ -29,7 +29,28 @@ switch ($action) {
         }
         
         $s = $db->get_common_settings();
-        $s['statistics']['table'] = $data['columns'];
+        $newColumns = [];
+        
+        // Process each column from the new data
+        foreach ($data['columns'] as $columnName) {
+            $found = false;
+            // Check if column exists in current settings
+            if (isset($s['statistics']['table'])) {
+                foreach ($s['statistics']['table'] as $existingColumn) {
+                    if ($existingColumn['field'] === $columnName) {
+                        $newColumns[] = $existingColumn;
+                        $found = true;
+                        break;
+                    }
+                }
+            }
+            // If column not found, add it with default width
+            if (!$found) {
+                $newColumns[] = ['field' => $columnName, 'width' => -1];
+            }
+        }
+        
+        $s['statistics']['table'] = $newColumns;
         
         $db->set_common_settings($s);
         break;

@@ -1,7 +1,7 @@
 <?php
 class AvailableColumns
 {
-  public static $blockedColumns = [
+  static $blockedColumns = [
     "time",
     "ip",
     "country",
@@ -19,7 +19,7 @@ class AvailableColumns
     "reason"
   ];
 
-  public static $allowedColumns = [
+  static $allowedColumns = [
     "subid",
     "time",
     "ip",
@@ -43,7 +43,7 @@ class AvailableColumns
     "payout"
   ];
 
-  public static $leadsColumns = [
+  static $leadsColumns = [
     "subid",
     "time",
     "ip",
@@ -67,7 +67,7 @@ class AvailableColumns
     "name",
     "phone"
   ];
-  public static $trafficbackColumns = [
+  static $trafficbackColumns = [
     "clicks",
     "ip",
     "country",
@@ -84,7 +84,7 @@ class AvailableColumns
     "params"
   ];
 
-  public static $groupbyColumns = [
+  static $groupbyColumns = [
     "date",
     "preland",
     "land",
@@ -94,7 +94,7 @@ class AvailableColumns
     "os"
   ];
 
-  public static $statsColumns = [
+  static $statsColumns = [
     "clicks",
     "uniques",
     "uniques_ratio",

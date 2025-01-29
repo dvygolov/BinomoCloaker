@@ -285,6 +285,18 @@ JSON;
                     "width": "100"
                 },
                 {
+                    "title": "Client",
+                    "field": "client",
+                    "headerFilter": "input",
+                    "width": "100"
+                },
+                {
+                    "title": "ClientVer",
+                    "field": "clientver",
+                    "headerFilter": "input",
+                    "width": "100"
+                },
+                {
                     "title": "UA",
                     "field": "ua",
                     "headerFilter": "input",
