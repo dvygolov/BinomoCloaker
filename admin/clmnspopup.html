@@ -6,43 +6,155 @@
     }
 
     .sortable-item {
-        padding: 10px;
-        margin: 5px 0;
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
+        padding: 12px 16px;
+        margin: 8px 0;
+        background: #1a2235;
+        border: 1px solid #2a3245;
+        border-radius: 8px;
         cursor: move;
         display: flex;
         align-items: center;
         user-select: none;
+        transition: all 0.2s ease;
+        position: relative;
     }
 
     .sortable-item:hover {
-        background: #e9ecef;
+        background: #212b40;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .sortable-item::before {
+        content: "☰";
+        margin-right: 12px;
+        color: #4a5568;
+        font-size: 14px;
     }
 
     .sortable-item input[type="checkbox"] {
-        margin-right: 10px;
+        margin-right: 12px;
         cursor: pointer;
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 2px solid #2d3748;
+        appearance: none;
+        -webkit-appearance: none;
+        position: relative;
+        background: #1a2235;
+        transition: all 0.2s ease;
+    }
+
+    .sortable-item input[type="checkbox"]:checked {
+        background: #0084ff;
+        border-color: #0084ff;
+    }
+
+    .sortable-item input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        color: white;
+        font-size: 12px;
+        left: 3px;
+        top: -1px;
+    }
+
+    .sortable-item span {
+        font-size: 14px;
+        color: #e2e8f0;
+        font-weight: 500;
     }
 
     .sortable-item.sortable-ghost {
         opacity: 0.4;
+        background: #2d3748;
     }
 
     .sortable-item.sortable-chosen {
-        background: #e9ecef;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background: #212b40;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     #columnsContainer {
         max-height: 400px;
         overflow-y: auto;
-        margin-bottom: 20px;
+        margin: 20px 0;
+        padding: 0 4px;
+    }
+
+    #columnsContainer::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #columnsContainer::-webkit-scrollbar-track {
+        background: #1a2235;
+        border-radius: 4px;
+    }
+
+    #columnsContainer::-webkit-scrollbar-thumb {
+        background: #2d3748;
+        border-radius: 4px;
+    }
+
+    #columnsContainer::-webkit-scrollbar-thumb:hover {
+        background: #3a4759;
+    }
+
+    .modal-content {
+        background: #151b2d;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        color: #e2e8f0;
+    }
+
+    .modal-content h4 {
+        color: #e2e8f0;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 16px 0;
+        padding: 20px 24px;
+        border-bottom: 1px solid #2a3245;
+    }
+
+    .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #2a3245;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-secondary {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+        background: #3a4759;
+    }
+
+    .btn-primary {
+        background: #0084ff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #0066cc;
     }
 </style>
 
-<div id="columnModal" class="modal">
+<div id="columnModal" class="ywbmodal">
     <div class="modal-content">
         <h4>Select and Order Columns</h4>
         <div id="columnsContainer">

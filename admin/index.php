@@ -69,8 +69,10 @@ $dataset = $db->get_campaigns(
 
         document.getElementById("columnsSelect").onclick = async () => {
             $('#columnModal').modal({
+                modalClass: 'ywbmodal',
                 fadeDuration: 250,
-                fadeDelay: 0.80
+                fadeDelay: 0.80,
+                showClose: false
             });
         }
 
