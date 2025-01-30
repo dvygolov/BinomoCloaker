@@ -124,7 +124,7 @@ function get_clicks_columns(?int $campId, string $filter, $timezone): string
             ]
 JSON;
             break;
-        case 'traficback':
+        case 'trafficback':
             $columns = <<<JSON
             [
                 {

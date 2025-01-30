@@ -36,7 +36,7 @@ $endDate = $timeRange[1];
         <?php
         $filter = $_GET['filter'] ?? '';
         switch ($filter) {
-            case 'traficback':
+            case 'trafficback':
                 $dataset = $db->get_trafficback_clicks($startDate, $endDate);
                 break;
             case 'leads':
