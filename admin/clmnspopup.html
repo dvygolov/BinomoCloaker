@@ -166,3 +166,81 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById("columnsSelect").onclick = async () => {
+        $('#columnModal').modal({
+            modalClass: 'ywbmodal',
+            fadeDuration: 250,
+            fadeDelay: 0.80,
+            showClose: false
+        });
+    }
+
+    function addColumnsToList(selectedClmns, availableClmns) {
+        let $list = $('#columnsList');
+        
+        // First add selected columns in their saved order
+        selectedClmns.forEach(column => {
+            const $item = $(`
+                <li class="sortable-item">
+                    <input type="checkbox" value="${column.field}" checked>
+                    <span>${column.field}</span>
+                </li>`);
+            $list.append($item);
+        });
+
+        // Then add unselected columns
+        availableClmns.forEach(column => {
+            if (!selectedClmns.some(sc => sc.field === column)) {
+                const $item = $(`
+                    <li class="sortable-item">
+                        <input type="checkbox" value="${column}">
+                        <span>${column}</span>
+                    </li>`);
+                $list.append($item);
+            }
+        });
+        
+        let sortableList = new Sortable(document.getElementById('columnsList'), {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen'
+        });
+    }
+
+    function getSelectedColumns() {
+        const selectedColumns = [];
+        $('#columnsList .sortable-item').each(function () {
+            const $checkbox = $(this).find('input[type="checkbox"]');
+            if ($checkbox.is(':checked')) {
+                selectedColumns.push($checkbox.val());
+            }
+        });
+        return selectedColumns;
+    }
+
+    function setSaveButtonHandler(handlerUrl){
+        // Save button handler
+        $('#saveColumns').off('click').on('click', async function () {
+            const selectedColumns = getSelectedColumns();
+
+            // Save columns configuration
+            let res = await fetch(handlerUrl, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    columns: selectedColumns
+                })
+            });
+
+            let data = await res.json();
+            if (!data.error) {
+                window.location.reload();
+            } else {
+                alert('Error saving columns: ' + data.msg);
+            }
+        });
+    }
+</script>
