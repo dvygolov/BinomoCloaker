@@ -1,203 +1,282 @@
 <?php
 class AvailableColumns
 {
-  static $blockedColumns = [
-    "time",
-    "ip",
-    "country",
-    "lang",
-    "os",
-    "osver",
-    "device",
-    "brand",
-    "model",
-    "isp",
-    "client",
-    "clientver",
-    "ua",
-    "params",
-    "reason"
-  ];
-
-  static $allowedColumns = [
-    "subid",
-    "time",
-    "ip",
-    "country",
-    "lang",
-    "os",
-    "osver",
-    "device",
-    "brand",
-    "model",
-    "isp",
-    "client",
-    "clientver",
-    "ua",
-    "params",
-    "preland",
-    "land",
-    "lpclick",
-    "status",
-    "cost",
-    "payout"
-  ];
-
-  static $leadsColumns = [
-    "subid",
-    "time",
-    "ip",
-    "country",
-    "lang",
-    "os",
-    "osver",
-    "device",
-    "brand",
-    "model",
-    "isp",
-    "client",
-    "clientver",
-    "ua",
-    "params",
-    "preland",
-    "land",
-    "lpclick",
-    "status",
-    "payout",
-    "name",
-    "phone"
-  ];
-  static $trafficbackColumns = [
-    "clicks",
-    "ip",
-    "country",
-    "lang",
-    "os",
-    "osver",
-    "device",
-    "brand",
-    "model",
-    "isp",
-    "client",
-    "clientver",
-    "ua",
-    "params"
-  ];
-
-  static $groupbyColumns = [
-    "date",
-    "preland",
-    "land",
-    "isp",
-    "country",
-    "lang",
-    "os"
-  ];
-
-  static $statsColumns = [
-    "clicks",
-    "uniques",
-    "uniques_ratio",
-    "lpclicks",
-    "lpctr",
-    "cra",
-    "crs",
-    "epc",
-    "uepc",
-    "cpc",
-    "ucpc",
-    "appt",
-    "app",
-    "conversion",
-    "purchase",
-    "hold",
-    "reject",
-    "trash",
-    "cpa",
-    "ec",
-    "revenue",
-    "costs",
-    "profit",
-    "roi"
-  ];
-
-  public static function get_columns_for_type($type)
-  {
-    $clmnsName = $type.'Columns';
-    return self::$$clmnsName;
-  }
-}
-
-class TableColumn{
-  public string $title;
-  public string $field;
-  public string $description;
-  public int $width;
-  public string $viewModel;
-
-  public function __construct(string $title, string $field, string $description, int $width, ?string $viewModel) {
-    $this->title = $title;
-    $this->field = $field;
-    $this->description = $description;
-    $this->width = $width;
-    $this->viewModel = $viewModel;
-  }
-
-  public static function Create(string $title, string $field, string $description, int $width, ?string $viewModel): TableColumn {
-    return new TableColumn($title, $field, $description, $width, $viewModel);
-  }
-
-  public function ToDbJson(): string {
-    return json_encode([
-      "field" => $this->field,
-      "width" => $this->width
-    ]);
-  }
-  
-  public function ToTabulatorJson(): string {
-    $commonPart = [
-      "title" => $this->title,
-      "field" => $this->field,
-      "headerTooltip" => $this->description,
-      "width" => $this->width,
+    static $blockedColumns = [
+        "time",
+        "ip",
+        "country",
+        "lang",
+        "os",
+        "osver",
+        "device",
+        "brand",
+        "model",
+        "isp",
+        "client",
+        "clientver",
+        "ua",
+        "params",
+        "reason"
     ];
-    if (is_null($this->viewModel)) return json_encode($commonPart);
-    $tabulatorPart = json_decode("{$this->viewModel}");
-    return json_encode(array_merge($commonPart, $tabulatorPart));
-  }
+
+    static $allowedColumns = [
+        "subid",
+        "time",
+        "ip",
+        "country",
+        "lang",
+        "os",
+        "osver",
+        "device",
+        "brand",
+        "model",
+        "isp",
+        "client",
+        "clientver",
+        "ua",
+        "params",
+        "preland",
+        "land",
+        "lpclick",
+        "status",
+        "cost",
+        "payout"
+    ];
+
+    static $leadsColumns = [
+        "subid",
+        "time",
+        "ip",
+        "country",
+        "lang",
+        "os",
+        "osver",
+        "device",
+        "brand",
+        "model",
+        "isp",
+        "client",
+        "clientver",
+        "ua",
+        "params",
+        "preland",
+        "land",
+        "lpclick",
+        "status",
+        "payout",
+        "name",
+        "phone"
+    ];
+    static $trafficbackColumns = [
+        "clicks",
+        "ip",
+        "country",
+        "lang",
+        "os",
+        "osver",
+        "device",
+        "brand",
+        "model",
+        "isp",
+        "client",
+        "clientver",
+        "ua",
+        "params"
+    ];
+
+    static $groupbyColumns = [
+        "date",
+        "preland",
+        "land",
+        "isp",
+        "country",
+        "lang",
+        "os"
+    ];
+
+    static $statsColumns = [
+        "clicks",
+        "uniques",
+        "uniques_ratio",
+        "lpclicks",
+        "lpctr",
+        "cra",
+        "crs",
+        "epc",
+        "uepc",
+        "cpc",
+        "ucpc",
+        "appt",
+        "app",
+        "conversion",
+        "purchase",
+        "hold",
+        "reject",
+        "trash",
+        "cpa",
+        "ec",
+        "revenue",
+        "costs",
+        "profit",
+        "roi"
+    ];
+
+    public static function get_columns_for_type($type)
+    {
+        $clmnsName = $type . 'Columns';
+        return self::$$clmnsName;
+    }
 }
 
-class TableColumns{
-  public static array $clickClmns = [
-    // "subid" => TableColumn::Create("Subid", "subid", "Unique click ID",-1, ""),
-    /*
-    <<<JSON
-                {
-                    "formatter": "link",
-                    "formatterParams": {
-                        "urlPrefix": "clicks.php?campId=$campId&filter=single&subid="
+class TableColumns
+{
+    public static array $clickClmns =
+        [
+            "ip" => [
+                "title" => "IP",
+                "field" => "ip",
+                "headerFilter" => "input",
+            ],
+            "country" => [
+                "title" => "Country",
+                "field" => "country",
+                "headerFilter" => "input",
+            ],
+            "lang" => [
+                "title" => "Lang",
+                "field" => "lang",
+                "headerTooltip" => "Language",
+                "headerFilter" => "input",
+            ],
+            "isp" => [
+                "title" => "ISP",
+                "field" => "isp",
+                "headerFilter" => "input",
+                "headerTooltip" => "Internet Service Provider"
+            ],
+            "os" => [
+                "title" => "OS",
+                "field" => "os",
+                "headerFilter" => "input",
+                "headerTooltip" => "OS",
+            ],
+            "osver" => [
+                "title" => "OSVer",
+                "field" => "osver",
+                "headerTooltip" => "OS version",
+                "headerFilter" => "input",
+            ],
+            "client" => [
+                "title" => "Client",
+                "field" => "client",
+                "headerTooltip" => "Client (browser)",
+                "headerFilter" => "input",
+            ],
+            "clientver" => [
+                "title" => "ClientVer",
+                "field" => "clientver",
+                "headerTooltip" => "Client (browser) version",
+                "headerFilter" => "input",
+            ],
+            "device" => [
+                "title" => "Device",
+                "field" => "device",
+                "headerTooltip" => "Device",
+                "headerFilter" => "input",
+            ],
+            "brand" => [
+                "title" => "Brand",
+                "field" => "brand",
+                "headerTooltip" => "Brand",
+                "headerFilter" => "input",
+            ],
+            "model" => [
+                "title" => "Model",
+                "field" => "model",
+                "headerTooltip" => "Model",
+                "headerFilter" => "input",
+            ],
+            "ua" => [
+                "title" => "UA",
+                "field" => "ua",
+                "headerTooltip" => "User agent",
+                "headerFilter" => "input",
+                "formatter" => "textarea",
+                "width" => "200"
+            ],
+            "params" => [
+                "title" => "Subs",
+                "field" => "params",
+                "headerTooltip" => "All url parameters",
+                "headerFilter" => "input",
+                "headerFilterFunc" => "function(headerValue, rowValue, rowData, filterParams){
+                if (rowValue.length===0) return false;
+                return JSON.stringify(rowValue).includes(headerValue);}",
+                "headerSort" => false,
+                "tooltip" => 'function(e, cell, onRendered){
+                var data = cell.getValue();
+
+                var keys = Object.keys(data).sort();
+                var formattedData = "";
+
+                keys.forEach(function(key) {
+                    if (data.hasOwnProperty(key)) {
+                        formattedData += key + "=" + data[key] + "<br>";
                     }
-                }
-JSON),
-*/
-    //TODO: TIMEZONE!!!
-//     "time"=> TableColumn::Create("Time", "time", "Click time", -1, <<<JSON
-//                 {
-//                     "formatter": "datetime",
-//                     "formatterParams": {
-//                         "inputFormat": "unix",
-//                         "outputFormat": "yyyy-MM-dd HH:mm:ss",
-//                         "timezone": "$timezone"
-//                     },
-//                     "sorter": "datetime",
-//                     "sorterParams": {
-//                         "format": "unix"
-//                     }
-//                 }
-// JSON)
-  ];
-  
-  public static array $statsClmns = [
+                });
+                return formattedData;}',
+                "formatter" => 'function(cell, formatterParams, onRendered) {
+                var data = cell.getValue();
+
+                var keys = Object.keys(data).sort();
+                var formattedData = "";
+
+                keys.forEach(function(key) {
+                    if (data.hasOwnProperty(key)) {
+                        formattedData += key + "=" + data[key] + "<br>";
+                    }
+                });
+                return formattedData;}'
+            ],
+            [
+                "title" => "Preland",
+                "field" => "preland",
+                "headerTooltip" => "Chosen prelanding",
+                "headerFilter" => "input",
+            ],
+            [
+                "title" => "Land",
+                "field" => "land",
+                "headerTooltip" => "Chosen landing",
+                "headerFilter" => "input",
+            ],
+            [
+                "title" => "Reason",
+                "headerTooltip" => "Why click was blocked",
+                "field" => "reason",
+                "formatter" => "plaintext",
+                "sorter" => "string",
+                "headerFilter" => "input"
+            ],
+            [ //TODO: check how it appears!
+                "title" => "LpClick",
+                "field" => "lpclick",
+                "headerFilter" => "input",
+            ],
+            [
+                "title" => "Status",
+                "field" => "status",
+                "headerFilter" => "input",
+            ],
+            [
+                "title" => "Payout",
+                "field" => "payout",
+                "headerFilter" => "input",
+            ],
+        ];
+
+
+    public static array $statsClmns = [
         'preland' => [
             "title" => "Preland",
             "headerTooltip" => "Chosen prelanding",
@@ -233,9 +312,9 @@ JSON),
             "title" => "Date",
             "field" => "date",
             "sorter" => "date",
-            "sorterParams"=>[
-                "format"=>"yyyy-MM-dd",
-                "alignEmptyValues"=>"top",
+            "sorterParams" => [
+                "format" => "yyyy-MM-dd",
+                "alignEmptyValues" => "top",
             ]
         ],
         'os' => [
@@ -249,174 +328,174 @@ JSON),
             "title" => "Clicks",
             "headerTooltip" => "Number of visitors",
             "field" => "clicks",
-            "width"=>"90",
-            "bottomCalc"=>"sum"
+            "width" => "90",
+            "bottomCalc" => "sum"
         ],
         'uniques' => [
             "title" => "Uniques",
             "headerTooltip" => "Number of unique visitors",
             "field" => "uniques",
-            "width"=>"90",
-            "bottomCalc"=>"sum"
+            "width" => "90",
+            "bottomCalc" => "sum"
         ],
         'uniques_ratio' => [
             "title" => "U/C",
             "headerTooltip" => "Unique visitors / visitors",
             "field" => "uniques_ratio",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "symbol"=> "%",
-                "symbolAfter"=> true,
-                "precision"=> 2,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "symbol" => "%",
+                "symbolAfter" => true,
+                "precision" => 2,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'conversion' => [
             "title" => "CV",
             "headerTooltip" => "Conversions",
             "field" => "conversion",
             "width" => "60",
-            "bottomCalc"=>"sum"
+            "bottomCalc" => "sum"
         ],
         'purchase' => [
             "title" => "P",
             "headerTooltip" => "Purchases",
             "field" => "purchase",
             "width" => "50",
-            "bottomCalc"=>"sum"
+            "bottomCalc" => "sum"
         ],
         'hold' => [
             "title" => "H",
             "headerTooltip" => "Holds",
             "field" => "hold",
             "width" => "50",
-            "bottomCalc"=>"sum"
+            "bottomCalc" => "sum"
         ],
         'reject' => [
             "title" => "R",
             "headerTooltip" => "Rejects",
             "field" => "reject",
             "width" => "50",
-            "bottomCalc"=>"sum"
+            "bottomCalc" => "sum"
         ],
         'trash' => [
             "title" => "T",
             "headerTooltip" => "Trashes",
             "field" => "trash",
             "width" => "50",
-            "bottomCalc"=>"sum"
+            "bottomCalc" => "sum"
         ],
         'lpclicks' => [
             "title" => "LPClicks",
             "headerTooltip" => "Landing page visitors",
             "field" => "lpclicks",
             "width" => "70",
-            "bottomCalc"=>"sum"
+            "bottomCalc" => "sum"
         ],
         'lpctr' => [
             "title" => "LPCTR",
             "headerTooltip" => "Landing page visitors percentage",
             "field" => "lpctr",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "symbol"=> "%",
-                "symbolAfter"=> true,
-                "precision"=> 2,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "symbol" => "%",
+                "symbolAfter" => true,
+                "precision" => 2,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'cra' => [
             "title" => "CRa",
             "headerTooltip" => "Total conversion rate",
             "field" => "cra",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "symbol"=> "%",
-                "symbolAfter"=> true,
-                "precision"=> 2,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "symbol" => "%",
+                "symbolAfter" => true,
+                "precision" => 2,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'crs' => [
             "title" => "CRs",
             "headerTooltip" => "Conversion into Sales rate",
             "field" => "crs",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "symbol"=> "%",
-                "symbolAfter"=> true,
-                "precision"=> 2,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "symbol" => "%",
+                "symbolAfter" => true,
+                "precision" => 2,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'appt' => [
             "title" => "App(t)",
             "headerTooltip" => "Approve rate without Trash conversions",
             "field" => "appt",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "symbol"=> "%",
-                "symbolAfter"=> true,
-                "precision"=> 2,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "symbol" => "%",
+                "symbolAfter" => true,
+                "precision" => 2,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'app' => [
             "title" => "App",
             "headerTooltip" => "Approve rate",
             "field" => "app",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "symbol"=> "%",
-                "symbolAfter"=> true,
-                "precision"=> 2,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "symbol" => "%",
+                "symbolAfter" => true,
+                "precision" => 2,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'cpc' => [
             "title" => "CPC",
             "headerTooltip" => "Cost per click",
             "field" => "cpc",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "precision"=> 5,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "precision" => 5,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'costs' => [
             "title" => "Costs",
             "headerTooltip" => "Traffic costs",
             "field" => "costs",
             "width" => "100",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "precision"=> 2,
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "precision" => 2,
             ],
-            "bottomCalc"=>"sum",
-            "bottomCalcParams"=>[
+            "bottomCalc" => "sum",
+            "bottomCalcParams" => [
                 "precision" => 2,
             ]
         ],
@@ -424,41 +503,41 @@ JSON),
             "title" => "EPC",
             "headerTooltip" => "Earnings Per Click",
             "field" => "epc",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "precision"=> 5,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "precision" => 5,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'epuc' => [
             "title" => "EPuC",
             "headerTooltip" => "Earnings Per Unique Click",
             "field" => "epuc",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "precision"=> 5,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "precision" => 5,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
         'revenue' => [
             "title" => "Rev.",
             "headerTooltip" => "Revenue",
             "field" => "revenue",
             "width" => "100",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "precision"=> 2,
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "precision" => 2,
             ],
-            "bottomCalc"=>"sum",
-            "bottomCalcParams"=>[
+            "bottomCalc" => "sum",
+            "bottomCalcParams" => [
                 "precision" => 2,
             ]
         ],
@@ -467,14 +546,14 @@ JSON),
             "headerTooltip" => "Profit",
             "field" => "profit",
             "width" => "100",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "precision"=> 2,
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "precision" => 2,
             ],
-            "bottomCalc"=>"sum",
-            "bottomCalcParams"=>[
+            "bottomCalc" => "sum",
+            "bottomCalcParams" => [
                 "precision" => 2,
             ]
         ],
@@ -482,14 +561,14 @@ JSON),
             "title" => "ROI",
             "headerTooltip" => "Return On Investment",
             "field" => "roi",
-            "width"=>"90",
-            "formatter"=> "money",
-            "formatterParams"=>[
-                "decimal"=> ".",
-                "thousand"=> ",",
-                "precision"=> 2,
+            "width" => "90",
+            "formatter" => "money",
+            "formatterParams" => [
+                "decimal" => ".",
+                "thousand" => ",",
+                "precision" => 2,
             ],
-            "bottomCalc"=>"avg"
+            "bottomCalc" => "avg"
         ],
     ];
 }

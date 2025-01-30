@@ -22,9 +22,7 @@ $dataset = $db->get_campaigns(
 ?>
 <!doctype html>
 <html lang="en">
-
 <?php include __DIR__."/head.php" ?>
-
 <body>
     <?php include __DIR__."/header.php" ?>
     <div class="all-content-wrapper">
@@ -42,6 +40,32 @@ $dataset = $db->get_campaigns(
         </div>
         <div id="campaigns"></div>
     </div>
+    <script>
+        let tableData = <?= json_encode($dataset) ?>;
+        let tableColumns = <?= get_campaigns_columns($gs['statistics']['table']) ?>;
+        let table = new Tabulator('#campaigns', {
+            layout: "fitColumns",
+            columns: tableColumns,
+            pagination: false,
+            height: "100%",
+            data: tableData,
+            columnDefaults: {
+                tooltip: true,
+            },
+            columnCalcs: "both"
+        });
+
+        table.on("columnResized", async function (column) {
+            let updatedColumn = { field: column.getField(), width: column.getWidth() };
+            await fetch("commoneditor.php?action=width&table=campaigns", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedColumn),
+            });
+        });
+    </script>
     <?php include __DIR__."/clmnspopup.html" ?>
     <script>
         document.getElementById("trafficBack").onclick = async () => {
@@ -71,35 +95,9 @@ $dataset = $db->get_campaigns(
             let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type('stats')) ?>;
             let selectedClmns = <?= json_encode($gs['statistics']['table']) ?>;
             addColumnsToList(selectedClmns, availableClmns);
-            setSaveButtonHandler("commoneditor.php?action=savecolumns");
+            setSaveButtonHandler("commoneditor.php?action=savecolumns&table=campaigns");
         });
         
-    </script>
-    <script>
-        let tableData = <?= json_encode($dataset) ?>;
-        let tableColumns = <?= get_campaigns_columns($gs['statistics']['table']) ?>;
-        let table = new Tabulator('#campaigns', {
-            layout: "fitColumns",
-            columns: tableColumns,
-            pagination: false,
-            height: "100%",
-            data: tableData,
-            columnDefaults: {
-                tooltip: true,
-            },
-            columnCalcs: "both"
-        });
-
-        table.on("columnResized", async function (column) {
-            let updatedColumn = { field: column.getField(), width: column.getWidth() };
-            await fetch("commoneditor.php?action=width", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedColumn),
-            });
-        });
     </script>
 </body>
 

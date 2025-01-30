@@ -2,13 +2,13 @@
 require_once __DIR__ . '/../db/db.php';
 require_once __DIR__ . '/clmns.php';
 
-function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=null, ?array $groupby=null): string
+function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=null): string
 {
     $columnSettings = TableColumns::$statsClmns;
     $tabulatorColumns = [];
     
     //if we have a groupby parameter, then we should add a group column with a specific name
-    if (!is_null($tName) && !is_null($groupby) && count($groupby) > 0)
+    if (!is_null($tName))
         $tabulatorColumns[] = ["title" => $tName, "field" => "group"];
 
     for($i=0; $i<count($columns); $i++)
@@ -27,337 +27,40 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
     return json_encode($tabulatorColumns);
 }
 
-function get_clicks_columns(?int $campId, string $filter, $timezone): string
+
+function get_clicks_columns(?int $campId, string $filter, string $timezone, array $clmnWidths): string
 {
-    $columns = [];
-    switch ($filter) {
-        case 'blocked':
-            $columns = <<<JSON
-            [
-                {
-                    "title": "IP",
-                    "field": "ip",
-                    "width": "150",
-                    "headerFilter": "input"
-                },
-                {
-                    "title": "Country",
-                    "field": "country",
-                    "headerFilter": "input",
-                    "width": "50"
-                },
-                {
-                    "title": "ISP",
-                    "field": "isp",
-                    "headerFilter": "input"
-                },
-                {
-                    "title": "Time",
-                    "field": "time",
-                    "formatter": "datetime",
-                    "formatterParams": {
-                        "inputFormat": "unix",
-                        "outputFormat": "yyyy-MM-dd HH:mm:ss",
-                        "timezone": "$timezone"
-                    },
-                    "sorter": "datetime",
-                    "sorterParams": {
-                        "format": "unix"
-                    }
-                },
-                {
-                    "title": "Reason",
-                    "field": "reason",
-                    "formatter": "plaintext",
-                    "sorter": "string",
-                    "width": "80",
-                    "headerFilter": "input"
-                },
-                {
-                    "title": "OS",
-                    "field": "os",
-                    "headerFilter": "input",
-                    "width": "100"
-                },
-                {
-                    "title": "UA",
-                    "field": "ua",
-                    "formatter": "textarea",
-                    "headerFilter": "input"
-                },
-                {
-                    "title": "Subs",
-                    "field": "params",
-                    "headerFilter": "input",
-                    "headerFilterFunc": function(headerValue, rowValue, rowData, filterParams){
-                        if (rowValue.length===0) return false;
-                        return JSON.stringify(rowValue).includes(headerValue);
-                    },
-                    "headerSort":false,
-                    "tooltip": function(e, cell, onRendered){
-                        var data = cell.getValue();
 
-                        var keys = Object.keys(data).sort();
-                        var formattedData = "";
-
-                        keys.forEach(function(key) {
-                            if (data.hasOwnProperty(key)) {
-                                formattedData += key + "=" + data[key] + "<br>";
-                            }
-                        });
-                        return formattedData;
-                    },
-                    "formatter": function(cell, formatterParams, onRendered) {
-                        var data = cell.getValue();
-
-                        var keys = Object.keys(data).sort();
-                        var formattedData = "";
-
-                        keys.forEach(function(key) {
-                            if (data.hasOwnProperty(key)) {
-                                formattedData += key + "=" + data[key] + "<br>";
-                            }
-                        });
-                        return formattedData;
-                    }
-                },
-            ]
+    $defaultClmns = <<<JSON
+    [
+        {
+            "title": "Subid",
+            "field": "subid",
+            "formatter": "link",
+            "formatterParams": {
+                "urlPrefix": "clicks.php?campId=$campId&filter=single&subid="
+            },
+            "headerTooltip" => "Unique click id",
+            "headerSort":false,
+        },
+        {
+            "title": "Time",
+            "field": "time",
+            "formatter": "datetime",
+            "formatterParams": {
+                "inputFormat": "unix",
+                "outputFormat": "yyyy-MM-dd HH:mm:ss",
+                "timezone": "$timezone"
+            },
+            "sorter": "datetime",
+            "sorterParams": {
+                "format": "unix"
+            }
+        },
 JSON;
-            break;
-        case 'trafficback':
-            $columns = <<<JSON
-            [
-                {
-                    "title": "Time",
-                    "field": "time",
-                    "formatter": "datetime",
-                    "formatterParams": {
-                        "inputFormat": "unix",
-                        "outputFormat": "yyyy-MM-dd HH:mm:ss",
-                        "timezone": "$timezone"
-                    },
-                    "sorter": "datetime",
-                    "sorterParams": {
-                        "format": "unix"
-                    }
-                },
-                {
-                    "title": "IP",
-                    "field": "ip",
-                    "headerFilter": "input",
-                    "width": "120"
-                },
-                {
-                    "title": "Country",
-                    "field": "country",
-                    "headerFilter": "input",
-                    "width": "80"
-                },
-                {
-                    "title": "Lang",
-                    "field": "lang",
-                    "headerFilter": "input",
-                    "width": "50"
-                },
-                {
-                    "title": "ISP",
-                    "field": "isp",
-                    "headerFilter": "input"
-                },
-                {
-                    "title": "OS",
-                    "field": "os",
-                    "headerFilter": "input",
-                    "width": "100"
-                },
-                {
-                    "title": "OSVer",
-                    "field": "osver",
-                    "headerFilter": "input",
-                    "width": "100"
-                },
-                {
-                    "title": "UA",
-                    "field": "ua",
-                    "headerFilter": "input",
-                    "formatter": "textarea",
-                    "width":"200"
-                },
-                {
-                    "title": "Subs",
-                    "field": "params",
-                    "headerFilter": "input",
-                    "headerFilterFunc": function(headerValue, rowValue, rowData, filterParams){
-                        if (rowValue.length===0) return false;
-                        return JSON.stringify(rowValue).includes(headerValue);
-                    },
-                    "headerSort":false,
-                    "tooltip": function(e, cell, onRendered){
-                        var data = cell.getValue();
 
-                        var keys = Object.keys(data).sort();
-                        var formattedData = "";
-
-                        keys.forEach(function(key) {
-                            if (data.hasOwnProperty(key)) {
-                                formattedData += key + "=" + data[key] + "<br>";
-                            }
-                        });
-                        return formattedData;
-                    },
-                    "formatter": function(cell, formatterParams, onRendered) {
-                        var data = cell.getValue();
-
-                        var keys = Object.keys(data).sort();
-                        var formattedData = "";
-
-                        keys.forEach(function(key) {
-                            if (data.hasOwnProperty(key)) {
-                                formattedData += key + "=" + data[key] + "<br>";
-                            }
-                        });
-                        return formattedData;
-                    }
-                }
-            ]
-JSON;
-            break;
-        default:
-            $columns = <<<JSON
-            [
-                {
-                    "title": "Subid",
-                    "field": "subid",
-                    "formatter": "link",
-                    "formatterParams": {
-                        "urlPrefix": "clicks.php?campId=$campId&filter=single&subid="
-                    },
-                    "headerSort":false,
-                    "width":"100"
-                },
-                {
-                    "title": "IP",
-                    "field": "ip",
-                    "headerFilter": "input",
-                    "width": "120"
-                },
-                {
-                    "title": "Country",
-                    "field": "country",
-                    "headerFilter": "input",
-                    "width": "80"
-                },
-                {
-                    "title": "Lang",
-                    "field": "lang",
-                    "headerFilter": "input",
-                    "width": "50"
-                },
-                {
-                    "title": "ISP",
-                    "field": "isp",
-                    "headerFilter": "input"
-                },
-                {
-                    "title": "Time",
-                    "field": "time",
-                    "formatter": "datetime",
-                    "formatterParams": {
-                        "inputFormat": "unix",
-                        "outputFormat": "yyyy-MM-dd HH:mm:ss",
-                        "timezone": "$timezone"
-                    },
-                    "sorter": "datetime",
-                    "sorterParams": {
-                        "format": "unix"
-                    }
-                },
-                {
-                    "title": "OS",
-                    "field": "os",
-                    "headerFilter": "input",
-                    "width": "100"
-                },
-                {
-                    "title": "OSVer",
-                    "field": "osver",
-                    "headerFilter": "input",
-                    "width": "100"
-                },
-                {
-                    "title": "Client",
-                    "field": "client",
-                    "headerFilter": "input",
-                    "width": "100"
-                },
-                {
-                    "title": "ClientVer",
-                    "field": "clientver",
-                    "headerFilter": "input",
-                    "width": "100"
-                },
-                {
-                    "title": "UA",
-                    "field": "ua",
-                    "headerFilter": "input",
-                    "formatter": "textarea",
-                    "width":"200"
-                },
-                {
-                    "title": "Subs",
-                    "field": "params",
-                    "headerFilter": "input",
-                    "headerFilterFunc": function(headerValue, rowValue, rowData, filterParams){
-                        if (rowValue.length===0) return false;
-                        return JSON.stringify(rowValue).includes(headerValue);
-                    },
-                    "headerSort":false,
-                    "tooltip": function(e, cell, onRendered){
-                        var data = cell.getValue();
-
-                        var keys = Object.keys(data).sort();
-                        var formattedData = "";
-
-                        keys.forEach(function(key) {
-                            if (data.hasOwnProperty(key)) {
-                                formattedData += key + "=" + data[key] + "<br>";
-                            }
-                        });
-                        return formattedData;
-                    },
-                    "formatter": function(cell, formatterParams, onRendered) {
-                        var data = cell.getValue();
-
-                        var keys = Object.keys(data).sort();
-                        var formattedData = "";
-
-                        keys.forEach(function(key) {
-                            if (data.hasOwnProperty(key)) {
-                                formattedData += key + "=" + data[key] + "<br>";
-                            }
-                        });
-                        return formattedData;
-                    }
-                },
-                {
-                    "title": "Preland",
-                    "field": "preland",
-                    "headerFilter": "input",
-                    "width":"100"
-                },
-                {
-                    "title": "Land",
-                    "field": "land",
-                    "headerFilter": "input",
-                    "width":"150"
-                }
-            ]
-JSON;
-            break;
-    }
-    return $columns;
+    return $defaultClmns;
 }
-
 
 function get_campaigns_columns(array $clmnWidths): string
 {

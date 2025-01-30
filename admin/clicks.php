@@ -22,9 +22,31 @@ if (isset($_GET['campId'])) {
 $timeRange = Dates::get_time_range($tz);
 $startDate = $timeRange[0];
 $endDate = $timeRange[1];
+
+$filter = $_GET['filter'] ?? '';
+switch ($filter) {
+    case 'trafficback':
+        $dataset = $db->get_trafficback_clicks($startDate, $endDate);
+        break;
+    case 'leads':
+        $dataset = $db->get_leads($startDate, $endDate, $campId);
+        break;
+    case 'blocked':
+        $dataset = $db->get_white_clicks($startDate, $endDate, $campId);
+        break;
+    case 'single':
+        $clickId = $_GET['subid'] ?? '';
+        $dataset = $db->get_clicks_by_subid($clickId);
+        break;
+    default:
+        $dataset = $db->get_black_clicks($startDate, $endDate, $campId);
+        break;
+}
+
+$dJson = json_encode($dataset);
+$tName = empty($filter) ? 'allowed' : $filter;
+$tColumns = get_clicks_columns($campId, $filter, $tz);
 ?>
-
-
 
 <!doctype html>
 <html lang="en">
@@ -32,36 +54,11 @@ $endDate = $timeRange[1];
 <body>
     <?php include "header.php" ?>
     <div class="all-content-wrapper">
-        <div id="clicks"></div>
-        <?php
-        $filter = $_GET['filter'] ?? '';
-        switch ($filter) {
-            case 'trafficback':
-                $dataset = $db->get_trafficback_clicks($startDate, $endDate);
-                break;
-            case 'leads':
-                $dataset = $db->get_leads($startDate, $endDate, $campId);
-                break;
-            case 'blocked':
-                $dataset = $db->get_white_clicks($startDate, $endDate, $campId);
-                break;
-            case 'single':
-                $clickId = $_GET['subid'] ?? '';
-                $dataset = $db->get_clicks_by_subid($clickId);
-                break;
-            default:
-                $dataset = $db->get_black_clicks($startDate, $endDate, $campId);
-                break;
-        }
-        
-        $dJson = json_encode($dataset);
-        $tName = empty($filter) ? 'allowed' : $filter;
-        $tColumns = get_clicks_columns($campId, $filter, $tz);
-        ?>
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-            <button id="download<?=$tName?>" title="Download table data as CSV" class="btn btn-success">
-                <i class="bi bi-download"></i>
-            </button>
+        <div class="buttons-block">
+            <button id="columnsSelect" title="Select and order columns" class="btn btn-info"><i
+                    class="bi bi-layout-three-columns"></i></button>
+            <button id="downloadCsv" title="Download table as CSV" class="btn btn-success" style="float: right;"><i
+                    class="bi bi-download"></i></button>
         </div>
         <div id="t<?=$tName?>" style="clear: both;"></div>
         <script>
@@ -82,7 +79,17 @@ $endDate = $timeRange[1];
                 }
             });
 
-            document.getElementById("download<?=$tName?>").onclick = () => {
+            t<?=$tName?>Table.on("columnResized", async function (column) {
+                let updatedColumn = { field: column.getField(), width: column.getWidth() };
+                await fetch("commoneditor.php?action=width&table=trafficback", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedColumn),
+                });
+            });
+            document.getElementById("downloadCsv").onclick = () => {
                 t<?=$tName?>Table.download("csv", "<?=$tName?>_data.csv");
             };
         </script>
