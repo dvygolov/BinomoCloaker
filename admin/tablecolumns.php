@@ -28,38 +28,37 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
 }
 
 
-function get_clicks_columns(?int $campId, string $filter, string $timezone, array $clmnWidths): string
+function get_clicks_columns(?int $campId, string $timezone, string $filter, array $clmnWidths): string
 {
-
-    $defaultClmns = <<<JSON
+    $defaultClmns =
     [
-        {
-            "title": "Subid",
-            "field": "subid",
-            "formatter": "link",
-            "formatterParams": {
-                "urlPrefix": "clicks.php?campId=$campId&filter=single&subid="
-            },
+        "subid"=>[
+            "title" => "Subid",
+            "field" => "subid",
+            "formatter" => "link",
+            "formatterParams" => [
+                "urlPrefix" => "clicks.php?campId=$campId&filter=single&subid="
+            ],
             "headerTooltip" => "Unique click id",
-            "headerSort":false,
-        },
-        {
-            "title": "Time",
-            "field": "time",
-            "formatter": "datetime",
-            "formatterParams": {
-                "inputFormat": "unix",
-                "outputFormat": "yyyy-MM-dd HH:mm:ss",
-                "timezone": "$timezone"
-            },
-            "sorter": "datetime",
-            "sorterParams": {
-                "format": "unix"
-            }
-        },
-JSON;
+            "headerSort" => false,
+        ],
+        "time"=>[
+            "title" => "Time",
+            "field" => "time",
+            "formatter" => "datetime",
+            "formatterParams" => [
+                "inputFormat" => "unix",
+                "outputFormat" => "yyyy-MM-dd HH:mm:ss",
+                "timezone" => "$timezone"
+            ],
+            "sorter" => "datetime",
+            "sorterParams" => [
+                "format" => "unix"
+            ]
+        ]
+    ];
 
-    return $defaultClmns;
+    return json_encode($defaultClmns);
 }
 
 function get_campaigns_columns(array $clmnWidths): string
