@@ -1,11 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("newCampaign").onclick = async () => {
-        let campName = prompt("Enter new campaign name:");
-        if (campName)
-            await campEditor('add', null, campName);
-    };
-});
-
 async function campEditor(action, campId=null, name=null) {
     let body = `action=${action}`;
     if (campId)

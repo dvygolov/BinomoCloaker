@@ -68,36 +68,41 @@ $dataset = $db->get_campaigns(
     </script>
     <?php include __DIR__."/clmnspopup.html" ?>
     <script>
-        document.getElementById("trafficBack").onclick = async () => {
-            let tbUrl = prompt("Enter trafficback url:", "<?= $gs['trafficBackUrl'] ?>");
-            if (tbUrl === null) return;
-            let res = await fetch("commoneditor.php?action=trafficback", {
-                method: "POST",
-                body: tbUrl,
-            });
-            if (!res['error']) {
-                alert('TrafficBack url saved!');
-                window.location.reload();
-            }
-            else
-                alert('Error saving trafficback url:' + res['msg']);
-        };
-
-        document.getElementById("trafficBackStats").onclick = () => {
-            window.location.href = "clicks.php?filter=trafficback";
-        };
-
-        document.getElementById("downloadCsv").onclick = () => {
-            table.download("csv", "campaigns_data.csv");
-        };
-        
         document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("newCampaign").onclick = async () => {
+                let campName = prompt("Enter new campaign name:");
+                if (campName)
+                    await campEditor('add', null, campName);
+            };
+
+            document.getElementById("trafficBack").onclick = async () => {
+                let tbUrl = prompt("Enter trafficback url:", "<?= $gs['trafficBackUrl'] ?>");
+                if (tbUrl === null) return;
+                let res = await fetch("commoneditor.php?action=trafficback", {
+                    method: "POST",
+                    body: tbUrl,
+                });
+                if (!res['error']) {
+                    alert('TrafficBack url saved!');
+                    window.location.reload();
+                }
+                else
+                    alert('Error saving trafficback url:' + res['msg']);
+            };
+
+            document.getElementById("trafficBackStats").onclick = () => {
+                window.location.href = "clicks.php?filter=trafficback";
+            };
+
+            document.getElementById("downloadCsv").onclick = () => {
+                table.download("csv", "campaigns_data.csv");
+            };
+        
             let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type('stats')) ?>;
             let selectedClmns = <?= json_encode($gs['statistics']['table']) ?>;
             addColumnsToList(selectedClmns, availableClmns);
             setSaveButtonHandler("commoneditor.php?action=savecolumns&table=campaigns");
         });
-        
     </script>
 </body>
 
