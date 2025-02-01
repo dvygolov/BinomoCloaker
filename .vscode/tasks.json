@@ -4,19 +4,23 @@
 		{
 			"label": "Launch PHP Server",
 			"type": "shell",
-			"command": "php -S localhost:80 -t ${workspaceFolder}",
+			"command": "php -S localhost:8080 -t ${workspaceFolder}",
 			"isBackground": true,
 			"problemMatcher": {
-				"pattern": {
-					"regexp": "^.*$",
-					"file": 1,
-					"location": 2,
-					"message": 3
-				},
+				"owner": "php",
+				"pattern": [
+					{
+						"regexp": "^(Parse error):\\s+(.*?)(?: in (.*?))? on line (\\d+)$",
+						"kind": "file",
+						"file": 3,
+						"line": 4,
+						"message": 2
+					}
+				],
 				"background": {
 					"activeOnStart": true,
-					"beginsPattern": ".",
-					"endsPattern": "."
+					"beginsPattern": "^Development Server \\(http://.*\\) started",
+					"endsPattern": "^.*$"
 				}
 			}
 		}
