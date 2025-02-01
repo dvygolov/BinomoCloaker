@@ -2,12 +2,53 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch in Firefox (Admin)",
+            "name": "Listen for Xdebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "pathMappings": {
+                "/var/www/html": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Launch PHP Server & Debug",
+            "type": "php",
+            "request": "launch",
+            "runtimeArgs": [
+                "-S",
+                "localhost:8080",
+                "-t",
+                "${workspaceFolder}"
+            ],
+            "preLaunchTask": "Launch PHP Server",
+            "port": 9003
+        },
+        {
+            "name": "Launch Firefox (Admin)",
             "type": "firefox",
             "request": "launch",
             "url": "http://localhost:8080/admin/",
             "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "Launch PHP Server"
+            "pathMappings": [
+                {
+                    "url": "http://localhost:8080",
+                    "path": "${workspaceFolder}"
+                }
+            ],
+            "reAttach": true,
+            "skipFiles": [
+                "${workspaceFolder}/node_modules/**"
+            ],
+            "sourceMaps": true
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Debug Session",
+            "configurations": [
+                "Launch PHP Server & Debug",
+                "Launch Firefox (Admin)"
+            ]
         }
     ]
 }

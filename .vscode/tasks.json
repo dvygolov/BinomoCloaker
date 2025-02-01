@@ -4,7 +4,7 @@
 		{
 			"label": "Launch PHP Server",
 			"type": "shell",
-			"command": "php -S localhost:8080 -t ${workspaceFolder}",
+			"command": "php -dxdebug.mode=debug -dxdebug.client_host=localhost -dxdebug.client_port=9003 -S localhost:8080 -t ${workspaceFolder}",
 			"isBackground": true,
 			"problemMatcher": {
 				"owner": "php",
