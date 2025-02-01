@@ -8,14 +8,12 @@ global $db;
 if (isset($_GET['campId'])) {
     require_once __DIR__ . '/campinit.php';
     global $c, $campId;
-    $stats = $c->statistics;
-    $tz = $stats->timezone;
+    $tz = $c->statistics->timezone;
 
 } else {
     require_once __DIR__ .'/../db/db.php';
     $gs = $db->get_common_settings();
-    $stats = $gs['statistics'];
-    $tz = $stats['timezone'];
+    $tz = $gs['statistics']['timezone'];
     $campId = null;
 }
 
@@ -27,25 +25,30 @@ $filter = $_GET['filter'] ?? '';
 switch ($filter) {
     case 'trafficback':
         $dataset = $db->get_trafficback_clicks($startDate, $endDate);
+        $stats = $gs['statistics']['trafficBack'];
         break;
     case 'leads':
         $dataset = $db->get_leads($startDate, $endDate, $campId);
+        $stats = $c->statistics->leads;
         break;
     case 'blocked':
         $dataset = $db->get_white_clicks($startDate, $endDate, $campId);
+        $stats = $c->statistics->blocked;
         break;
     case 'single':
         $clickId = $_GET['subid'] ?? '';
         $dataset = $db->get_clicks_by_subid($clickId);
+        $stats = $c->statistics->allowed;
         break;
     default:
         $dataset = $db->get_black_clicks($startDate, $endDate, $campId);
+        $stats = $c->statistics->allowed;
         break;
 }
 
 $dJson = json_encode($dataset);
 $tName = empty($filter) ? 'allowed' : $filter;
-$tColumns = get_clicks_columns($campId, $filter, $tz);
+$tColumns = get_clicks_columns($campId, $tz,$filter, $stats);
 ?>
 
 <!doctype html>
@@ -81,7 +84,7 @@ $tColumns = get_clicks_columns($campId, $filter, $tz);
 
             t<?=$tName?>Table.on("columnResized", async function (column) {
                 let updatedColumn = { field: column.getField(), width: column.getWidth() };
-                await fetch("commoneditor.php?action=width&table=trafficback", {
+                await fetch("commoneditor.php?action=width&table=<?=$filter?>", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
