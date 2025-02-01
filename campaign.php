@@ -386,6 +386,7 @@ class StatisticsSettings implements JsonSerializable
 {
     public string $timezone;
     public array $allowed;
+    public array $leads;
     public array $blocked;
     public array $tables;
 
@@ -393,6 +394,7 @@ class StatisticsSettings implements JsonSerializable
         $ss = new StatisticsSettings();
         $ss->timezone = $arr['timezone'];
         $ss->allowed = $arr['allowed'];
+        $ss->leads = $arr['leads'];
         $ss->blocked = $arr['blocked'];
         $ss->tables = [];
         foreach ($arr['tables'] as $st){
@@ -404,12 +406,13 @@ class StatisticsSettings implements JsonSerializable
     function jsonSerialize():array
     {
         return [
-        "statistics" => [
-        "timezone" => $this->timezone,
-        "allowed" => $this->allowed,
-        "blocked" => $this->blocked,
-        "tables" => $this->tables
-        ]
+            "statistics" => [
+            "timezone" => $this->timezone,
+            "allowed" => $this->allowed,
+            "leads" => $this->leads,
+            "blocked" => $this->blocked,
+            "tables" => $this->tables
+            ]
         ];
     }
 }
@@ -441,5 +444,3 @@ class StatisticsTable implements JsonSerializable
         ];
     }
 }
-
-
