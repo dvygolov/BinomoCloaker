@@ -92,9 +92,17 @@ $tColumns = get_clicks_columns($campId, $tz,$filter, $stats);
                     body: JSON.stringify(updatedColumn),
                 });
             });
+        </script>
+        <?php include __DIR__."/clmnspopup.html" ?>
+        <script>
             document.getElementById("downloadCsv").onclick = () => {
                 t<?=$tName?>Table.download("csv", "<?=$tName?>_data.csv");
             };
+
+            let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type($filter)) ?>;
+            let selectedClmns = <?= json_encode($stats) ?>;
+            addColumnsToList(selectedClmns, availableClmns);
+            setSaveButtonHandler("commoneditor.php?action=savecolumns&table=<?=$filter?>");
         </script>
         <br/>
         <br/>
