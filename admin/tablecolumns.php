@@ -77,7 +77,10 @@ function get_clicks_columns(?int $campId, string $timezone, string $filter, arra
         if ($width===-1) continue;
         $tabulatorColumns[count($tabulatorColumns)-1]["width"] = $width;
     }
-    return json_encode($tabulatorColumns);
+    $clmnsJson = json_encode($tabulatorColumns);
+    $clmnsJson = str_replace('"FSTART', '', $clmnsJson);
+    $clmnsJson = str_replace('FEND"', '', $clmnsJson);
+    return $clmnsJson;
 }
 
 function get_campaigns_columns(array $clmnWidths): string
