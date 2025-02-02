@@ -64,7 +64,7 @@ function get_clicks_columns(?int $campId, string $timezone, string $filter, arra
     for($i=0; $i<count($columns); $i++)
     {
         $clmn = $columns[$i]['field'];
-        $width = $widths[$i]['width']??-1;
+        $width = $columns[$i]['width']??-1;
         if (array_key_exists($clmn, $columnSettings)) {
             $tabulatorColumns[] = $columnSettings[$clmn];
         }
