@@ -209,34 +209,10 @@ class TableColumns
                 "field" => "params",
                 "headerTooltip" => "All url parameters",
                 "headerFilter" => "input",
-                "headerFilterFunc" => "function(headerValue, rowValue, rowData, filterParams){
-                if (rowValue.length===0) return false;
-                return JSON.stringify(rowValue).includes(headerValue);}",
+                "headerFilterFunc" => "FSTARTfunction(headerValue, rowValue, rowData, filterParams){ if (rowValue.length===0) return false; return JSON.stringify(rowValue).includes(headerValue);}FEND", 
                 "headerSort" => false,
-                "tooltip" => 'function(e, cell, onRendered){
-                var data = cell.getValue();
-
-                var keys = Object.keys(data).sort();
-                var formattedData = "";
-
-                keys.forEach(function(key) {
-                    if (data.hasOwnProperty(key)) {
-                        formattedData += key + "=" + data[key] + "<br>";
-                    }
-                });
-                return formattedData;}',
-                "formatter" => 'function(cell, formatterParams, onRendered) {
-                var data = cell.getValue();
-
-                var keys = Object.keys(data).sort();
-                var formattedData = "";
-
-                keys.forEach(function(key) {
-                    if (data.hasOwnProperty(key)) {
-                        formattedData += key + "=" + data[key] + "<br>";
-                    }
-                });
-                return formattedData;}'
+                "tooltip" => "FSTARTfunction(e, cell, onRendered){ var data = cell.getValue(); var keys = Object.keys(data).sort(); var formattedData = ''; keys.forEach(function(key) { if (data.hasOwnProperty(key)) { formattedData += key + '=' + data[key] + '<br>'; } }); return formattedData;}FEND",
+                "formatter" => "FSTARTfunction(cell, formatterParams, onRendered){var data = cell.getValue();var keys = Object.keys(data).sort();var formattedData = ''; keys.forEach(function(key) { if (data.hasOwnProperty(key)) { formattedData += key + '=' + data[key] + '<br>';}}); return formattedData;}FEND"
             ],
             [
                 "title" => "Preland",
@@ -258,10 +234,11 @@ class TableColumns
                 "sorter" => "string",
                 "headerFilter" => "input"
             ],
-            [ //TODO: check how it appears!
+            [ 
                 "title" => "LpClick",
                 "field" => "lpclick",
-                "headerFilter" => "input",
+                "sorter" => "boolean",
+                "formatter" => "tickCross"
             ],
             [
                 "title" => "Status",
