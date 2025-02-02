@@ -57,7 +57,7 @@ $dataset = $db->get_campaigns(
 
         table.on("columnResized", async function (column) {
             let updatedColumn = { field: column.getField(), width: column.getWidth() };
-            await fetch("commoneditor.php?action=width&table=campaigns", {
+            await fetch("clmnseditor.php?action=width&table=campaigns", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -78,7 +78,7 @@ $dataset = $db->get_campaigns(
             document.getElementById("trafficBack").onclick = async () => {
                 let tbUrl = prompt("Enter trafficback url:", "<?= $gs['trafficBackUrl'] ?>");
                 if (tbUrl === null) return;
-                let res = await fetch("commoneditor.php?action=trafficback", {
+                let res = await fetch("clmnseditor.php?action=trafficback", {
                     method: "POST",
                     body: tbUrl,
                 });
@@ -101,7 +101,7 @@ $dataset = $db->get_campaigns(
             let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type('stats')) ?>;
             let selectedClmns = <?= json_encode($gs['statistics']['table']) ?>;
             addColumnsToList(selectedClmns, availableClmns);
-            setSaveButtonHandler("commoneditor.php?action=savecolumns&table=campaigns");
+            setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=campaigns");
         });
     </script>
 </body>

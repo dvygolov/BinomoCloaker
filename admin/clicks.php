@@ -84,7 +84,7 @@ $tColumns = get_clicks_columns($campId, $tz,$filter, $stats);
 
             t<?=$tName?>Table.on("columnResized", async function (column) {
                 let updatedColumn = { field: column.getField(), width: column.getWidth() };
-                await fetch("commoneditor.php?action=width&table=<?=$filter?>", {
+                await fetch("clmnseditor.php?action=width&table=<?=$filter?>", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -102,7 +102,7 @@ $tColumns = get_clicks_columns($campId, $tz,$filter, $stats);
             let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type($filter)) ?>;
             let selectedClmns = <?= json_encode($stats) ?>;
             addColumnsToList(selectedClmns, availableClmns);
-            setSaveButtonHandler("commoneditor.php?action=savecolumns&table=<?=$filter?>");
+            setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=<?=$filter?>");
         </script>
         <br/>
         <br/>
