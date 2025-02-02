@@ -28,9 +28,11 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
 }
 
 
-function get_clicks_columns(?int $campId, string $timezone, string $filter, array $clmnWidths): string
+function get_clicks_columns(?int $campId, string $timezone, string $filter, array $columns): string
 {
-    $defaultClmns =
+    $columnSettings = TableColumns::$clickClmns;
+
+    $defaultColumns = 
     [
         "subid"=>[
             "title" => "Subid",
@@ -58,7 +60,24 @@ function get_clicks_columns(?int $campId, string $timezone, string $filter, arra
         ]
     ];
 
-    return json_encode($defaultClmns);
+    $tabulatorColumns = [];
+    for($i=0; $i<count($columns); $i++)
+    {
+        $clmn = $columns[$i]['field'];
+        $width = $widths[$i]['width']??-1;
+        if (array_key_exists($clmn, $columnSettings)) {
+            $tabulatorColumns[] = $columnSettings[$clmn];
+        }
+        else if (array_key_exists($clmn, $defaultColumns)) {
+            $tabulatorColumns[] = $defaultColumns[$clmn];
+        }
+        else{
+            $tabulatorColumns[] = ["title"=>$clmn,"field"=>$clmn];
+        }
+        if ($width===-1) continue;
+        $tabulatorColumns[count($tabulatorColumns)-1]["width"] = $width;
+    }
+    return json_encode($tabulatorColumns);
 }
 
 function get_campaigns_columns(array $clmnWidths): string
