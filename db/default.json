@@ -333,88 +333,21 @@
       {
         "name": "Date",
         "columns": [
-          "clicks",
-          "uniques",
-          "uniques_ratio",
-          "conversion",
-          "cra",
-          "epc",
-          "cpc",
-          "revenue",
-          "costs",
-          "profit",
-          "roi"
+          {"field": "date", "width":-1},
+          {"field": "clicks", "width":-1},
+          {"field": "uniques", "width":-1},
+          {"field": "uniques_ratio", "width":-1},
+          {"field": "conversion", "width":-1},
+          {"field": "cra", "width":-1},
+          {"field": "epc", "width":-1},
+          {"field": "cpc", "width":-1},
+          {"field": "revenue", "width":-1},
+          {"field": "costs", "width":-1},
+          {"field": "profit", "width":-1},
+          {"field": "roi", "width":-1}
         ],
         "groupby": [ "date" ]
-      },
-      {
-        "name": "Creo",
-        "columns": [
-          "clicks",
-          "uniques",
-          "uniques_ratio",
-          "conversion",
-          "cra",
-          "epc",
-          "cpc",
-          "revenue",
-          "costs",
-          "profit",
-          "roi"
-        ],
-        "groupby": [ "c" ]
-      },
-      {
-        "name": "Age",
-        "columns": [
-          "clicks",
-          "uniques",
-          "uniques_ratio",
-          "conversion",
-          "cra",
-          "epc",
-          "cpc",
-          "revenue",
-          "costs",
-          "profit",
-          "roi"
-        ],
-        "groupby": [ "age" ]
-      },
-      {
-        "name": "Feed",
-        "columns": [
-          "clicks",
-          "uniques",
-          "uniques_ratio",
-          "conversion",
-          "cra",
-          "epc",
-          "cpc",
-          "revenue",
-          "costs",
-          "profit",
-          "roi"
-        ],
-        "groupby": [ "f" ]
-      },
-      {
-        "name": "Zone",
-        "columns": [
-          "clicks",
-          "uniques",
-          "uniques_ratio",
-          "conversion",
-          "cra",
-          "epc",
-          "cpc",
-          "revenue",
-          "costs",
-          "profit",
-          "roi"
-        ],
-        "groupby": [ "z" ]
-      }
+      } 
     ]
   },
   "postback": {
