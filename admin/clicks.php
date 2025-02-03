@@ -21,34 +21,34 @@ $timeRange = Dates::get_time_range($tz);
 $startDate = $timeRange[0];
 $endDate = $timeRange[1];
 
-$filter = $_GET['filter'] ?? '';
+$filter = $_GET['filter'] ?? 'allowed';
 switch ($filter) {
     case 'trafficback':
         $dataset = $db->get_trafficback_clicks($startDate, $endDate);
-        $stats = $gs['statistics']['trafficBack'];
+        $tableColumns = $gs['statistics']['trafficBack'];
         break;
     case 'leads':
         $dataset = $db->get_leads($startDate, $endDate, $campId);
-        $stats = $c->statistics->leads;
+        $tableColumns = $c->statistics->leads;
         break;
     case 'blocked':
         $dataset = $db->get_white_clicks($startDate, $endDate, $campId);
-        $stats = $c->statistics->blocked;
+        $tableColumns = $c->statistics->blocked;
         break;
     case 'single':
         $clickId = $_GET['subid'] ?? '';
         $dataset = $db->get_clicks_by_subid($clickId);
-        $stats = $c->statistics->allowed;
+        $tableColumns = $c->statistics->allowed;
         break;
     default:
         $dataset = $db->get_black_clicks($startDate, $endDate, $campId);
-        $stats = $c->statistics->allowed;
+        $tableColumns = $c->statistics->allowed;
         break;
 }
 
 $dJson = json_encode($dataset);
 $tName = empty($filter) ? 'allowed' : $filter;
-$tColumns = get_clicks_columns($campId, $tz,$filter, $stats);
+$tColumns = get_clicks_columns($campId, $tz,$tableColumns);
 ?>
 
 <!doctype html>
@@ -84,7 +84,7 @@ $tColumns = get_clicks_columns($campId, $tz,$filter, $stats);
 
             t<?=$tName?>Table.on("columnResized", async function (column) {
                 let updatedColumn = { field: column.getField(), width: column.getWidth() };
-                await fetch("clmnseditor.php?action=width&table=<?=$filter?>", {
+                await fetch("clmnseditor.php?action=width&table=<?=$filter?><?=is_null($campId)?'':'&campid='.$campId?>", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -100,9 +100,9 @@ $tColumns = get_clicks_columns($campId, $tz,$filter, $stats);
             };
 
             let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type($filter)) ?>;
-            let selectedClmns = <?= json_encode($stats) ?>;
+            let selectedClmns = <?= json_encode($tableColumns) ?>;
             addColumnsToList(selectedClmns, availableClmns);
-            setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=<?=$filter?>");
+            setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=<?=$filter?><?=is_null($campId)?'':'&campid='.$campId?>");
         </script>
         <br/>
         <br/>

@@ -10,24 +10,27 @@ if (!$passOk)
 
 $action = $_REQUEST['action'];
 $table = $_REQUEST['table']??'';
-$campId = $_REQUEST['campid']??'';
-add_log('trace', "ColumnsEditor action: $action, table: $table, campId: $campId");
-switch($table){
-    case 'trafficback':
-        $table = 'trafficBack';
-        break;
-    default:
-        $table = 'table';
-        break;
+$campId = $_REQUEST['campid']??null;
+$postData = file_get_contents('php://input');
+
+//ugly one but we need it!
+if ($action === 'trafficback') {
+    $s = $db->get_common_settings();
+    $s['trafficBackUrl'] = $postData;
+    $res = $db->set_common_settings($s);
+    if ($res===false)
+        return send_clmnseditor_result("Error saving settings!",true);
+    return send_clmnseditor_result("OK");
 }
 
-$s = $db->get_common_settings();
-$postData = file_get_contents('php://input');
+add_log('trace', "ColumnsEditor action: $action, table: $table, campId: $campId");
+$currentColumns = get_columns_for_type($table, $campId);
 
 switch ($action) {
     case 'width':
         $uc = json_decode($postData, true);
-        update_width($s['statistics'][$table], $uc);
+        update_width($currentColumns, $uc);
+        save_columns_for_type($currentColumns, $table, $campId);
         break;
     case 'savecolumns':
         $data = json_decode($postData, true);
@@ -35,19 +38,12 @@ switch ($action) {
             return send_clmnseditor_result("Error: missing columns data", true);
         }
         
-        $s['statistics'][$table] = 
-            get_new_columns($s['statistics'][$table], $data['columns']);
-        break;
-    case 'trafficback':
-        $s['trafficBackUrl'] = $postData;
+        $newColumns = get_new_columns($currentColumns, $data['columns']);
+        save_columns_for_type($newColumns, $table, $campId);
         break;
     default:
         return send_clmnseditor_result("Error: wrong action!",true);
 }
-
-$res = $db->set_common_settings($s);
-if ($res===false)
-    return send_clmnseditor_result("Error saving settings!",true);
 return send_clmnseditor_result("OK");
 
 function send_clmnseditor_result($msg,$error=false): void
@@ -100,4 +96,79 @@ function get_new_columns($existingColumns, $newColumnNames): array
     }
 
     return $newColumns;
+}
+
+function get_columns_for_type(string $table, ?int $campId = null): array{
+    global $db;
+    switch($table){
+        case 'campaigns':
+            $s = $db->get_common_settings();
+            return $s['statistics']['table'];
+        case 'trafficback':
+            $s = $db->get_common_settings();
+            return $s['statistics']['trafficBack'];
+        case 'allowed':
+        case 'single':
+            $s = $db->get_campaign_settings($campId);
+            return $s['statistics']['allowed'];
+        case 'blocked':
+            $s = $db->get_campaign_settings($campId);
+            return $s['statistics']['blocked'];
+        case 'leads':
+            $s = $db->get_campaign_settings($campId);
+            return $s['statistics']['leads'];
+        default:
+            $s = $db->get_campaign_settings($campId);
+            $c = new Campaign($campId, $s);
+            foreach ($c->statistics->tables as $t) {
+                if ($t->name === $table) {
+                    return $t->columns;
+                }
+            }
+
+            $errMsg = "Table $table not found in campaign settings";
+            add_log('error', $errMsg);
+            trigger_error($errMsg, E_USER_ERROR);
+            exit;
+    }
+}
+
+function save_columns_for_type(array $columns, string $table, ?int $campId = null):bool{
+    global $db;
+    switch($table){
+        case 'campaigns':
+            $s = $db->get_common_settings();
+            $s['statistics']['table'] = $columns;
+            return $db->set_common_settings($s);
+        case 'trafficback':
+            $s = $db->get_common_settings();
+            $s['statistics']['trafficBack'] = $columns;
+            return $db->set_common_settings($s);
+        case 'allowed':
+        case 'single':
+            $s = $db->get_campaign_settings($campId);
+            $s['statistics']['allowed'] = $columns;
+            return $db->save_campaign_settings($campId, $s);
+        case 'blocked':
+            $s = $db->get_campaign_settings($campId);
+            $s['statistics']['blocked'] = $columns;
+            return $db->save_campaign_settings($campId, $s);
+        case 'leads':
+            $s = $db->get_campaign_settings($campId);
+            $s['statistics']['leads'] = $columns;
+            return $db->save_campaign_settings($campId, $s);
+        default:
+            $s = $db->get_campaign_settings($campId);
+            $c = new Campaign($campId, $s);
+            foreach ($c->statistics->tables as $t) {
+                if ($t->name === $table) {
+                    return $t->columns;
+                }
+            }
+
+            $errMsg = "Table $table not found in campaign settings";
+            add_log('error', $errMsg);
+            trigger_error($errMsg, E_USER_ERROR);
+            exit;
+    }
 }

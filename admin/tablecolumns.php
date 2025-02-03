@@ -28,7 +28,7 @@ function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=n
 }
 
 
-function get_clicks_columns(?int $campId, string $timezone, string $filter, array $columns): string
+function get_clicks_columns(?int $campId, string $timezone,  array $columns): string
 {
     $columnSettings = TableColumns::$clickClmns;
 
