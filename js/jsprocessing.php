@@ -11,7 +11,7 @@ require_once __DIR__ . '/../requestfunc.php';
 
 global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
-if ($dbCamp===null){
+if ($dbCamp===false){
     $cs = $db->get_common_settings();
     $cp = Cloaker::get_click_params();
     $db->add_trafficback_click($cp);

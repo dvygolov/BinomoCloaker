@@ -16,7 +16,7 @@ require_once __DIR__ . '/redirect.php';
 
 global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
-if ($dbCamp===null){
+if ($dbCamp===false){
     $clickParams = Cloaker::get_click_params();
     $db->add_trafficback_click($clickParams);
     $cs = $db->get_common_settings();

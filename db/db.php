@@ -161,7 +161,7 @@ class Db
         }
     }
 
-    public function get_clicks_by_subid($subid, $firstOnly = false): array
+    public function get_clicks_by_subid($subid, bool $firstOnly = false): array
     {
         if (empty($subid)) {
             add_log("trace", "Skipping clicks retrieval - empty subid provided");
@@ -474,7 +474,7 @@ class Db
             $i++;
         }
     }
-    private function count_totals(array $children, array $columns)
+    private function count_totals(array $children, array $columns): array
     {
         // If we have only one child row
         if (count($children) === 1) {
@@ -674,7 +674,7 @@ class Db
         }
     }
 
-    public function add_lead($subid, $name, $phone, $status = 'Lead')
+    public function add_lead($subid, $name, $phone, $status = 'Lead'): bool
     {
         if (empty($subid)) {
             add_log("warning", "Skipping lead addition - empty subid provided");
@@ -887,7 +887,7 @@ class Db
         return $data;
     }
 
-    public function add_campaign($name)
+    public function add_campaign($name): bool|int
     {
         $query = "INSERT INTO campaigns (name, settings) VALUES (:name, :settings)";
 
@@ -920,7 +920,7 @@ class Db
         }
     }
 
-    public function clone_campaign($id)
+    public function clone_campaign($id): bool|int
     {
         // SQL query to clone campaign using a single command
         $query = "INSERT INTO campaigns (name, settings)
@@ -954,7 +954,7 @@ class Db
         }
     }
 
-    public function get_campaign_settings($id)
+    public function get_campaign_settings($id):array
     {
         $query = "SELECT settings FROM campaigns WHERE id = :id";
 
@@ -983,7 +983,7 @@ class Db
         }
     }
 
-    public function get_campaign_by_currentpath()
+    public function get_campaign_by_currentpath(): array|bool
     {
         $domain = get_cloaker_path(false, false);
         $query = "SELECT * FROM campaigns";
@@ -1018,16 +1018,16 @@ class Db
             }
 
             add_log("trace", "No matching campaign found for domain $domain");
-            return null;
+            return false;
         } catch (Exception $e) {
             add_log("errors", "Couldn't fetch campaigns for domain $domain: " . $e->getMessage());
-            return null;
+            return false;
         } finally {
             if (isset($db)) $db->close();
         }
     }
 
-    private function match_domain($domains, $domainToMatch)
+    private function match_domain($domains, $domainToMatch): bool
     {
         foreach ($domains as $domain) {
             if ($domain === $domainToMatch) {
@@ -1044,7 +1044,7 @@ class Db
         return false;
     }
 
-    public function rename_campaign($id, $name)
+    public function rename_campaign($id, $name): bool
     {
         $query = "UPDATE campaigns SET name = :name WHERE id = :id";
 
@@ -1079,7 +1079,7 @@ class Db
         }
     }
 
-    public function save_campaign_settings(int $id, array $settings)
+    public function save_campaign_settings(int $id, array $settings): bool
     {
         $query = "UPDATE campaigns SET settings = :settings WHERE id = :id";
 
@@ -1117,7 +1117,7 @@ class Db
     }
 
 
-    public function delete_campaign($id)
+    public function delete_campaign($id): bool
     {
         $query = "DELETE FROM campaigns WHERE id = :id";
 
@@ -1151,7 +1151,7 @@ class Db
         }
     }
 
-    public function get_campaigns($startDate, $endDate, array $selectFields)
+    public function get_campaigns($startDate, $endDate, array $selectFields): array
     {
         $query = "
         SELECT cmp.id, cmp.name, %s

@@ -19,7 +19,7 @@ header('Content-Type: text/javascript');
 
 global $db;
 $dbCamp = $db->get_campaign_by_currentpath();
-if ($dbCamp===null){
+if ($dbCamp===false){
     //we couldn't find a campaign for this domain, so we send back js code to redirect to trafficback if any
     $cs = $db->get_common_settings();
     $cp = Cloaker::get_click_params();

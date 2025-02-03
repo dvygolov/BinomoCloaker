@@ -7,7 +7,7 @@ require_once __DIR__ . '/../db/db.php';
 global $db;
 
 $dbCamp = $db->get_campaign_by_currentpath();
-if ($dbCamp === null)
+if ($dbCamp === false)
     die("NO CAMPAIGN FOR THIS DOMAIN!");
 $reason = isset($_GET['reason']) ? $_GET['reason'] : 'js_checks';
 $added = $db->add_white_click(Cloaker::get_click_params(), $reason, $dbCamp['id']);
