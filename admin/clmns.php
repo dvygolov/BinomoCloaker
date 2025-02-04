@@ -123,6 +123,7 @@ class AvailableColumns
 
     public static function get_columns_for_type($type)
     {
+        if ($type === 'single') $type = 'allowed';
         $clmnsName = $type . 'Columns';
         return self::$$clmnsName;
     }
