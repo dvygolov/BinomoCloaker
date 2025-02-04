@@ -2,28 +2,28 @@
 require_once __DIR__ . '/../db/db.php';
 require_once __DIR__ . '/clmns.php';
 
-function get_stats_columns(array $columns, ?array $widths=null, ?string $tName=null): string
+function get_stats_columns(array $columns, ?string $groupByClmnTitle=null): string
 {
     $columnSettings = TableColumns::$statsClmns;
     $tabulatorColumns = [];
     
-    //if we have a groupby parameter, then we should add a group column with a specific name
-    if (!is_null($tName))
-        $tabulatorColumns[] = ["title" => $tName, "field" => "group"];
-
     for($i=0; $i<count($columns); $i++)
     {
-        $clmn = $columns[$i];
-        $width = $widths[$i]??-1;
-        if (array_key_exists($clmn, $columnSettings)) {
-            $tabulatorColumns[] = $columnSettings[$clmn];
+        $field = $columns[$i]['field'];
+        $width = $columns[$i]['width']??-1;
+        if (array_key_exists($field, $columnSettings)) {
+            $tabulatorColumns[] = $columnSettings[$field];
         }
         else{
-            $tabulatorColumns[] = ["title"=>$clmn,"field"=>$clmn];
+            $tabulatorColumns[] = ["title"=>$field,"field"=>$field];
         }
         if ($width===-1) continue;
         $tabulatorColumns[count($tabulatorColumns)-1]["width"] = $width;
     }
+    
+    if (!is_null($groupByClmnTitle) && count($tabulatorColumns)>0)
+        $tabulatorColumns[0]["title"] = $groupByClmnTitle;
+
     return json_encode($tabulatorColumns);
 }
 
@@ -83,7 +83,7 @@ function get_clicks_columns(?int $campId, string $timezone,  array $columns): st
     return $clmnsJson;
 }
 
-function get_campaigns_columns(array $clmnWidths): string
+function get_campaigns_columns(array $columns): string
 {
     $defaultClmns = <<<JSON
     [
@@ -123,11 +123,7 @@ function get_campaigns_columns(array $clmnWidths): string
         },
 JSON;
 
-
-    $names = array_column($clmnWidths,'field');
-    $widths = array_column($clmnWidths,'width');
-    $statColumns = get_stats_columns($names,$widths);
-    
+    $statColumns = get_stats_columns($columns);
     $defaultClmns.=substr($statColumns,1);
     return $defaultClmns;
 }

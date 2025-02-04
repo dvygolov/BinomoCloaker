@@ -20,11 +20,16 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
     $ss = $c->statistics;
     foreach ($ss->tables as $tSettings) {
         $dataset = $db->get_statistics(
-            $tSettings->columns, $tSettings->groupby, $campId,
-            $timeRange[0],$timeRange[1], $ss->timezone);
+            array_column($tSettings->columns, 'field'),
+            $tSettings->groupby,
+            $campId,
+            $timeRange[0],
+            $timeRange[1],
+            $ss->timezone
+        );
         $dJson = json_encode($dataset);
         $tName = $tSettings->name;
-        $tColumns = get_stats_columns($tSettings->columns, null, $tName);
+        $tColumns = get_stats_columns($tSettings->columns, $tName);
     ?>
             <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
                 <button id="download<?=$tName?>" title="Download table data as CSV" class="btn btn-success">

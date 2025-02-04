@@ -346,15 +346,15 @@ class Db
     }
 
     public function get_statistics(
-    $selectedFields,
-    $groupByFields,
-    $campId,
-    $startDate,
-    $endDate,
-    $timezone
-    ) {
+        array $selectedFields,
+        array $groupByFields,
+        int $campId,
+        string $startDate,
+        string $endDate,
+        string $timezone
+    ): array {
         $baseQuery =
-        "SELECT %s FROM clicks c WHERE campaign_id = :campid AND time BETWEEN :startDate AND :endDate";
+            "SELECT %s FROM clicks c WHERE campaign_id = :campid AND time BETWEEN :startDate AND :endDate";
         $selectParts = [];
         $groupByParts = [];
         $orderByParts = [];
@@ -377,7 +377,7 @@ class Db
                 "strftime('%Y-%m-%d', datetime(time, 'unixepoch', '{$offsetFormatted}')) AS date";
                 $groupByParts[] = "date";
                 $orderByParts[] = "date";
-            } elseif (in_array($field, ['preland', 'land', 'isp', 'country', 'lang', 'os'])) {
+            } elseif (in_array($field, ['country', 'lang', 'os', 'osver', 'brand', 'model', 'device', 'isp', 'client', 'clientver',  'preland', 'land'])) {
                 $selectParts[] = $field;
                 $groupByParts[] = $field;
                 $orderByParts[] = $field;
@@ -397,147 +397,109 @@ class Db
         $sqlQuery = sprintf($baseQuery, $selectClause) . " " . $groupByClause . " " . $orderByClause;
 
         $db = $this->open_db(true);
-        // Prepare and execute the query
         $stmt = $db->prepare($sqlQuery);
         if ($stmt === false) {
-            // Prepare failed, get and display the error message
             $errorMessage = $db->lastErrorMsg();
             add_log("errors", "Error preparing statistics statement: $errorMessage");
             $db->close();
             return [];
         }
+
         $stmt->bindValue(':campid', $campId, SQLITE3_INTEGER);
         $stmt->bindValue(':startDate', $startDate, SQLITE3_INTEGER);
         $stmt->bindValue(':endDate', $endDate, SQLITE3_INTEGER);
         $result = $stmt->execute();
 
         if ($result === false) {
-            // Prepare failed, get and display the error message
             $errorMessage = $db->lastErrorMsg();
             add_log("errors", "Error executing statistics statement: $errorMessage");
             $db->close();
             return [];
         }
 
-        $treeData = [];
+        $rows = [];
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            $this->add_row($treeData, $row, $selectedFields, $groupByFields);
+            $rows[] = $row;
         }
 
-        //$this->countTotals($treeData, $newGroupIndex, $selectedFields, $groupByFields);
         $db->close();
-        return $treeData;
+
+        // Build the tree structure
+        return $this->build_tree($rows, $groupByFields, $selectedFields);
     }
-    //TODO: totals correct counting
-    private function add_row(&$treeData, $row, $columns, $groupBy)
+
+    private function build_tree(array $rows, array $groupByFields, array $selectedFields, int $level = 0): array
     {
-        $children = &$treeData;
-        $i = 0;
-        while ($i < count($groupBy)) {
-            $curGroup = $groupBy[$i];
-            $lastChild = count($children) === 0 ? null : $children[count($children) - 1];
-            //if row will be the first child or
-            //if new row has group value that differs from the last child's group value
-            if ($lastChild === null || $lastChild['group'] !== $row[$curGroup]) {
+        if ($level >= count($groupByFields)) {
+            // At leaf level, return the row data
+            return $rows;
+        }
 
-                if (count($children) !== 0) {
-                    //count totals for previous levels
-                    $j = $i;
-                    $totChildren = &$children;
-                    $totParents = [];
-                    while ($j < count($groupBy) - 1) {
-                        $parent = &$totChildren[count($totChildren) - 1];
-                        $totChildren = &$parent['_children'];
-                        $totParents[] = &$parent;
-                        $j++;
-                    }
-                    while ($j > $i) {
-                        $parent = array_pop($totParents);
-                        $totals = $this->count_totals($totChildren, $columns);
-                        $parent = array_merge($parent, $totals);
-                        $j--;
-                    }
-                }
+        $groupField = $groupByFields[$level];
+        $groupedData = [];
 
-                $children[] = ['group' => $row[$curGroup], '_children' => []];
-                $lastChild = &$children[count($children) - 1];
-
-                unset($row[$curGroup]); //current group became a new level, we should remove it from row
-
-                //if we are at the last group by level - we need to add all the row data here
-                if ($i === count($groupBy) - 1) {
-                    unset($lastChild['_children']); //child-free node! it will have 'group' only
-                    $lastChild = array_merge($lastChild, $row);
-                }
+        // Group rows by current level's field
+        foreach ($rows as $row) {
+            $groupValue = $row[$groupField];
+            if (!isset($groupedData[$groupValue])) {
+                $groupedData[$groupValue] = [];
             }
-            $children = &$lastChild['_children'];
-            $i++;
-        }
-    }
-    private function count_totals(array $children, array $columns): array
-    {
-        // If we have only one child row
-        if (count($children) === 1) {
-            // Filter the array to include only keys present in the $columns array
-            $filtered = array_intersect_key($children[0], array_flip($columns));
-            return $filtered;
+            $groupedData[$groupValue][] = $row;
         }
 
-        //if we have many children - sum their values
-        $sumArray = [];
-        foreach ($children as $child) {
-            // Iterate over each key-value pair in the current array
-            foreach ($child as $key => $value) {
-                if (
-                in_array($key, [
-                '_children',
-                'group',
-                'uniques_ratio',
-                'lpctr',
-                'cra',
-                'crs',
-                'appt',
-                'app',
-                'cpc',
-                'epc',
-                'epuc'
-                ])
-                )
-                    continue;
-                if (!isset($sumArray[$key])) {
-                    $sumArray[$key] = 0;
+        $tree = [];
+        foreach ($groupedData as $groupValue => $groupRows) {
+            $children = $this->build_tree($groupRows, $groupByFields, $selectedFields, $level + 1);
+
+            // Calculate totals for this group
+            $totals = $this->calculate_totals($children, $selectedFields);
+
+            $tree[] = array_merge(
+                ['group' => $groupValue, '_children' => $children],
+                array_diff_key($totals, ['group' => null])
+            );
+        }
+
+        return $tree;
+    }
+
+    private function calculate_totals(array $rows, array $selectedFields): array
+    {
+        $totals = array_fill_keys($selectedFields, 0);
+
+        foreach ($rows as $row) {
+            foreach ($selectedFields as $field) {
+                if (isset($row[$field]) && is_numeric($row[$field])) {
+                    $totals[$field] += $row[$field];
                 }
-                $sumArray[$key] += $value;
             }
         }
 
-        if (in_array('uniques_ratio', $columns))
-            $sumArray['uniques_ratio'] =
-            $sumArray['clicks'] === 0 ? 0 : $sumArray['uniques'] * 1.0 / $sumArray['clicks'] * 100;
-        if (in_array('lpctr', $columns))
-            $sumArray['lpctr'] =
-            $sumArray['clicks'] === 0 ? 0 : $sumArray['lpclicks'] * 1.0 / $sumArray['clicks'] * 100.0;
-        if (in_array('cra', $columns))
-            $sumArray['cra'] =
-            $sumArray['clicks'] === 0 ? 0 : $sumArray['conversion'] * 1.0 / $sumArray['clicks'] * 100.0;
-        if (in_array('crs', $columns))
-            $sumArray['crs'] =
-            $sumArray['clicks'] === 0 ? 0 : $sumArray['purchase'] * 1.0 / $sumArray['clicks'] * 100.0;
-        if (in_array('appt', $columns))
-            $sumArray['appt'] = $sumArray['conversion'] - $sumArray['trash'] === 0 ? 0 :
-            $sumArray['purchase'] * 1.0 / ($sumArray['conversion'] - $sumArray['trash']) * 100.0;
-        if (in_array('app', $columns))
-            $sumArray['app'] =
-            $sumArray['conversion'] === 0 ? 0 : $sumArray['purchase'] * 1.0 / $sumArray['conversion'] * 100.0;
+        // Calculate derived fields
+        if (in_array('uniques_ratio', $selectedFields))
+            $totals['uniques_ratio'] = $totals['clicks'] === 0 ? 0 : $totals['uniques'] * 1.0 / $totals['clicks'] * 100;
+        if (in_array('lpctr', $selectedFields))
+            $totals['lpctr'] = $totals['clicks'] === 0 ? 0 : $totals['lpclicks'] * 1.0 / $totals['clicks'] * 100.0;
+        if (in_array('uniques_ratio', $selectedFields))
+            $totals['uniques_ratio'] = $totals['clicks'] === 0 ? 0 : $totals['uniques'] * 1.0 / $totals['clicks'] * 100;
+        if (in_array('lpctr', $selectedFields))
+            $totals['lpctr'] = $totals['clicks'] === 0 ? 0 : $totals['lpclicks'] * 1.0 / $totals['clicks'] * 100.0;
+        if (in_array('cra', $selectedFields))
+            $totals['cra'] = $totals['clicks'] === 0 ? 0 : $totals['conversion'] * 1.0 / $totals['clicks'] * 100.0;
+        if (in_array('crs', $selectedFields))
+            $totals['crs'] = $totals['clicks'] === 0 ? 0 : $totals['purchase'] * 1.0 / $totals['clicks'] * 100.0;
+        if (in_array('appt', $selectedFields))
+            $totals['appt'] = $totals['conversion'] - $totals['trash'] === 0 ? 0 : $totals['purchase'] * 1.0 / ($totals['conversion'] - $totals['trash']) * 100.0;
+        if (in_array('app', $selectedFields))
+            $totals['app'] = $totals['conversion'] === 0 ? 0 : $totals['purchase'] * 1.0 / $totals['conversion'] * 100.0;
+        if (in_array('cpc', $selectedFields))
+            $totals['cpc'] = $totals['clicks'] === 0 ? 0 : $totals['costs'] * 1.0 / $totals['clicks'];
+        if (in_array('epc', $selectedFields))
+            $totals['epc'] = $totals['clicks'] === 0 ? 0 : $totals['revenue'] * 1.0 / $totals['clicks'];
+        if (in_array('epuc', $selectedFields))
+            $totals['epuc'] = $totals['uniques'] === 0 ? 0 : $totals['revenue'] * 1.0 / $totals['uniques'] * 100;
 
-        if (in_array('cpc', $columns))
-            $sumArray['cpc'] = $sumArray['clicks'] === 0 ? 0 : $sumArray['costs'] * 1.0 / $sumArray['clicks'];
-        if (in_array('epc', $columns))
-            $sumArray['epc'] = $sumArray['clicks'] === 0 ? 0 : $sumArray['revenue'] * 1.0 / $sumArray['clicks'];
-        if (in_array('epuc', $columns))
-            $sumArray['epuc'] = $sumArray['uniques'] === 0 ? 0 : $sumArray['revenue'] * 1.0 / $sumArray['uniques'] * 100;
-
-        return $sumArray;
+        return $totals;
     }
 
     public function add_trafficback_click($data): bool
@@ -775,7 +737,7 @@ class Db
             return true;
         } catch (Exception $e) {
             add_log("errors", "Failed to update status: " . $e->getMessage() . ", Data: subid=$subid, status=$status, payout=$payout");
-            return false;
+            return false; // Safer to return false than die() on error
         } finally {
             if (isset($db)) $db->close();
         }
