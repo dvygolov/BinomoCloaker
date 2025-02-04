@@ -40,6 +40,11 @@ $dataset = $db->get_campaigns(
         </div>
         <div id="campaigns"></div>
     </div>
+    <style>
+        .btn-camp{
+            padding: 8px 4px !important;
+        }
+    </style>
     <script>
         let tableData = <?= json_encode($dataset) ?>;
         let tableColumns = <?= get_campaigns_columns($gs['statistics']['table']) ?>;

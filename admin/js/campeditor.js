@@ -42,30 +42,44 @@ async function campActionsHandler(e, cell) {
         if (newName==null) return;
         if (newName) {
             await campEditor('ren', campaignId, newName);
+            return;
         }
-        else
+        else{
             alert('Campaign name can not be empty!');
+            return;
+        }
     }
 
     if (target.classList.contains('btn-delete')) {
         if (confirm(`Are you sure? Going to delete campaign ${row.getData().name}.`)) {
             await campEditor('del', campaignId);
+            return;
         }
+        return;
     }
 
     if (target.classList.contains('btn-clone')) {
         await campEditor('dup', campaignId);
+        return;
     }
 
     if (target.classList.contains('btn-stats')) {
         window.location.href = `statistics.php?campId=${campaignId}`;
+        return;
     }
 
     if (target.classList.contains('btn-allowed')) {
-        window.location.href = `clicks.php?campId=${campaignId}`;
+        window.location.href = `clicks.php?campId=${campaignId}&filter=allowed`;
+        return;
     }
 
     if (target.classList.contains('btn-blocked')) {
         window.location.href = `clicks.php?campId=${campaignId}&filter=blocked`;
+        return;
+    }
+
+    if (target.classList.contains('btn-leads')) {
+        window.location.href = `clicks.php?campId=${campaignId}&filter=leads`;
+        return;
     }
 }
