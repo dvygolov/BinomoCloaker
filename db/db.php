@@ -11,7 +11,7 @@ class Db
     public function __construct()
     {
         global $cloSettings;
-        $this->dbPath = __DIR__ . '/' . $cloSettings['dbFileName'];
+        $this->dbPath = __DIR__ . '/' . $cloSettings['dbConnection'];
         if (!file_exists($this->dbPath)) {
             $this->create_new_db();
         }
