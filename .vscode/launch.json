@@ -26,6 +26,7 @@
         {
             "name": "Launch Firefox (Admin)",
             "type": "firefox",
+            "firefoxExecutable": "C:\\Users\\allsp\\AppData\\Local\\Mozilla Firefox\\firefox.exe",
             "request": "launch",
             "url": "http://localhost:8080/admin/",
             "webRoot": "${workspaceFolder}",
@@ -38,8 +39,7 @@
             "reAttach": true,
             "skipFiles": [
                 "${workspaceFolder}/node_modules/**"
-            ],
-            "sourceMaps": true
+            ]
         }
     ],
     "compounds": [

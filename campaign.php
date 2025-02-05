@@ -42,7 +42,6 @@ class Campaign implements JsonSerializable
     function jsonSerialize():array
     {
         return [
-        "campaignId" => $this->campaignId,
         "domains" => $this->domains,
         "filters" => $this->filters,
         "saveuserflow" => $this->saveUserFlow,

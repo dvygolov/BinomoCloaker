@@ -38,6 +38,7 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
                         class="bi bi-layout-three-columns"></i></button>
                 <button id="download<?=$tName?>" title="Download table as CSV" class="btn btn-success" style="float: right;"><i
                         class="bi bi-download"></i></button>
+            
             </div>
             <div id="t<?=$tName?>" style="clear: both;"></div>
             <script>

@@ -44,7 +44,6 @@ switch ($action) {
             else
                 setArrayValue($s,$key,$value);
         }
-        $c = new Campaign($campId,$s);
         $saveRes = $db->save_campaign_settings($campId, $s);
         if($saveRes===false)
             return send_camp_result("Error saving campaign!",true);

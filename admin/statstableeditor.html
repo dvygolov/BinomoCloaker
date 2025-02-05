@@ -1,0 +1,440 @@
+<style>
+    .sortable-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sortable-item {
+        padding: 12px 16px;
+        margin: 8px 0;
+        background: #1a2235;
+        border: 1px solid #2a3245;
+        border-radius: 8px;
+        cursor: move;
+        display: flex;
+        align-items: center;
+        user-select: none;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .sortable-item:hover {
+        background: #212b40;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .sortable-item::before {
+        content: "☰";
+        margin-right: 12px;
+        color: #4a5568;
+        font-size: 14px;
+    }
+
+    .sortable-item input[type="checkbox"] {
+        margin-right: 12px;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 2px solid #2d3748;
+        appearance: none;
+        -webkit-appearance: none;
+        position: relative;
+        background: #1a2235;
+        transition: all 0.2s ease;
+    }
+
+    .sortable-item input[type="checkbox"]:checked {
+        background: #0084ff;
+        border-color: #0084ff;
+    }
+
+    .sortable-item input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        color: white;
+        font-size: 12px;
+        left: 3px;
+        top: -1px;
+    }
+
+    .sortable-item span {
+        font-size: 14px;
+        color: #e2e8f0;
+        font-weight: 500;
+    }
+
+    .sortable-item.sortable-ghost {
+        opacity: 0.4;
+        background: #2d3748;
+    }
+
+    .sortable-item.sortable-chosen {
+        background: #212b40;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #columnsContainer {
+        max-height: 400px;
+        overflow-y: auto;
+        margin: 20px 0;
+        padding: 0 4px;
+    }
+
+    #columnsContainer::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #columnsContainer::-webkit-scrollbar-track {
+        background: #1a2235;
+        border-radius: 4px;
+    }
+
+    #columnsContainer::-webkit-scrollbar-thumb {
+        background: #2d3748;
+        border-radius: 4px;
+    }
+
+    #columnsContainer::-webkit-scrollbar-thumb:hover {
+        background: #3a4759;
+    }
+
+    .modal-content {
+        background: #151b2d;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        color: #e2e8f0;
+    }
+
+    .modal-content h4 {
+        color: #e2e8f0;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 16px 0;
+        padding: 20px 24px;
+        border-bottom: 1px solid #2a3245;
+    }
+
+    .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #2a3245;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-secondary {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+        background: #3a4759;
+    }
+
+    .btn-primary {
+        background: #0084ff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #0066cc;
+    }
+
+    .sortable-list {
+        border: 1px solid #ddd;
+        padding: 10px;
+        min-height: 100px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .column-item {
+        display: flex;
+        align-items: center;
+        padding: 5px;
+        margin: 5px 0;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        cursor: move;
+    }
+
+    .column-item input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    .column-item span {
+        flex-grow: 1;
+    }
+
+    .column-item:hover {
+        background: #e9ecef;
+    }
+</style>
+
+<div id="columnModal" class="ywbmodal">
+    <div class="modal-content">
+        <h4>Select and Order Columns</h4>
+        <div id="columnsContainer">
+            <ul id="columnsList" class="sortable-list"></ul>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="closeModal" onclick="$.modal.close();">Cancel</button>
+            <button type="button" class="btn btn-primary" id="saveColumns">Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="statsTableModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Edit Statistics Table</h4>
+        </div>
+        <div class="modal-body">
+            <!-- Table Name -->
+            <div class="form-group mb-3">
+                <label for="tableName">Table Name:</label>
+                <input type="text" id="tableName" class="form-control" placeholder="Enter table name">
+            </div>
+
+            <!-- Metrics (Table Columns) -->
+            <div class="form-group mb-3">
+                <label>Metrics (Table Columns):</label>
+                <div class="d-flex justify-content-between mb-2">
+                    <button id="selectAllMetrics" class="btn btn-sm btn-outline-secondary">Select All</button>
+                    <button id="deselectAllMetrics" class="btn btn-sm btn-outline-secondary">Deselect All</button>
+                </div>
+                <div id="metricsColumns" class="sortable-list">
+                    <!-- Will be populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Dimensions (Group By Fields) -->
+            <div class="form-group mb-3">
+                <label>Dimensions (Group By):</label>
+                <div class="d-flex justify-content-between mb-2">
+                    <button id="selectAllDimensions" class="btn btn-sm btn-outline-secondary">Select All</button>
+                    <button id="deselectAllDimensions" class="btn btn-sm btn-outline-secondary">Deselect All</button>
+                </div>
+                <div id="dimensionsColumns" class="sortable-list">
+                    <!-- Will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="saveTableBtn" class="btn btn-primary">Save</button>
+            <button type="button" id="cancelTableBtn" class="btn btn-secondary">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addColumnsToList(selectedClmns, availableClmns) {
+        let $list = $('#columnsList');
+        $list.empty();
+        // First add selected columns in their saved order
+        selectedClmns.forEach(column => {
+            const $item = $(`
+                <li class="sortable-item">
+                    <input type="checkbox" value="${column.field}" checked>
+                    <span>${column.field}</span>
+                </li>`);
+            $list.append($item);
+        });
+
+        // Then add unselected columns
+        availableClmns.forEach(column => {
+            if (!selectedClmns.some(sc => sc.field === column)) {
+                const $item = $(`
+                    <li class="sortable-item">
+                        <input type="checkbox" value="${column}">
+                        <span>${column}</span>
+                    </li>`);
+                $list.append($item);
+            }
+        });
+        
+        let sortableList = new Sortable(document.getElementById('columnsList'), {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen'
+        });
+    }
+
+    function getSelectedColumns() {
+        const selectedColumns = [];
+        $('#columnsList .sortable-item').each(function () {
+            const $checkbox = $(this).find('input[type="checkbox"]');
+            if ($checkbox.is(':checked')) {
+                selectedColumns.push($checkbox.val());
+            }
+        });
+        return selectedColumns;
+    }
+
+    function setSaveButtonHandler(handlerUrl){
+        // Save button handler
+        $('#saveColumns').off('click').on('click', async function () {
+            const selectedColumns = getSelectedColumns();
+
+            // Save columns configuration
+            let res = await fetch(handlerUrl, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    columns: selectedColumns
+                })
+            });
+
+            let data = await res.json();
+            if (!data.error) {
+                window.location.reload();
+            } else {
+                alert('Error saving columns: ' + data.msg);
+            }
+        });
+    }
+
+    function initializeStatsTableEditor(availableColumns, selectedMetrics, selectedDimensions, tableName, saveUrl) {
+        // Initialize Sortable.js for both lists
+        new Sortable(document.getElementById('metricsColumns'), {
+            animation: 150,
+            group: 'metrics'
+        });
+        new Sortable(document.getElementById('dimensionsColumns'), {
+            animation: 150,
+            group: 'dimensions'
+        });
+
+        // Set table name if provided
+        if (tableName) {
+            document.getElementById('tableName').value = tableName;
+        }
+
+        // Populate metrics list
+        function addColumnsToMetricsList(columns) {
+            const $list = $('#metricsColumns');
+            $list.empty();
+            
+            columns.forEach(column => {
+                const isSelected = selectedMetrics.some(sc => sc.field === column.field);
+                const $item = $(`
+                    <div class="column-item" data-field="${column.field}">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''}>
+                        <span>${column.title || column.field}</span>
+                    </div>
+                `);
+                $list.append($item);
+            });
+        }
+
+        // Populate dimensions list
+        function addColumnsToDimensionsList(columns) {
+            const $list = $('#dimensionsColumns');
+            $list.empty();
+            
+            columns.forEach(column => {
+                const isSelected = selectedDimensions.some(sd => sd === column.field);
+                const $item = $(`
+                    <div class="column-item" data-field="${column.field}">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''}>
+                        <span>${column.title || column.field}</span>
+                    </div>
+                `);
+                $list.append($item);
+            });
+        }
+
+        // Add columns to both lists
+        addColumnsToMetricsList(availableColumns);
+        addColumnsToDimensionsList(availableColumns);
+
+        // Select/Deselect All buttons handlers
+        $('#selectAllMetrics').click(() => {
+            $('#metricsColumns input[type="checkbox"]').prop('checked', true);
+        });
+
+        $('#deselectAllMetrics').click(() => {
+            $('#metricsColumns input[type="checkbox"]').prop('checked', false);
+        });
+
+        $('#selectAllDimensions').click(() => {
+            $('#dimensionsColumns input[type="checkbox"]').prop('checked', true);
+        });
+
+        $('#deselectAllDimensions').click(() => {
+            $('#dimensionsColumns input[type="checkbox"]').prop('checked', false);
+        });
+
+        // Save button handler
+        $('#saveTableBtn').click(async () => {
+            const tableName = $('#tableName').val();
+            if (!tableName) {
+                alert('Please enter a table name');
+                return;
+            }
+
+            const selectedMetrics = $('#metricsColumns .column-item')
+                .filter((_, item) => $(item).find('input').is(':checked'))
+                .map((_, item) => ({
+                    field: $(item).data('field'),
+                    width: -1
+                }))
+                .get();
+
+            const selectedDimensions = $('#dimensionsColumns .column-item')
+                .filter((_, item) => $(item).find('input').is(':checked'))
+                .map((_, item) => $(item).data('field'))
+                .get();
+
+            if (selectedMetrics.length === 0) {
+                alert('Please select at least one metric');
+                return;
+            }
+
+            const data = {
+                name: tableName,
+                columns: selectedMetrics,
+                groupby: selectedDimensions
+            };
+
+            try {
+                const response = await fetch(saveUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                $.modal.close();
+                location.reload();
+            } catch (error) {
+                alert('Error saving table: ' + error.message);
+            }
+        });
+
+        // Cancel button handler
+        $('#cancelTableBtn').click(() => {
+            $.modal.close();
+        });
+    }
+</script>

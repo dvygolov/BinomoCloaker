@@ -119,10 +119,9 @@ function get_columns_for_type(string $table, ?int $campId = null): array{
             return $s['statistics']['leads'];
         default:
             $s = $db->get_campaign_settings($campId);
-            $c = new Campaign($campId, $s);
-            foreach ($c->statistics->tables as $t) {
-                if ($t->name === $table) {
-                    return $t->columns;
+            foreach ($s['statistics']['tables'] as $t) {
+                if ($t['name'] === $table) {
+                    return $t['columns'];
                 }
             }
 
@@ -159,10 +158,10 @@ function save_columns_for_type(array $columns, string $table, ?int $campId = nul
             return $db->save_campaign_settings($campId, $s);
         default:
             $s = $db->get_campaign_settings($campId);
-            $c = new Campaign($campId, $s);
-            foreach ($c->statistics->tables as $t) {
-                if ($t->name === $table) {
-                    return $t->columns;
+            foreach ($s['statistics']['tables'] as &$t) {
+                if ($t['name'] === $table) {
+                    $t['columns'] = $columns;
+                    return $db->save_campaign_settings($campId, $s);
                 }
             }
 
