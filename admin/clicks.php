@@ -95,14 +95,24 @@ $tColumns = get_clicks_columns($campId, $tz,$tableColumns);
         </script>
         <?php include __DIR__."/clmnspopup.html" ?>
         <script>
+        document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("downloadCsv").onclick = () => {
                 t<?=$tName?>Table.download("csv", "<?=$tName?>_data.csv");
             };
 
-            let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type($filter)) ?>;
-            let selectedClmns = <?= json_encode($tableColumns) ?>;
-            addColumnsToList(selectedClmns, availableClmns);
-            setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=<?=$filter?><?=is_null($campId)?'':'&campid='.$campId?>");
+            document.getElementById("columnsSelect").onclick = async () => {
+                let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type($filter)) ?>;
+                let selectedClmns = <?= json_encode($tableColumns) ?>;
+                addColumnsToList(selectedClmns, availableClmns);
+                setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=<?= $filter ?><?= is_null($campId) ? '' : '&campid=' . $campId ?>");
+                $('#columnModal').modal({
+                    modalClass: 'ywbmodal',
+                    fadeDuration: 250,
+                    fadeDelay: 0.80,
+                    showClose: false
+                });
+            }
+        });
         </script>
         <br/>
         <br/>

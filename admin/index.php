@@ -102,11 +102,18 @@ $dataset = $db->get_campaigns(
             document.getElementById("downloadCsv").onclick = () => {
                 table.download("csv", "campaigns_data.csv");
             };
-        
-            let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type('stats')) ?>;
-            let selectedClmns = <?= json_encode($gs['statistics']['table']) ?>;
-            addColumnsToList(selectedClmns, availableClmns);
-            setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=campaigns");
+            document.getElementById("columnsSelect").onclick = async () => {
+                let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type('stats')) ?>;
+                let selectedClmns = <?= json_encode($gs['statistics']['table']) ?>;
+                addColumnsToList(selectedClmns, availableClmns);
+                setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=campaigns");
+                $('#columnModal').modal({
+                    modalClass: 'ywbmodal',
+                    fadeDuration: 250,
+                    fadeDelay: 0.80,
+                    showClose: false
+                });
+            }
         });
     </script>
 </body>

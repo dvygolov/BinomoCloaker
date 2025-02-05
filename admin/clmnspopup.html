@@ -167,18 +167,10 @@
     </div>
 </div>
 <script>
-    document.getElementById("columnsSelect").onclick = async () => {
-        $('#columnModal').modal({
-            modalClass: 'ywbmodal',
-            fadeDuration: 250,
-            fadeDelay: 0.80,
-            showClose: false
-        });
-    }
 
     function addColumnsToList(selectedClmns, availableClmns) {
         let $list = $('#columnsList');
-        
+        $list.empty();
         // First add selected columns in their saved order
         selectedClmns.forEach(column => {
             const $item = $(`

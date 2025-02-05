@@ -15,6 +15,7 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
 <body>
     <?php include "header.php" ?>
     <div class="all-content-wrapper">
+    <?php include __DIR__."/clmnspopup.html" ?>
     <?php
     $tableData ='';
     $ss = $c->statistics;
@@ -31,10 +32,12 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
         $tName = $tSettings->name;
         $tColumns = get_stats_columns($tSettings->columns, $tName);
     ?>
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                <button id="download<?=$tName?>" title="Download table data as CSV" class="btn btn-success">
-                    <i class="bi bi-download"></i>
-                </button>
+
+            <div class="buttons-block">
+                <button id="columnsSelect<?=$tName?>" title="Select and order columns" class="btn btn-info"><i
+                        class="bi bi-layout-three-columns"></i></button>
+                <button id="download<?=$tName?>" title="Download table as CSV" class="btn btn-success" style="float: right;"><i
+                        class="bi bi-download"></i></button>
             </div>
             <div id="t<?=$tName?>" style="clear: both;"></div>
             <script>
@@ -59,13 +62,37 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
                     }
                 });
 
+                t<?=$tName?>Table.on("columnResized", async function (column) {
+                    let updatedColumn = { field: column.getField(), width: column.getWidth() };
+                    await fetch("clmnseditor.php?action=width&table=<?=$tName?>&campid=<?=$campId?>", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(updatedColumn),
+                    });
+                });
+
                 document.getElementById("download<?=$tName?>").onclick = () => {
                     t<?=$tName?>Table.download("csv", "<?=$tName?>_data.csv");
                 };
+                document.getElementById("columnsSelect<?=$tName?>").onclick = async () => {
+                    let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type('stats')) ?>;
+                    let selectedClmns = <?= json_encode($tSettings->columns) ?>;
+                    addColumnsToList(selectedClmns, availableClmns);
+                    setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=<?=$tName?>&campid=<?=$campId?>");
+                    $('#columnModal').modal({
+                        modalClass: 'ywbmodal',
+                        fadeDuration: 250,
+                        fadeDelay: 0.80,
+                        showClose: false
+                    });
+                }
             </script>
             <br/>
             <br/>
     <?php } ?>
+
     </div>
 </body>
 
