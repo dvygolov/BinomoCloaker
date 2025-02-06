@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__."/password.php";
+require_once __DIR__."/../requestfunc.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = array('success' => check_password(false));
@@ -56,14 +57,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div id="main">
         <div id="title">
-            <img src="img/logobig.png" />
+            <img src="<?=get_cloaker_path()?>img/logobig.png" />
         </div>
         <?php include __DIR__."/version.php"; ?>
         <form id="login-form">
             <label for="password">Enter Admin Password👇</label><br />
             <input type="password" id="password" name="password" required/><br />
             <button type="submit">
-                <img src="img/loading.apng" class="loading-img" alt="Loading..." />
+                <img src="<?=get_cloaker_path()?>img/loading.apng" class="loading-img" alt="Loading..." />
                 <span>Login</span>
             </button>
         </form>
