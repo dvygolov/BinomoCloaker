@@ -16,6 +16,11 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
     <?php include "header.php" ?>
     <div class="all-content-wrapper">
     <?php include __DIR__."/statstableeditor.html" ?>
+
+        <div class="buttons-block">
+            <button id="addNewTable" title="Add new statisctics table" class="btn btn-primary"><i
+                    class="bi bi-plus-circle-fill"></i>&nbsp;New</button>
+        </div>
     <?php
     $tableData ='';
     $ss = $c->statistics;
@@ -33,12 +38,13 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
         $tColumns = get_stats_columns($tSettings->columns, $tName);
     ?>
 
-            <div class="buttons-block">
+            <div class="buttons-block" style="float: right;">
                 <button id="columnsSelect<?=$tName?>" title="Select and order columns" class="btn btn-info"><i
                         class="bi bi-layout-three-columns"></i></button>
-                <button id="download<?=$tName?>" title="Download table as CSV" class="btn btn-success" style="float: right;"><i
+                <button id="download<?=$tName?>" title="Download table as CSV" class="btn btn-success"><i
                         class="bi bi-download"></i></button>
-            
+                <button id="delete<?=$tName?>" title="Delete table" class="btn btn-danger"><i
+                        class="bi bi-trash-fill"></i></button>
             </div>
             <div id="t<?=$tName?>" style="clear: both;"></div>
             <script>
