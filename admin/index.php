@@ -1,4 +1,9 @@
 <?php
+//fix for Apache Multiviews and/or PHP Development Server
+if ($_SERVER['SCRIPT_NAME'] !== $_SERVER['PHP_SELF']) {
+    header("HTTP/1.0 404 Not Found");
+    exit("Not Found");
+}
 //we always need a slash at the end of the url, otherwise links will not work properly
 $url = $_SERVER['REQUEST_URI'];
 if ($url==='/admin'){
