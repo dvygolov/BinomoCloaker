@@ -15,7 +15,7 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
 <body>
     <?php include "header.php" ?>
     <div class="all-content-wrapper">
-    <?php include __DIR__."/clmnspopup.html" ?>
+    <?php include __DIR__."/statstableeditor.html" ?>
     <?php
     $tableData ='';
     $ss = $c->statistics;
@@ -80,15 +80,23 @@ $timeRange = Dates::get_time_range($c->statistics->timezone);
                 document.getElementById("columnsSelect<?=$tName?>").onclick = async () => {
                     let availableClmns = <?= json_encode(AvailableColumns::get_columns_for_type('stats')) ?>;
                     let selectedClmns = <?= json_encode($tSettings->columns) ?>;
-                    addColumnsToList(selectedClmns, availableClmns);
-                    setSaveButtonHandler("clmnseditor.php?action=savecolumns&table=<?=$tName?>&campid=<?=$campId?>");
-                    $('#columnModal').modal({
+                    let selectedDimensions = <?= json_encode($tSettings->groupby) ?>;
+                    
+                    initializeStatsTableEditor(
+                        availableClmns,
+                        selectedClmns,
+                        selectedDimensions,
+                        "<?=$tName?>",
+                        `clmnseditor.php?action=savecolumns&table=<?=$tName?>&campid=<?=$campId?>`
+                    );
+
+                    $('#statsTableModal').modal({
                         modalClass: 'ywbmodal',
                         fadeDuration: 250,
                         fadeDelay: 0.80,
                         showClose: false
                     });
-                }
+                };
             </script>
             <br/>
             <br/>
