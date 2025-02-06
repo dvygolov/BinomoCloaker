@@ -1,4 +1,0 @@
-<Files "clicks.db">  
-  Order Allow,Deny
-  Deny from all
-</Files>
