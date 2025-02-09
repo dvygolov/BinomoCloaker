@@ -112,7 +112,7 @@ function get_campaigns_columns(array $columns): string
             "formatter": function() {
                 return `
                     <button class="btn btn-camp btn-rename" title="Rename"><i class="bi bi-pencil-fill"></i></button>
-                    <button class="btn btn-camp btn-delete" title="Delete"><i class="bi bi-file-x"></i></button>
+                    <button class="btn btn-camp btn-delete" title="Delete"><i class="bi bi-trash-fill"></i></button>
                     <button class="btn btn-camp btn-clone" title="Clone"><i class="bi bi-copy"></i></button>
                     <button class="btn btn-camp btn-stats" title="View stats"><i class="bi bi-bar-chart-fill"></i></button>
                     <button class="btn btn-camp btn-allowed" title="View allowed clicks"><i class="bi bi-person-circle"></i></button>
