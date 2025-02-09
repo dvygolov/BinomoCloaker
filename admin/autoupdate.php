@@ -1,9 +1,9 @@
 <?php
-require_once('auth.php');
 
 class AutoUpdater {
     private const GITHUB_REPO = 'dvygolov/YellowCloaker';
-    private const GITHUB_API_URL = 'https://api.github.com/repos/dvygolov/YellowCloaker/releases/latest';
+    private const GITHUB_BRANCH = 'multipleconfigs';
+    private const GITHUB_API_URL = 'https://api.github.com/repos/dvygolov/YellowCloaker/contents/admin/version.txt?ref=multipleconfigs';
     private const VERSION_FILE = __DIR__ . '/version.txt';
     private const SETTINGS_FILE = __DIR__ . '/../settings.php';
     private const BACKUP_DIR = __DIR__ . '/../backups';
@@ -32,22 +32,32 @@ class AutoUpdater {
             $response = file_get_contents(self::GITHUB_API_URL, false, $context);
             
             if ($response === false) {
-                throw new Exception("Failed to fetch release information");
+                throw new Exception("Failed to fetch version information");
             }
 
-            $releaseInfo = json_decode($response, true);
-            if (!$releaseInfo || !isset($releaseInfo['tag_name'])) {
-                throw new Exception("Invalid release information");
+            $fileInfo = json_decode($response, true);
+            if (!$fileInfo || !isset($fileInfo['content'])) {
+                throw new Exception("Invalid version file information");
             }
 
-            $this->latestVersion = trim($releaseInfo['tag_name'], 'v');
-            $this->downloadUrl = $releaseInfo['zipball_url'];
+            $this->latestVersion = trim(base64_decode($fileInfo['content']));
 
-            return version_compare($this->latestVersion, $this->currentVersion, '>');
+            $latestTimestamp = $this->convertVersionToTimestamp($this->latestVersion);
+            $currentTimestamp = $this->convertVersionToTimestamp($this->currentVersion);
+
+            return $latestTimestamp > $currentTimestamp;
         } catch (Exception $e) {
             error_log("Update check failed: " . $e->getMessage());
             return false;
         }
+    }
+
+    private function convertVersionToTimestamp(string $version): int {
+        $parts = explode('.', $version);
+        if (count($parts) !== 3) {
+            throw new Exception("Invalid version format");
+        }
+        return mktime(0, 0, 0, $parts[1], $parts[0], 2000 + intval($parts[2]));
     }
 
     public function update(): array {
@@ -70,6 +80,8 @@ class AutoUpdater {
 
             // Download and extract update
             $zipFile = self::UPDATE_DIR . '/update.zip';
+
+            $this->downloadUrl = "https://api.github.com/repos/" . self::GITHUB_REPO . "/zipball/" . self::GITHUB_BRANCH;
             if (!$this->downloadFile($this->downloadUrl, $zipFile)) {
                 throw new Exception("Failed to download update");
             }
@@ -179,118 +191,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $response = [
                 'success' => true,
                 'hasUpdate' => $hasUpdate,
-                'currentVersion' => $updater->getCurrentVersion(),
-                'latestVersion' => $updater->getLatestVersion()
+                'version' => $hasUpdate ? $updater->getLatestVersion() : $updater->getCurrentVersion()
             ];
             break;
 
         case 'update':
-            $response = $updater->update();
+            $result = $updater->update();
+            $response = [
+                'success' => $result['success'],
+                'message' => $result['message']
+            ];
             break;
+
+        default:
+            $response['message'] = 'Invalid action';
     }
 
     header('Content-Type: application/json');
     echo json_encode($response);
     exit;
+} else {
+    http_response_code(405);
+    echo 'Method Not Allowed';
 }
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Yellow Cloaker Auto Update</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .status { margin: 20px 0; padding: 15px; border-radius: 4px; }
-        .status.success { background-color: #d4edda; color: #155724; }
-        .status.error { background-color: #f8d7da; color: #721c24; }
-        .status.info { background-color: #cce5ff; color: #004085; }
-        button { padding: 10px 20px; margin: 10px 0; cursor: pointer; }
-        .hidden { display: none; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Yellow Cloaker Auto Update</h1>
-        <div id="status" class="status info">
-            Checking for updates...
-        </div>
-        <button id="checkBtn" onclick="checkForUpdates()">Check for Updates</button>
-        <button id="updateBtn" onclick="performUpdate()" class="hidden">Update Now</button>
-    </div>
-
-    <script>
-        function checkForUpdates() {
-            fetch('autoupdate.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'action=check'
-            })
-            .then(response => response.json())
-            .then(data => {
-                const status = document.getElementById('status');
-                const updateBtn = document.getElementById('updateBtn');
-                
-                if (data.success) {
-                    if (data.hasUpdate) {
-                        status.className = 'status info';
-                        status.innerHTML = `Update available! Current version: ${data.currentVersion}, Latest version: ${data.latestVersion}`;
-                        updateBtn.classList.remove('hidden');
-                    } else {
-                        status.className = 'status success';
-                        status.innerHTML = 'You have the latest version installed.';
-                        updateBtn.classList.add('hidden');
-                    }
-                } else {
-                    status.className = 'status error';
-                    status.innerHTML = 'Failed to check for updates.';
-                    updateBtn.classList.add('hidden');
-                }
-            })
-            .catch(error => {
-                const status = document.getElementById('status');
-                status.className = 'status error';
-                status.innerHTML = 'Error checking for updates: ' + error;
-                document.getElementById('updateBtn').classList.add('hidden');
-            });
-        }
-
-        function performUpdate() {
-            const status = document.getElementById('status');
-            const updateBtn = document.getElementById('updateBtn');
-            
-            status.className = 'status info';
-            status.innerHTML = 'Updating...';
-            updateBtn.disabled = true;
-
-            fetch('autoupdate.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'action=update'
-            })
-            .then(response => response.json())
-            .then(data => {
-                status.className = data.success ? 'status success' : 'status error';
-                status.innerHTML = data.message;
-                updateBtn.disabled = false;
-                if (data.success) {
-                    updateBtn.classList.add('hidden');
-                }
-            })
-            .catch(error => {
-                status.className = 'status error';
-                status.innerHTML = 'Error during update: ' + error;
-                updateBtn.disabled = false;
-            });
-        }
-
-        // Check for updates when page loads
-        window.onload = checkForUpdates;
-    </script>
-</body>
-</html>
