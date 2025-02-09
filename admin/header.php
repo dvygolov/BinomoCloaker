@@ -46,6 +46,10 @@ function get_bases_version(): string
                                     <i class="bi bi-arrow-clockwise"></i>
                                     <span>Refresh</span>
                                 </a>
+                                <a class="nav-link" href="#" onclick="checkForUpdates(); return false;">
+                                    <i class="bi bi-cloud-arrow-down"></i>
+                                    <span>Update</span>
+                                </a>
                                 <a class="nav-link" href="logout.php">
                                     <i class="bi bi-door-closed"></i>
                                     <span>Logout</span>
@@ -80,6 +84,52 @@ function get_bases_version(): string
         searchParams.set('startdate', d1);
         searchParams.set('enddate', d2);
         window.location.search = searchParams.toString();
+    }
+
+    // System update functionality
+    async function checkForUpdates() {
+        try {
+            const response = await fetch('autoupdate.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=check'
+            });
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                alert('Error checking for updates: ' + result.message);
+                return;
+            }
+            
+            if (!result.hasUpdate) {
+                alert('Your system is up to date!');
+                return;
+            }
+            
+            if (confirm(`An update to version ${result.version} is available. Would you like to update now?`)) {
+                const updateResponse = await fetch('autoupdate.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=update'
+                });
+                
+                const updateResult = await updateResponse.json();
+                
+                if (updateResult.success) {
+                    alert('Update successful! The page will now reload.');
+                    location.reload();
+                } else {
+                    alert('Update failed: ' + updateResult.message);
+                }
+            }
+        } catch (error) {
+            alert('Error checking for updates: ' + error.message);
+        }
     }
 
     // Geo database update functionality
