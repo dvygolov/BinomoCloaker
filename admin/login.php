@@ -24,6 +24,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #0F0;
             font-family: monospace;
         }
+
+        button[type="submit"] {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            color: #0F0;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5),
+                         0 0 20px rgba(0, 255, 0, 0.3),
+                         0 0 30px rgba(0, 255, 0, 0.2);
+            border-color: #0F0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 255, 0, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        button[type="submit"]:hover::before {
+            left: 100%;
+        }
     </style>
     <script>
         // Matrix rain effect
