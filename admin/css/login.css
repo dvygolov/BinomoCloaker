@@ -284,30 +284,32 @@ button.loading span {
 }
 
 .version-grid {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 8px 12px;
-    text-align: left;
-    max-width: 300px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
     margin: 0 auto;
+    max-width: 500px;
+}
+
+.version-column {
+    flex: 1;
 }
 
 .version-item {
-    display: contents;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 4px;
 }
 
 .version-label {
     color: rgba(255, 255, 255, 0.5);
     font-weight: 500;
-    text-align: right;
-}
-
-.version-label::after {
-    content: ":";
 }
 
 .version-value {
     color: rgba(255, 255, 255, 0.9);
+    text-align: right;
 }
 
 .version-value .error {
