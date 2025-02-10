@@ -62,6 +62,10 @@ function get_bases_version(): string
         </div>
     </div>
 </div>
+<div class="overlay" id="updateOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">UPDATING SYSTEM...</div>
+</div>
 <script>
     flatpickr("#litepicker", {
         dateFomat: "DD.MM.YY",
@@ -176,5 +180,47 @@ function get_bases_version(): string
 }
 .geo-version a:hover {
     text-decoration: underline;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.overlay.active {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 80px;
+    height: 80px;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #00ff00;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    position: absolute;
+    margin-top: 100px;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
 </style>
