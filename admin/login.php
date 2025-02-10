@@ -18,6 +18,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" type="text/css" href="css/login.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        #cursor {
+            display: inline-block;
+            color: #0F0;
+            font-family: monospace;
+        }
+    </style>
     <script>
         // Matrix rain effect
         function setupMatrixRain() {
@@ -77,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             let cursorVisible = true;
             setInterval(() => {
                 cursorVisible = !cursorVisible;
-                cursor.style.opacity = cursorVisible ? '1' : '0';
+                cursor.textContent = cursorVisible ? '█' : '';
             }, 530);
 
             // Handle password input
@@ -138,9 +145,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="input-group">
                     <label for="password">Enter Admin Password</label>
                     <div class="password-container">
-                        <input type="password" id="password" name="password" required autocomplete="current-password"/>
+                        <input type="password" id="password" name="password" required autocomplete="off"/>
                         <div class="fake-input-container">
-                            <span id="fake-input"></span><span id="cursor">X</span>
+                            <span id="fake-input"></span><span id="cursor">█</span>
                         </div>
                     </div>
                 </div>

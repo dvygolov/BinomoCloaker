@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/password.php');
 
 class AutoUpdater {
     private const GITHUB_REPO = 'dvygolov/YellowCloaker';
@@ -102,13 +103,10 @@ class AutoUpdater {
             }
 
             // Copy files recursively, excluding settings.php
-            $this->recursiveCopy($extractedDir, dirname(__DIR__), ['settings.php']);
+            // $this->recursiveCopy($extractedDir, dirname(__DIR__), ['settings.php']);
 
-            // Update version file
-            file_put_contents(self::VERSION_FILE, $this->latestVersion);
-
-            // Clean up
-            $this->recursiveDelete(self::UPDATE_DIR);
+            // // Clean up
+            // $this->recursiveDelete(self::UPDATE_DIR);
 
             $result['success'] = true;
             $result['message'] = "Successfully updated to version " . $this->latestVersion;
@@ -182,29 +180,34 @@ class AutoUpdater {
 
 // Handle update request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $updater = new AutoUpdater();
-    $response = ['success' => false, 'message' => ''];
+    if (!check_password(false)){
+        $response = ['success' => false, 'message' => 'Incorrect password'];
+    }
+    else {
+        $updater = new AutoUpdater();
+        $response = ['success' => false, 'message' => ''];
 
-    switch ($_POST['action']) {
-        case 'check':
-            $hasUpdate = $updater->checkForUpdates();
-            $response = [
-                'success' => true,
-                'hasUpdate' => $hasUpdate,
-                'version' => $hasUpdate ? $updater->getLatestVersion() : $updater->getCurrentVersion()
-            ];
-            break;
+        switch ($_POST['action']) {
+            case 'check':
+                $hasUpdate = $updater->checkForUpdates();
+                $response = [
+                    'success' => true,
+                    'hasUpdate' => $hasUpdate,
+                    'version' => $hasUpdate ? $updater->getLatestVersion() : $updater->getCurrentVersion()
+                ];
+                break;
 
-        case 'update':
-            $result = $updater->update();
-            $response = [
-                'success' => $result['success'],
-                'message' => $result['message']
-            ];
-            break;
+            case 'update':
+                $result = $updater->update();
+                $response = [
+                    'success' => $result['success'],
+                    'message' => $result['message']
+                ];
+                break;
 
-        default:
-            $response['message'] = 'Invalid action';
+            default:
+                $response['message'] = 'Invalid action';
+        }
     }
 
     header('Content-Type: application/json');
