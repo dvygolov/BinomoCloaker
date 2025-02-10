@@ -102,11 +102,12 @@ class AutoUpdater {
                 throw new Exception("Failed to locate extracted files");
             }
 
+            //TODO: uncomment when ready
             // Copy files recursively, excluding settings.php
             // $this->recursiveCopy($extractedDir, dirname(__DIR__), ['settings.php']);
 
-            // // Clean up
-            // $this->recursiveDelete(self::UPDATE_DIR);
+            // Clean up
+            $this->recursiveDelete(self::UPDATE_DIR);
 
             $result['success'] = true;
             $result['message'] = "Successfully updated to version " . $this->latestVersion;
