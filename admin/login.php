@@ -16,20 +16,91 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Yellow Cloaker Login</title>
     <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="stylesheet" type="text/css" href="css/login.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script>
+        // Matrix rain effect
+        function setupMatrixRain() {
+            const canvas = document.getElementById('matrix-rain');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const characters = "01";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let x = 0; x < columns; x++) {
+                drops[x] = Math.random() * -100;
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(27, 42, 71, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#0F0';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 35);
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            setupMatrixRain();
             const form = document.getElementById('login-form');
             const submitButton = form.querySelector('button[type="submit"]');
+            const passwordInput = document.getElementById('password');
+            const fakeInput = document.getElementById('fake-input');
+            const cursor = document.getElementById('cursor');
+            
+            // Focus input on page load
+            passwordInput.focus();
 
+            // Handle cursor blinking
+            let cursorVisible = true;
+            setInterval(() => {
+                cursorVisible = !cursorVisible;
+                cursor.style.opacity = cursorVisible ? '1' : '0';
+            }, 530);
+
+            // Handle password input
+            passwordInput.addEventListener('input', function(e) {
+                const value = this.value;
+                fakeInput.textContent = 'X'.repeat(value.length);
+            });
+
+            // Keep focus on the real input
+            document.addEventListener('click', () => passwordInput.focus());
+            fakeInput.addEventListener('click', (e) => {
+                e.preventDefault();
+                passwordInput.focus();
+            });
+
+            // Handle form submission
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                // Disable button and show loading state
                 submitButton.disabled = true;
                 submitButton.classList.add('loading');
                 
-                const password = document.getElementById('password').value;
+                const password = passwordInput.value;
                 const formData = new FormData();
                 formData.append('password', password);
                 
@@ -55,19 +126,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </script>
 </head>
 <body>
+    <canvas id="matrix-rain"></canvas>
+    <div class="grid-overlay"></div>
     <div id="main">
         <div id="title">
-            <img src="<?=get_cloaker_path()?>img/logobig.png" />
+            <img src="<?=get_cloaker_path()?>img/logobig.png" alt="Yellow Cloaker Logo" />
         </div>
-        <?php include __DIR__."/version.php"; ?>
-        <form id="login-form">
-            <label for="password">Enter Admin Password👇</label><br />
-            <input type="password" id="password" name="password" required/><br />
-            <button type="submit">
-                <img src="<?=get_cloaker_path()?>img/loading.apng" class="loading-img" alt="Loading..." />
-                <span>Login</span>
-            </button>
-        </form>
+        <div class="login-container">
+            <form id="login-form">
+                <h2>Welcome Back</h2>
+                <div class="input-group">
+                    <label for="password">Enter Admin Password</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required autocomplete="current-password"/>
+                        <div class="fake-input-container">
+                            <span id="fake-input"></span><span id="cursor">X</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="login-button">
+                    <img src="<?=get_cloaker_path()?>img/loading.apng" class="loading-img" alt="Loading..." />
+                    <span>Login to Dashboard</span>
+                </button>
+            </form>
+            <div class="version-info">
+                <?php include __DIR__."/version.php"; ?>
+            </div>
+        </div>
     </div>
 </body>
 </html>

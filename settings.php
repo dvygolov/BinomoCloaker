@@ -24,9 +24,5 @@ $cloSettings =
 //- show PHP errors if any,
 //- won't obfuscate any javascript code
 //- will add YWB headers to the response, where you'll be able to see, how long does it take to process requests
-"debug" => true,
-
-//TODO: implement!
-//if true the cloaker will automatically check for new versions and update itself from GitHub
-"autoupdate" => true
+"debug" => true
 ];
